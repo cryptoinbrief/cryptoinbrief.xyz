@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-coin="ethereum">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof of stake from zero | Crypto in Brief</title>
+<meta name="description" content="What Ethereum did after it fired its miners: validators, attestations, slashing and finality, with three labs including a stake-weighted lottery you run in your browser.">
+<link rel="canonical" href="https://cryptoinbrief.xyz/proof-of-stake.html">
+<meta property="og:site_name" content="Crypto in Brief">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Proof of stake from zero">
+<meta property="og:description" content="What Ethereum did after it fired its miners: validators, attestations, slashing and finality, with three labs including a stake-weighted lottery you run in your browser.">
+<meta property="og:url" content="https://cryptoinbrief.xyz/proof-of-stake.html">
+<meta property="og:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Proof of stake from zero">
+<meta name="twitter:description" content="Validators, attestations, slashing and finality, explained from zero with three browser labs including a stake-weighted lottery.">
+<meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="author" content="Moamen Basel">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Proof of stake from zero","description":"Proof of stake explained from zero with three runnable browser labs.","datePublished":"2026-09-19","inLanguage":"en","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz"},"mainEntityOfPage":"https://cryptoinbrief.xyz/proof-of-stake.html"}</script>
+<style>
+:root{
+  --bg:#FAFAF8; --surface:#FFFFFF; --surface2:#F4F4F1;
+  --border:#E7E6E1; --border2:#D8D7D1;
+  --ink:#16171A; --muted:#5D6270; --faint:#9B9FA8;
+  --accent:#4F67D9; --accent-ink:#FFFFFF; --accent-soft:rgba(79,103,217,.10);
+  --good:#0B9E6A; --bad:#D64533; --warn:#B27A22;
+  --term:#0C0E11; --term-border:#1E2229; --term-ink:#DADEE4; --term-dim:#8A909A; --term-accent:#63E2A6;
+  --serif:"Instrument Serif","Georgia",serif;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --measure:66ch; --rail:13rem; --note:13.5rem; --gutter:1.75rem;
+  --ease:cubic-bezier(.25,.8,.35,1);
+  --r-card:16px; --r-btn:10px; --r-chip:999px;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#8B9CF7; --accent-ink:#131A33; --accent-soft:rgba(139,156,247,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}
+@media(prefers-color-scheme:dark){
+:root:not([data-theme="light"]){
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#8B9CF7; --accent-ink:#131A33; --accent-soft:rgba(139,156,247,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}}
+*{box-sizing:border-box}
+html{overflow-x:clip;font-size:106.25%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0588rem;line-height:1.72;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent-soft);color:var(--ink)}
+#readprog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+#readprog.on{visibility:visible}
+.band{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:3.25rem;padding-inline:max(1.25rem,calc(50vw - 21rem));font-family:var(--sans);font-size:.75rem;letter-spacing:.02em}
+header.band{position:sticky;top:0;z-index:50;flex-wrap:wrap;padding-block:.5rem;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--border)}
+.band a{color:var(--muted);text-decoration:none;transition:color .15s var(--ease)}
+.band a:hover{color:var(--ink)}
+.band a[aria-current="page"]{color:var(--accent)}
+.band .mark{color:var(--ink);font-weight:650;white-space:nowrap;letter-spacing:-.01em;font-size:.875rem}
+.band nav.series{display:flex;flex-wrap:wrap;gap:.3rem .95rem}
+.band .series a{white-space:nowrap}
+.band .switch{display:flex;gap:1rem;margin:0;white-space:nowrap;font-family:var(--mono);font-size:.7rem}
+.band .switch b{color:var(--ink);font-weight:600}
+.band .none{color:var(--faint)}
+.band button{background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer}
+.band button:hover{color:var(--accent)}
+main{max-width:var(--measure);margin-inline:auto;padding:3rem 1.25rem 5rem;position:relative}
+.reg,main::before,main::after{display:none}
+@media(min-width:1100px){
+main{max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note));display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter)}
+nav.toc.rail{grid-column:1;align-self:start;position:sticky;top:4.5rem}
+.col{grid-column:2;max-width:var(--measure);position:relative}
+}
+.byline{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 1rem}
+.byline,.lead{max-width:60ch}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,1.7rem + 3.2vw,3.6rem);line-height:1.04;letter-spacing:-.015em;margin:.15em 0 .5em}
+.lead{font-size:1.3rem;line-height:1.45;color:var(--muted);margin:0 0 2rem;font-weight:450}
+h2{font-size:1.65rem;line-height:1.25;font-weight:650;letter-spacing:-.015em;margin:3.4em 0 .7em}
+.col>h2:first-of-type{margin-block-start:1.8em}
+h2 .num{font-family:var(--mono);color:var(--accent);font-size:.7em;margin-inline-end:.7em;font-weight:500;letter-spacing:0}
+h3{font-size:1.18rem;line-height:1.35;font-weight:600;margin:2.1em 0 .45em;letter-spacing:-.008em}
+p{margin:0 0 1.15em}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);transition:border-color .15s var(--ease)}
+a:hover{border-bottom-color:var(--accent)}
+code,.hx,.num{font-family:var(--mono);font-size:.85em;font-variant-numeric:tabular-nums}
+code{background:var(--accent-soft);border-radius:5px;padding:.1em .35em}
+strong{font-weight:650}
+figure{margin:2.5rem auto;width:min(72rem,calc(100vw - 2rem));transform:translateX(0);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:1.5rem 1.5rem 1.1rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+[dir="rtl"] figure{margin-inline:auto}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:.9rem}
+figcaption .figno{font-family:var(--mono);color:var(--accent);margin-inline-end:.55em;font-size:.95em}
+.figbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:inherit;border-radius:var(--r-card)}
+.figbtn:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.c-time{stroke:var(--warn)} .c-nonce{stroke:var(--accent)} .c-mrk{stroke:var(--good)} .c-ver{stroke:var(--faint)}
+.f-time{fill:var(--warn)} .f-nonce{fill:var(--accent)} .f-ink{fill:var(--ink)} .f-mut{fill:var(--muted)} .f-pap{fill:var(--surface)}
+table{width:100%;border-collapse:collapse;margin:1.8em 0;font-family:var(--sans);font-size:.875rem}
+th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-bottom:1px solid var(--border)}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+tbody th{font-weight:400;color:var(--muted);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+aside.note{font-size:.875rem;line-height:1.6;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+aside.note.good{border-color:color-mix(in srgb,var(--good) 35%,var(--border))}
+aside.note.bad{border-color:color-mix(in srgb,var(--bad) 35%,var(--border))}
+aside.note p{margin:0 0 .5em}
+aside.note p:last-child{margin:0}
+@media(min-width:1152px){
+aside.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+nav.toc{font-family:var(--sans);font-size:.8125rem;line-height:1.5}
+nav.toc.rail{display:none}
+@media(min-width:1100px){nav.toc.rail{display:block}}
+nav.toc.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;transition:color .15s var(--ease)}
+nav.toc.rail a .leaders{display:none}
+nav.toc.rail a .secno{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover{color:var(--ink)}
+nav.toc.rail a:hover .secno{color:var(--accent)}
+nav.toc.rail a.act{color:var(--accent);font-weight:550}
+nav.toc.rail a.act .secno{color:var(--accent)}
+nav.toc.rail .toclab{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+details.toc{border:1px solid var(--border);border-radius:12px;margin:2rem 0;padding:.35rem 1rem;background:var(--surface)}
+details.toc summary{cursor:pointer;font-weight:600;color:var(--ink);padding:.45rem 0}
+details.toc ol{margin:.4em 0 .6em;padding-inline-start:1.3em}
+details.toc li{margin:.25em 0}
+@media(min-width:1100px){details.toc{display:none}}
+.machine{background:var(--surface2);color:var(--ink);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;width:min(72rem,calc(100vw - 2rem));margin:2.5rem auto;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.machine:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mhead{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0}
+.mtag{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em}
+.mtitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.mchip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted)}
+.mtick{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:7ch;text-align:end}
+.mtick.tk{color:var(--accent)}
+.melapsed{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:6ch;text-align:end}
+.mprog{height:2px;margin:0;background:var(--accent);transform-origin:0 0;transform:scaleX(0)}
+.machine[data-state="running"] .mprog{transform:scaleX(var(--sx,0));transition:transform 120ms linear}
+.machine[data-state="running"] .mprog.ind{transform:none;animation:indbar 900ms linear infinite}
+@keyframes indbar{from{transform:translateX(-40%) scaleX(.28)}to{transform:translateX(120%) scaleX(.28)}}
+.machine[data-state="done"] .mprog{transform:scaleX(1);height:0;transition:transform 140ms var(--ease),height 180ms var(--ease) 160ms}
+.mrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 4px}
+.machine .mrow~.mrow{padding-top:0}
+.machine button{font-family:var(--sans);font-size:.875rem;line-height:1;font-weight:550;padding:10px 18px;min-height:38px;cursor:pointer;border-radius:var(--r-btn);transition:transform .12s var(--ease),background .15s var(--ease),filter .12s var(--ease)}
+.machine .run{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine .run:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine .run:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine .ghost{background:transparent;border:1px solid var(--border2);color:var(--ink)}
+.machine .ghost:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.machine button:disabled{opacity:.4;cursor:not-allowed}
+.machine button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.machine .run.pop{animation:runpop 240ms var(--ease)}
+@keyframes runpop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.machine input,.machine select{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:9px 12px}
+.machine input:focus-visible,.machine select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{background:var(--term);border:1px solid var(--term-border);border-radius:12px;margin:10px 14px 14px;padding:12px 14px;min-height:76px;max-height:240px;overflow-y:auto;font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--term-ink);word-break:break-all;transition:border-color 180ms}
+.machine[data-state="running"] .out{border-color:var(--term-border)}
+.machine .out.flash{border-color:var(--good);transition:border-color 180ms}
+.machine[data-state="error"] .out{border-color:var(--bad)}
+.out p{margin:0 0 2px;animation:linein 120ms var(--ease)}
+@keyframes linein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.out::-webkit-scrollbar{width:6px}
+.out::-webkit-scrollbar-thumb{background:var(--term-border);border-radius:3px}
+.out .hx{font-size:.8rem}
+.out .zeros{color:var(--term-accent);font-weight:700}
+.out .ok{color:var(--good)}
+.out .no{color:var(--bad)}
+.out .dim{color:var(--term-dim);font-size:.72rem;margin-top:6px}
+.out .sA{color:var(--term-dim)}
+.out .sB{color:var(--term-accent)}
+.out .lane{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0}
+.out .lane .ln{width:6ch;color:var(--term-dim);font-size:.72rem}
+.out .blkchip{border:1px solid var(--term-border);border-radius:6px;padding:1px 7px;font-size:.72rem;color:var(--term-ink)}
+.out .blkchip.win{border-color:var(--good);color:var(--good)}
+.out .blkchip.dead{color:var(--term-dim);text-decoration:line-through}
+.mcap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:.7rem 14px 1rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+footer.band{display:block;position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:0;border-top:1px solid var(--border);padding-block:1.5rem 3rem;font-size:.8rem;color:var(--muted);letter-spacing:0}
+footer.band .pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:1.2rem}
+footer.band .pn a{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;color:var(--ink);background:var(--surface);transition:border-color .15s var(--ease)}
+footer.band .pn a:hover{border-color:var(--accent)}
+footer.band .pn a:hover .t{color:var(--accent)}
+footer.band .pn .k{font-family:var(--mono);font-size:.65rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+footer.band .pn .t{font-family:var(--sans);font-size:.95rem;font-weight:550;color:var(--ink)}
+footer.band .pn .next{text-align:end;align-items:flex-end}
+footer.band .colophon{margin:1.5rem 0 0}
+footer.band .colophon a{color:var(--muted);border-bottom:0}
+footer.band .colophon a:hover{color:var(--accent)}
+@media(prefers-contrast:more){
+.machine,.out{border-width:2px}
+.mprog{height:3px}
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.out p{animation:none}
+.machine .run.pop{animation:none}
+.machine button{transition:none}
+.machine[data-state="running"] .mprog,.machine[data-state="running"] .mprog.ind{animation:none;transition:none}
+.machine[data-state="done"] .mprog{transition:none}
+}
+
+#progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--accent);z-index:60}
+figure.lab{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-card);padding:1.1rem 1.25rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+figure.lab[data-state="running"]{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+figure.lab h3{font-family:var(--sans);font-size:.95rem;font-weight:600;letter-spacing:-.005em;line-height:1.35;margin:0 0 .5rem;display:flex;align-items:center;gap:10px}
+figure.lab h3 .tag{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;letter-spacing:.04em;white-space:nowrap}
+figure.lab .labnote{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:0 0 .95rem}
+figure.lab .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+figure.lab .controls label{font-family:var(--sans);font-size:.8125rem;color:var(--muted);display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap}
+figure.lab .controls button{font-family:var(--sans);font-size:.875rem;line-height:1;font-weight:550;padding:10px 18px;min-height:38px;cursor:pointer;border-radius:var(--r-btn);border:1px solid var(--border2);background:transparent;color:var(--ink);transition:transform .12s var(--ease),background .15s var(--ease),filter .12s var(--ease)}
+figure.lab .controls button:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent)}
+figure.lab .controls button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+figure.lab .controls button[id$="-run"]{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+figure.lab .controls button[id$="-run"]:hover{background:var(--accent);filter:brightness(1.07);transform:translateY(-1px)}
+figure.lab .controls button[id$="-run"]:active{transform:translateY(0);filter:brightness(.95)}
+figure.lab .state{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;color:var(--faint)}
+figure.lab[data-state="running"] .state{color:var(--accent)}
+figure.lab[data-state="done"] .state{color:var(--good)}
+figure.lab .elapsed{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);margin-left:auto}
+figure.lab input[type="number"]{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:8px 10px;width:5.5em}
+figure.lab input[type="number"]:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+figure.lab input[type="range"]{accent-color:var(--accent);width:100%}
+figure.lab pre.console{background:var(--term);border:1px solid var(--term-border);border-radius:12px;color:var(--term-ink);font-family:var(--mono);font-size:.8rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow:auto;margin:14px 0 0;padding:12px 14px}
+figure.lab pre.console::-webkit-scrollbar{width:6px}
+figure.lab pre.console::-webkit-scrollbar-thumb{background:var(--term-border);border-radius:3px}
+@media print{header.band,#progress,footer.band .pn{display:none}}
+
+.coinbadge{display:inline-flex;width:54px;height:54px;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin-inline-end:.7rem;vertical-align:-14px}.coinbadge svg{width:38px;height:38px;display:block}
+.coinbadge{background:#3D6BF5;border-color:color-mix(in srgb,#3D6BF5 55%,transparent)}
+.coinbadge svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+</style>
+
+<style>
+:root{--bg:#C5CAD4;--ink:#14161C;--muted:#4A5160;--faint:#7A8294;--border:color-mix(in srgb,#14161C 18%,transparent);--border2:color-mix(in srgb,#14161C 26%,transparent);--surface:color-mix(in srgb,#14161C 4%,var(--bg));--surface2:color-mix(in srgb,#14161C 7%,var(--bg));--accent:#3D6BF5;--accent-ink:#F3F6FF;--good:#3D6BF5;--coin:#3D6BF5;--coin2:#3D6BF5;--serif:"Syne",sans-serif;--sans:"Schibsted Grotesk",system-ui,sans-serif;--mono:"Martian Mono",ui-monospace,monospace}
+:root[data-theme="dark"]{--bg:#171B24;--ink:#E6EAF0;--muted:#8B93A3;--faint:#5A6272;--border:color-mix(in srgb,#E6EAF0 20%,transparent);--border2:color-mix(in srgb,#E6EAF0 28%,transparent);--surface:color-mix(in srgb,#E6EAF0 4%,var(--bg));--surface2:color-mix(in srgb,#E6EAF0 7%,var(--bg));--accent:#3D6BF5;--accent-ink:#F3F6FF;--good:#3D6BF5}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171B24;--ink:#E6EAF0;--muted:#8B93A3;--faint:#5A6272;--border:color-mix(in srgb,#E6EAF0 20%,transparent);--border2:color-mix(in srgb,#E6EAF0 28%,transparent);--surface:color-mix(in srgb,#E6EAF0 4%,var(--bg));--surface2:color-mix(in srgb,#E6EAF0 7%,var(--bg));--accent:#3D6BF5;--accent-ink:#F3F6FF;--good:#3D6BF5}}
+*{border-radius:0!important}
+body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.045;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")}
+:root[data-theme="dark"] body::after{opacity:.07;mix-blend-mode:overlay}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) body::after{opacity:.07;mix-blend-mode:overlay}}
+::selection{background:var(--coin);color:#F3F6FF}
+h1{font-family:"Syne",sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1.04}
+h2{font-family:"Syne",sans-serif;font-weight:700;letter-spacing:-.02em}
+header.band{position:static;backdrop-filter:none;-webkit-backdrop-filter:none;background:none;border-bottom:1px solid var(--border)}
+header.band .series a,header.band .mark,header.band .switch{font-family:"Martian Mono",monospace;font-size:.625rem;letter-spacing:.02em}
+.spine{position:fixed;left:0;top:0;width:6px;height:100dvh;z-index:45;background:#3D6BF5;opacity:.35}
+.spine i{position:absolute;inset:0;background:#3D6BF5;transform-origin:top;transform:scaleY(0);animation:spinefill linear;animation-timeline:scroll()}
+@keyframes spinefill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.spine i{animation:none;transform:scaleY(1)}}
+.bay{margin-inline:calc(50% - 50vw);width:100vw;background:#3D6BF5;color:#F3F6FF;padding:2.2rem max(1.25rem,3vw) 2rem;clip-path:inset(0 100% 0 0);animation:bayfill .64s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes bayfill{to{clip-path:inset(0 0 0 0)}}
+@media(prefers-reduced-motion:reduce){.bay{animation:none;clip-path:none}}
+.bay .byline,.bay .lead{color:#DCE4FF}
+.bay .byline a{color:#F3F6FF}
+.bay a{color:#F3F6FF;border-bottom-color:rgba(243,246,255,.45)}
+.bay h1{color:#F3F6FF;max-width:22ch}
+.bay h2 .num{color:#DCE4FF}
+.bay .coinbadge{background:rgba(255,255,255,.35);border-color:rgba(10,10,18,.35)}
+.bay figure{background:#0C0E11;border:0;padding:1.1rem 1.2rem .9rem;width:100%;margin:1.4rem 0 0;max-width:38rem}
+.bay figure .f-ink{fill:#E6EAF0}
+.bay figure .f-mut{fill:#8B93A3}
+.bay figure .f-nonce{fill:#F3F6FF}
+.bay figure .c-nonce{stroke:#F3F6FF}
+.bay figure .c-ver{stroke:#3E4656}
+.bay figcaption{color:#8B93A3;border-top:1px solid #232830;margin-top:.7rem;padding-top:.5rem}
+.bay figcaption .figno{color:#F3F6FF}
+.bay .figctl button{color:#DCE4FF;border-color:#3E4656}
+.bay .figctl .fign{color:#8B93A3}
+.bay .figbtn{color:#E6EAF0}
+footer.band .pn a{border:0;background:color-mix(in srgb,#3D6BF5 35%,var(--bg));min-height:6rem;align-items:flex-end;justify-content:flex-start;padding:1rem 1.2rem}
+footer.band .pn a .t{font-family:"Syne",sans-serif;font-weight:700;letter-spacing:-.02em}
+nav.toc.rail a.act{color:var(--accent);box-shadow:none;border-bottom:0}
+nav.toc.rail a{font-family:"Schibsted Grotesk",sans-serif}
+nav.toc .toclab{font-family:"Martian Mono",monospace}
+.machine{background:var(--surface2);border:1px solid var(--border)}
+figure{background:var(--surface)}
+code{background:color-mix(in srgb,#3D6BF5 14%,transparent)}
+aside.note{background:var(--surface)}
+</style>
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml">
+<meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
+<link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+<link rel="stylesheet" href="assets/consensus-story.css">
+<script defer src="assets/consensus-story.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="spine" aria-hidden="true"><i></i></div>
+<div id="progress" aria-hidden="true"></div>
+<header class="site-header">
+<a class="mark" href="index.html">crypto<span>in</span>brief.</a>
+<nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="crypto-summary.html">Start here</a></nav>
+<p class="switch">
+<span class="lang"><b>EN</b> | <span class="none" title="Arabic edition pending">AR</span></span>
+<span class="theme"><button type="button" id="theme-toggle">DARK</button></span>
+</p>
+</header>
+<main id="main-content">
+<nav class="toc rail" aria-label="Contents">
+<p class="toclab">Contents</p>
+<a href="#s01"><span>The bill Bitcoin never paid</span><span class="leaders"></span><span class="secno">01</span></a>
+<a href="#s02"><span>Locking coins instead of burning watts</span><span class="leaders"></span><span class="secno">02</span></a>
+<a href="#s03"><span>A computer, 32 ETH, and three jobs</span><span class="leaders"></span><span class="secno">03</span></a>
+<a href="#s04"><span>Lab 1, the proposer lottery</span><span class="leaders"></span><span class="secno">04</span></a>
+<a href="#s05"><span>Attestations, the vote that weighs</span><span class="leaders"></span><span class="secno">05</span></a>
+<a href="#s06"><span>LMD GHOST, following the heaviest subtree</span><span class="leaders"></span><span class="secno">06</span></a>
+<a href="#s07"><span>Lab 2, nothing at stake against slashing</span><span class="leaders"></span><span class="secno">07</span></a>
+<a href="#s08"><span>Finality, an economic burn notice</span><span class="leaders"></span><span class="secno">08</span></a>
+<a href="#s09"><span>Lab 3, the cost of attacking finality</span><span class="leaders"></span><span class="secno">09</span></a>
+<a href="#s10"><span>The bad behavior catalog</span><span class="leaders"></span><span class="secno">10</span></a>
+<a href="#s11"><span>The numbers, as of 2026</span><span class="leaders"></span><span class="secno">11</span></a>
+<a href="#s12"><span>Where the design traveled</span><span class="leaders"></span><span class="secno">12</span></a>
+</nav>
+<div class="col">
+<section class="bay"><p class="byline">By <a href="https://moamenbasel.com">Moamen Basel</a>, September 2026, 3 labs, about 40 minutes</p>
+<span class="coinbadge"><img src="assets/coins/ethereum.svg" alt="Ethereum" width="34" height="34"></span><h1>Proof of stake from zero</h1>
+<p class="lead">What Ethereum did after it fired its miners, run on your own machine.</p>
+<details class="toc" aria-label="Contents">
+<summary>Contents</summary>
+<ol>
+<li><a href="#s01">The bill Bitcoin never paid</a></li>
+<li><a href="#s02">Locking coins instead of burning watts</a></li>
+<li><a href="#s03">A computer, 32 ETH, and three jobs</a></li>
+<li><a href="#s04">Lab 1, the proposer lottery</a></li>
+<li><a href="#s05">Attestations, the vote that weighs</a></li>
+<li><a href="#s06">LMD GHOST, following the heaviest subtree</a></li>
+<li><a href="#s07">Lab 2, nothing at stake against slashing</a></li>
+<li><a href="#s08">Finality, an economic burn notice</a></li>
+<li><a href="#s09">Lab 3, the cost of attacking finality</a></li>
+<li><a href="#s10">The bad behavior catalog</a></li>
+<li><a href="#s11">The numbers, as of 2026</a></li>
+<li><a href="#s12">Where the design traveled</a></li>
+</ol>
+</details>
+<section id="s01" data-n="01">
+<h2><span class="num">01</span>The bill Bitcoin never paid</h2>
+<p>The <a href="bitcoin-from-zero.html">Bitcoin essay</a> in this notebook ends on a number that should bother you. Every ten minutes, machines around the world burn a country's worth of electricity to do one job: make lying expensive. A miner who wants to rewrite yesterday has to out grind everyone else, and the grinding itself is the cost. Security comes from a bill that is paid forever, in watts, whether anyone is attacking or not.</p>
+<p>That bill works. It also scales with the value being protected, which means the more successful the network gets, the more power it eats. People argued about this for years. Some said the waste is the point. Others said a system that secures money by boiling the ocean has a design flaw, not a feature.</p>
+<p>Ethereum's founders were in the second camp from the start. Their answer, sketched in the earliest design notes and shipped much later, was to swap the entrance ticket. Instead of proving you burned electricity, you prove you own something the network can destroy: coins. Attack the network and your own deposit goes into the fire. Be honest and your deposit just sits there, earning a small wage for the work you do.</p>
+<p>On September 15, 2022, at block 15537394, Ethereum switched the ticket mid flight. The event is called the Merge, and it is still the largest coordinated change any live blockchain has ever survived. Measurements compiled by the Ethereum Foundation with the UCL CCRI research group put the energy drop at roughly 99.95 percent. Not a rounding error of improvement. The network's power bill went from a small nation to a village of laptops, overnight, with no downtime.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d01t" data-fa="BEFORE THE MERGE" data-fb="AFTER THE MERGE">
+<title id="d01t">The security power bill before and after the Merge</title>
+<text x="30" y="26" class="f-mut" font-size="11">THE BILL OF MAKING LYING EXPENSIVE</text>
+<line x1="60" y1="168" x2="640" y2="168" class="c-ver"/>
+<g class="sa">
+<rect x="150" y="48" width="110" height="120" class="c-time" stroke-width="1.5" style="fill:var(--warn);fill-opacity:.12" data-note="Proof of work: security paid in watts, around the clock, attack or no attack. The more value protected, the bigger the draw. A small nation's grid, forever."/>
+<text x="205" y="40" text-anchor="middle" class="f-ink" font-size="12" font-weight="700">100%</text>
+<text x="205" y="186" text-anchor="middle" class="f-mut" font-size="10">PoW, before the Merge</text>
+<text x="290" y="84" class="f-ink" font-size="12">a small country's grid,</text>
+<text x="290" y="103" class="f-ink" font-size="12">paid every ten minutes,</text>
+<text x="290" y="122" class="f-ink" font-size="12">whether anyone attacks or not</text>
+</g>
+<g class="sb">
+<rect x="430" y="164" width="110" height="4" class="c-nonce" stroke-width="1.5" style="fill:var(--accent);fill-opacity:.4" data-note="Proof of stake: the threat is a balance the protocol can burn, not watts behind it. Measured drop at the Merge: about 99.95 percent, per Ethereum Foundation and UCL CCRI."/>
+<text x="485" y="156" text-anchor="middle" class="f-ink" font-size="12" font-weight="700">0.05%</text>
+<text x="485" y="186" text-anchor="middle" class="f-mut" font-size="10">PoS, after the Merge</text>
+<text x="400" y="84" text-anchor="end" class="f-ink" font-size="12">the same security,</text>
+<text x="400" y="103" text-anchor="end" class="f-ink" font-size="12">a village of laptops,</text>
+<text x="400" y="130" text-anchor="end" class="f-nonce" font-size="16" font-weight="700">-99.95%</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 01</span> The same job, two bills. Mining pays in watts at nation scale, staking holds a hostage instead. Toggle between the eras: the security stays, the grid draw does not.</figcaption>
+</figure>
+<p>This essay explains what actually replaced the miners. Not the slogan version. The moving parts: how a validator is chosen to build a block, why thousands of computers vote every few seconds, what happens when two honest computers disagree, and why a transaction that is finalized on Ethereum is harder to undo than a six confirmation Bitcoin payment ever was. Each idea gets a lab that runs in this page, on your machine, with real SHA-256 from your browser's own crypto engine.</p>
+</section>
+</section>
+<section id="s02" data-n="02">
+<h2><span class="num">02</span>Locking coins instead of burning watts</h2>
+<p>Staking is boring on purpose. You send coins to a program on the chain, a smart contract, which is just code that runs by consensus and cannot be quietly edited. While your coins sit in that contract, they are collateral. The protocol knows the deposit is yours, knows how much it is, and holds the key to a punishment that costs you something real.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d02t">
+<title id="d02t">The deposit contract: coins in, collateral held, two endings</title>
+<defs><marker id="d02a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" class="c-nonce" stroke-width="1.5"/></marker><marker id="d02g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" class="c-mrk" stroke-width="1.5"/></marker><marker id="d02b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" class="c-bad" stroke-width="1.5"/></marker></defs>
+<text x="30" y="26" class="f-mut" font-size="11">ONE DEPOSIT, TWO ENDINGS</text>
+<rect x="30" y="80" width="120" height="48" rx="8" class="c-ver" fill="none"/>
+<text x="90" y="100" text-anchor="middle" class="f-ink" font-size="11" font-weight="700">YOU</text>
+<text x="90" y="117" text-anchor="middle" class="f-mut" font-size="10">32 ETH</text>
+<rect x="250" y="72" width="180" height="64" rx="8" class="c-nonce" fill="none" stroke-width="1.5"/>
+<text x="340" y="93" text-anchor="middle" class="f-ink" font-size="10.5" font-weight="700">DEPOSIT CONTRACT</text>
+<text x="340" y="110" text-anchor="middle" class="f-nonce" font-size="10">0x0000…05Fa</text>
+<text x="340" y="126" text-anchor="middle" class="f-mut" font-size="9">live since dec 2020</text>
+<g data-step="1" data-note="You send exactly 32 ETH to the staking contract. The deposit is the whole application: no license, no committee, no identity check.">
+<line x1="150" y1="104" x2="240" y2="104" class="c-nonce" marker-end="url(#d02a)"/>
+<text x="195" y="94" text-anchor="middle" class="f-mut" font-size="10">deposit</text>
+</g>
+<g data-step="2" data-note="While locked, the coins are collateral the protocol can confiscate. Honest presence earns a small wage, roughly 2.6 to 3.4 percent APR.">
+<rect x="326" y="146" width="28" height="20" rx="4" class="c-ver" fill="none"/>
+<path d="M331 146 v-5 a9 8 0 0 1 18 0 v5" fill="none" class="c-ver"/>
+<text x="364" y="160" class="f-mut" font-size="10">locked: the protocol holds the key</text>
+</g>
+<g data-step="3" data-note="Honest path: since Shapella, April 2023, an exit queue meters withdrawals and you take the deposit home. The lock is real, not a life sentence.">
+<line x1="430" y1="88" x2="554" y2="52" class="c-mrk" marker-end="url(#d02g)"/>
+<rect x="560" y="34" width="92" height="36" rx="8" class="c-mrk" fill="none"/>
+<text x="606" y="56" text-anchor="middle" class="f-ink" font-size="10.5" font-weight="700">EXIT OK</text>
+<text x="492" y="44" text-anchor="middle" class="f-mut" font-size="9.5">shapella, apr 2023</text>
+</g>
+<g data-step="4" data-note="Attack path: provably contradictory signatures trigger forced exit, an immediate penalty, and a later correlation penalty that grows when many validators are slashed together.">
+<line x1="430" y1="120" x2="554" y2="156" class="c-bad" stroke-dasharray="5 4" marker-end="url(#d02b)"/>
+<rect x="560" y="138" width="92" height="36" rx="8" class="c-bad" fill="none"/>
+<text x="606" y="160" text-anchor="middle" class="f-bad" font-size="10.5" font-weight="700">BURNED</text>
+<text x="492" y="176" text-anchor="middle" class="f-mut" font-size="9.5">sign two futures</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 02</span> One deposit, two endings. Coins go into the oldest program on the chain and come back through the exit queue, unless you sign two futures and they burn instead. Step through the sequence.</figcaption>
+</figure>
+<p>That is the entire trick. Proof of work makes attacks expensive by burning energy continuously. Proof of stake makes attacks expensive by holding a hostage: your own deposit. The energy bill disappears because the threat no longer needs watts behind it. It needs a balance the network can confiscate.</p>
+<p>Ethereum's staking deposit contract is one of the oldest programs still running on the chain. Its address is <code>0x00000000219ab540356CBB839Cbe05303d7705Fa</code>. The contract began accepting deposits on November 4, 2020. The Beacon Chain, the new proof of stake engine, launched on December 1. For almost two years it ran alongside the old mining engine like a pilot light, holding real money and doing real work while miners still produced the blocks everyone used.</p>
+<p>One objection comes up immediately. If the coins are locked, is anything really at risk for a rich attacker? Yes, and the risk is specific: the protocol can burn stake. An isolated slash starts with a small immediate penalty and a forced exit. The later correlation penalty grows when many validators are slashed together and can consume the full effective balance in a coordinated attack. The signatures and penalties are public.</p>
+<p>The counter question matters too. Can you get your coins back? For the first years after the Merge, embarrassingly, no: withdrawals were not wired up yet. That changed on April 12, 2023, with the upgrade called Shapella, which let stakers exit and take their deposits home. Since then the lock is real but not a life sentence, and that balance, punisable yet retrievable, is what makes the collateral believable.</p>
+</section>
+<section id="s03" data-n="03">
+<h2><span class="num">03</span>A computer, 32 ETH, and three jobs</h2>
+<p>A validator is the machine that replaced the miner. In its smallest legal size it is a deposit of 32 ETH (ether, the currency of Ethereum) plus a computer, often just a small box in someone's house, that stays online and follows the protocol. Anyone can start one. There is no license, no committee, no identity check. The deposit is the whole application.</p>
+<p>The machine has three jobs, and the rest of this essay is basically the story of those three jobs.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d03t">
+<title id="d03t">The three jobs of a validator on the 12-second slot stream</title>
+<text x="30" y="26" class="f-mut" font-size="11">WHAT THE MACHINE DOES ALL DAY</text>
+<line x1="60" y1="170" x2="620" y2="170" class="c-ver"/>
+<text x="620" y="192" text-anchor="end" class="f-mut" font-size="9">the 12-second slot stream</text>
+<g data-step="1" data-note="Job 1, propose: gather pending transactions, order them, wrap them in a block. One validator per slot; a 32 ETH validator draws this duty about once every four and a half months.">
+<rect x="50" y="48" width="170" height="88" rx="8" class="c-nonce" fill="none"/>
+<text x="135" y="72" text-anchor="middle" class="f-ink" font-size="11" font-weight="700">1 · PROPOSE</text>
+<text x="135" y="92" text-anchor="middle" class="f-mut" font-size="10">build and offer the block</text>
+<text x="135" y="110" text-anchor="middle" class="f-mut" font-size="10">one validator per slot</text>
+<text x="135" y="128" text-anchor="middle" class="f-mut" font-size="9">about once per 4.5 months</text>
+<circle cx="250" cy="170" r="5" class="c-nonce" style="fill:var(--accent);fill-opacity:.85"/>
+<text x="250" y="192" text-anchor="middle" class="f-mut" font-size="9">your slot</text>
+</g>
+<g data-step="2" data-note="Job 2, attest: once per epoch (6.4 minutes, 32 slots) sign the short vote naming the block you believe is the head. This is nearly all of the work. Miss it and you leak.">
+<rect x="255" y="48" width="170" height="88" rx="8" class="c-nonce" fill="none"/>
+<text x="340" y="72" text-anchor="middle" class="f-ink" font-size="11" font-weight="700">2 · ATTEST</text>
+<text x="340" y="92" text-anchor="middle" class="f-mut" font-size="10">sign: this is the head</text>
+<text x="340" y="110" text-anchor="middle" class="f-mut" font-size="10">once per epoch, 6.4 min</text>
+<text x="340" y="128" text-anchor="middle" class="f-mut" font-size="9">miss it and you leak</text>
+<circle cx="445" cy="170" r="5" class="c-nonce" style="fill:var(--accent);fill-opacity:.85"/>
+<text x="445" y="192" text-anchor="middle" class="f-mut" font-size="9">your vote</text>
+</g>
+<g data-step="3" data-note="Job 3, committees: each slot, validators are dealt into a random sample that watches one slot together, so no single machine's word is ever trusted alone. 32 committees cover every validator, every epoch.">
+<rect x="460" y="48" width="170" height="88" rx="8" class="c-nonce" fill="none"/>
+<text x="545" y="72" text-anchor="middle" class="f-ink" font-size="11" font-weight="700">3 · COMMITTEE</text>
+<text x="545" y="92" text-anchor="middle" class="f-mut" font-size="10">random sample per slot</text>
+<text x="545" y="110" text-anchor="middle" class="f-mut" font-size="10">one duty, watched together</text>
+<text x="545" y="128" text-anchor="middle" class="f-mut" font-size="9">32 committees per epoch</text>
+<path d="M60 158 v6 h580 v-6" fill="none" class="c-ver"/>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 03</span> The three jobs on the slot stream. Propose is rare, attest is constant, committee duty is the rota that keeps any one machine's word from standing alone.</figcaption>
+</figure>
+<p>First, sometimes the validator is chosen to propose a block: gather pending transactions, order them, wrap them in a block, and offer it to the network. Second, far more often, it attests: sign a short vote saying which block it currently believes is the head of the chain. Third, it serves on committees, small random groups of validators that are handed one specific slot to watch together, so no single machine's word is ever trusted alone.</p>
+<p>Notice what is missing: racing, hashing at full speed, buying warehouse sized machines. A validator earns its keep by showing up. Miss a vote and you leak a tiny penalty. Show up and you earn a small reward, year after year. The system pays for presence, not for horsepower.</p>
+<p>How often does an ordinary validator get to propose? Rarely. Blocks come every 12 seconds, one proposer each, 32 per epoch (an epoch being 6.4 minutes). With roughly one million validators active as of February 2025, a single 32 ETH validator expects to propose about once every four and a half months. Your laptop is mostly voting, and occasionally, like a juror called to the front of the courtroom, it builds the block itself.</p>
+<p>Two upgrades softened the edges of this design, both landing in the Pectra upgrade on May 7, 2025. EIP-6110 lets the consensus layer recognize a deposit in about thirteen minutes instead of waiting through the old polling path. Activation still depends on the validator queue. EIP-7251 let one compounding validator hold up to 2048 ETH of effective stake, so large operators can consolidate validator records. The 32 ETH floor for solo entry did not move, but the ceiling did.</p>
+</section>
+<section id="s04" data-n="04">
+<h2><span class="num">04</span>Lab 1, the proposer lottery</h2>
+<p>Every 12 seconds the network needs exactly one proposer, and it cannot let anyone volunteer. The selection is a lottery where your tickets are your coins: the protocol stirs unpredictable hashed data into each slot so nobody can precompute the winner far ahead, then the hash lands on a validator with probability proportional to stake. Double your deposit and you double your odds. The fairness is not enforced by a referee, it falls out of arithmetic.</p>
+<p>This lab runs the lottery for real. Six validators, stakes you can edit, one thousand slots. For each slot your browser computes an actual SHA-256 hash through <code>crypto.subtle</code>, converts the hash to a big integer, and takes it modulo the total stake to pick the winner. Then it compares each validator's expected share of wins against the share it actually got. Watch the two columns converge, then set one stake to triple and run again.</p>
+<figure class="lab" id="lab1" data-state="idle">
+<h3><span class="tag">LAB 01</span>The proposer lottery</h3>
+<p class="labnote">REAL SHA-256, TOY NETWORK. Selection here is hash modulo total stake; Ethereum itself shuffles validators and applies a stake weighted proposer function, but the convergence lesson is the same law.</p>
+<div class="controls">
+<label>V1 <input type="number" id="lab1-s0" min="1" max="4096" value="32"></label>
+<label>V2 <input type="number" id="lab1-s1" min="1" max="4096" value="64"></label>
+<label>V3 <input type="number" id="lab1-s2" min="1" max="4096" value="128"></label>
+<label>V4 <input type="number" id="lab1-s3" min="1" max="4096" value="512"></label>
+<label>V5 <input type="number" id="lab1-s4" min="1" max="4096" value="1024"></label>
+<label>V6 <input type="number" id="lab1-s5" min="1" max="4096" value="2048"></label>
+</div>
+<div class="controls">
+<button id="lab1-run" type="button">RUN 1000 SLOTS</button>
+<button id="lab1-reset" type="button">RESET</button>
+<button id="lab1-copy" type="button" data-copy-src="#lab1-console">COPY RESULT</button>
+<span class="state" id="lab1-state">NOT RUNNING</span>
+<span class="elapsed" id="lab1-el"></span>
+</div>
+<pre class="console" id="lab1-console" role="log" aria-live="polite">idle. press RUN 1000 SLOTS to draw the lottery.</pre>
+<figcaption><span class="figno">Figure 1.</span> Stake weighted selection with SHA-256 as the randomness. Expected share is stake divided by total stake; actual share is wins divided by 1000 slots.</figcaption>
+</figure>
+<p>Two things to notice when it finishes. First, the biggest gaps between expected and actual sit on the fattest validator, because absolute wobble scales with share. Second, nobody's number is exactly on target after a thousand draws, and that is the point: the lottery is honest in expectation, not in any single window. A chain needs years of slots for the shares to settle, and a would be cheater needs the same years to feel the odds grind them down.</p>
+</section>
+<section id="s05" data-n="05">
+<h2><span class="num">05</span>Attestations, the vote that weighs</h2>
+<p>Proposing is the glamorous job, but the load bearing one is attesting. Once per epoch, every single validator signs a vote that says, in effect: here is the block I saw at the head of the chain, and here is the checkpoint I consider latest and greatest. That signed vote is an attestation. It is small, it is public, and it is the raw material everything else is built from.</p>
+<p>Think of the chain not as a tower built by proposers but as a consensus weighed by voters. A proposer offers a block; the committees of that slot check it and sign; the next proposer bundles those votes into the next block. Blocks carry attestations the way letters carry postmarks. Each new block is a receipt for thousands of votes about its parent.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d05t">
+<title id="d05t">How one attestation becomes countable head weight</title>
+<defs><marker id="d05v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" class="c-ver" stroke-width="1.5"/></marker><marker id="d05a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" class="c-nonce" stroke-width="1.5"/></marker></defs>
+<text x="30" y="26" class="f-mut" font-size="11">HOW A VOTE BECOMES WEIGHT</text>
+<g data-step="1" data-note="Slot n: the chosen proposer wraps pending transactions into a block and offers it to the network.">
+<rect x="40" y="58" width="130" height="60" rx="8" class="c-nonce" fill="none"/>
+<text x="105" y="82" text-anchor="middle" class="f-ink" font-size="11" font-weight="700">BLOCK n</text>
+<text x="105" y="102" text-anchor="middle" class="f-mut" font-size="9.5">proposer offers it</text>
+<line x1="170" y1="88" x2="220" y2="88" class="c-ver" marker-end="url(#d05v)"/>
+</g>
+<g data-step="2" data-note="The slot's committee checks the block and signs attestations: tiny signed votes naming it as the head. Every validator in the set votes exactly once per epoch.">
+<circle cx="248" cy="74" r="7" class="c-ver" fill="none"/><circle cx="276" cy="74" r="7" class="c-ver" fill="none"/><circle cx="304" cy="74" r="7" class="c-ver" fill="none"/><circle cx="332" cy="74" r="7" class="c-ver" fill="none"/>
+<circle cx="248" cy="104" r="7" class="c-ver" fill="none"/><circle cx="276" cy="104" r="7" class="c-ver" fill="none"/><circle cx="304" cy="104" r="7" class="c-ver" fill="none"/><circle cx="332" cy="104" r="7" class="c-ver" fill="none"/>
+<text x="290" y="132" text-anchor="middle" class="f-mut" font-size="10">committee signs votes</text>
+<line x1="344" y1="88" x2="402" y2="88" class="c-ver" marker-end="url(#d05v)"/>
+</g>
+<g data-step="3" data-note="Slot n+1: the next proposer bundles those attestations into the next block. Blocks carry votes the way letters carry postmarks.">
+<rect x="410" y="58" width="150" height="60" rx="8" class="c-nonce" fill="none"/>
+<text x="485" y="78" text-anchor="middle" class="f-ink" font-size="11" font-weight="700">BLOCK n+1</text>
+<text x="485" y="94" text-anchor="middle" class="f-mut" font-size="9.5">bundles the votes inside</text>
+<rect x="430" y="100" width="28" height="10" class="c-ver" fill="none"/>
+<rect x="468" y="100" width="28" height="10" class="c-ver" fill="none"/>
+<rect x="506" y="100" width="28" height="10" class="c-ver" fill="none"/>
+</g>
+<g data-step="4" data-note="When two versions of history compete there is no argument, only arithmetic: the head is wherever the summed attestations point.">
+<line x1="485" y1="118" x2="485" y2="144" class="c-nonce" marker-end="url(#d05a)"/>
+<text x="485" y="168" text-anchor="middle" class="f-nonce" font-size="11" font-weight="700">head weight = Σ attestations</text>
+<text x="485" y="186" text-anchor="middle" class="f-mut" font-size="9.5">countable, not a popularity contest</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 05</span> How a vote becomes weight. A proposer offers, the slot's committee signs, the next block bundles the signatures, and the head is wherever the attestations add up.</figcaption>
+</figure>
+<p>Why committees? With a million validators, having everyone vote on everything, every 12 seconds, would melt the network. So each slot, the protocol deals validators into one committee, a random sample big enough that attacking it means attacking the whole pool. Your validator votes once per epoch, and the epoch's 32 committees cover the entire set: every validator, every epoch, no exceptions. Skipping your duty is not a crime, but it costs you: your balance leaks a little every time you fail to show up.</p>
+<p>The design has a beautiful property buried in it. Because votes are signed and bundled on chain, the network does not need to trust gossip or popularity. The weight of a block is literally countable: add up the attestations for it. When two versions of history compete, there is no argument, only arithmetic. Which brings us to the rule that breaks ties.</p>
+</section>
+<section id="s06" data-n="06">
+<h2><span class="num">06</span>LMD GHOST, following the heaviest subtree</h2>
+<p>Sometimes two blocks appear at the same height. A proposer was offline and came back late, or a message crossed the planet slowly, and now there are two competing versions of the tip of the chain. Bitcoin's answer is crude and effective: follow the longest chain. Ethereum's answer looks one level deeper: follow the heaviest subtree.</p>
+<p>The rule's full name is Latest Message Driven Greedy Heaviest Observed SubTree, which is a mouthful until you unpack it. Take each validator's latest signed vote, the latest message. Start at the genesis block and walk forward. At every fork, count not the blocks but the total stake that voted anywhere inside each branch, the subtree weight. Walk into the heavier side. Repeat until you reach the tip. That tip is the head of the chain. GHOST is the tree walking part; LMD is the part that says only each validator's most recent vote counts, so stale votes cannot pile up and skew the count.</p>
+<p>Picture it. Fork A has four blocks in a wobbly line, with 20 percent of stake voting under it. Fork B has two blocks but 70 percent of stake voting under it. Longest chain picks A. Heaviest subtree picks B. The subtree view matters because the network is messy: blocks arrive late, votes get missed, and a lucky streak can build a thin tower. What users actually care about is where the mass of money is looking, and the mass is expressed in attestations, not in block count.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d06t" data-fa="LONGEST CHAIN" data-fb="HEAVIEST SUBTREE">
+<title id="d06t">Two forks: longest chain versus heaviest subtree</title>
+<text x="30" y="26" class="f-mut" font-size="11">SAME FORK, TWO RULES</text>
+<circle cx="70" cy="100" r="10" class="c-ver" fill="none"/>
+<text x="70" y="128" text-anchor="middle" class="f-mut" font-size="9.5">genesis</text>
+<g data-note="Fork A: four blocks in a wobbly line, with 20 percent of stake voting under it. The longest-chain rule, Bitcoin style, counts blocks and picks this.">
+<line x1="80" y1="95" x2="151" y2="58" class="c-ver"/>
+<rect x="153" y="40" width="34" height="24" rx="5" class="c-ver" fill="none"/>
+<line x1="187" y1="48" x2="243" y2="42" class="c-ver"/>
+<rect x="243" y="28" width="34" height="24" rx="5" class="c-ver" fill="none"/>
+<line x1="277" y1="44" x2="333" y2="54" class="c-ver"/>
+<rect x="333" y="46" width="34" height="24" rx="5" class="c-ver" fill="none"/>
+<line x1="367" y1="52" x2="423" y2="46" class="c-ver"/>
+<rect x="423" y="32" width="34" height="24" rx="5" class="c-ver" fill="none"/>
+<text x="305" y="20" text-anchor="middle" class="f-mut" font-size="10">fork A · 4 blocks · 20% of stake</text>
+</g>
+<g data-note="Fork B: two blocks but 70 percent of stake voting under it. LMD-GHOST counts stake inside each subtree, walks into the heavier side, and picks this.">
+<line x1="80" y1="105" x2="151" y2="144" class="c-ver"/>
+<rect x="153" y="136" width="34" height="24" rx="5" class="c-ver" fill="none"/>
+<line x1="187" y1="152" x2="243" y2="158" class="c-ver"/>
+<rect x="243" y="148" width="34" height="24" rx="5" class="c-ver" fill="none"/>
+<text x="215" y="192" text-anchor="middle" class="f-mut" font-size="10">fork B · 2 blocks · 70% of stake</text>
+</g>
+<g class="sa">
+<polyline points="80,95 170,52 260,40 350,58 440,44" fill="none" class="c-nonce" stroke-width="1.5"/>
+<circle cx="440" cy="44" r="16" fill="none" class="c-nonce" stroke-width="1.5"/>
+<text x="464" y="40" class="f-nonce" font-size="10.5" font-weight="700">HEAD</text>
+<text x="464" y="54" class="f-mut" font-size="9.5">4 blocks deep</text>
+</g>
+<g class="sb">
+<polyline points="80,105 170,148 260,160" fill="none" class="c-nonce" stroke-width="1.5"/>
+<ellipse cx="215" cy="152" rx="115" ry="34" fill="none" class="c-nonce" stroke-dasharray="6 5"/>
+<circle cx="260" cy="160" r="16" fill="none" class="c-nonce" stroke-width="1.5"/>
+<text x="284" y="164" class="f-nonce" font-size="10.5" font-weight="700">HEAD</text>
+<text x="284" y="178" class="f-mut" font-size="9.5">70% of stake voted inside</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 06</span> Same fork, two rules. Fork A is four blocks deep holding 20 percent of stake; fork B is two blocks holding 70 percent. Toggle the rule and watch the head move. Hover each fork for its count.</figcaption>
+</figure>
+<p>There is a second payoff. Under this rule, an attacker who wants their favorite fork to win cannot just mine fast like in the old world. They need to attract votes, and votes come from real validators with real deposits. The fork choice rule turns every dispute into a stake weighted election that re runs every 12 seconds.</p>
+</section>
+<section id="s07" data-n="07">
+<h2><span class="num">07</span>Lab 2, nothing at stake against slashing</h2>
+<p>Here is the hole in naive proof of stake, the one critics found in the 2010s and designers had to answer. Suppose two forks are racing and you are a validator. Voting for both costs you nothing. If fork A wins, great, you were on A. If fork B wins, great, you were on B. Why not sign everything? In mining, supporting both forks means splitting your electricity, real money, real constraint. In a naive staking world there is nothing at stake, so every rational validator hedges on every fork and forks never die.</p>
+<p>Ethereum's answer is slashing, and it is surgical. Certain signature pairs are self incriminating: propose two blocks for one slot, double vote for one target epoch, or cast a vote that surrounds an earlier vote. Anyone can submit that evidence. Under the current rules, a 32 ETH validator immediately loses 0.0078125 ETH, is forced out over about 36 days, and takes a later correlation penalty that grows with the amount slashed at the same time. A coordinated attack can lose the full effective balance. The <a href="https://ethereum.org/developers/docs/consensus-mechanisms/pos/rewards-and-penalties/">Ethereum Foundation's current penalty guide</a> documents those numbers.</p>
+<p>This lab runs the race both ways. An equivocating validator (that is the technical word for signing two conflicting things) signs both forks for 200 rounds. In the first arm, no slashing rule exists, so hedging is free profit. In the second arm, each round carries a chance an honest validator catches the double signature and burns the floor. Same cheater, same luck, two different economies.</p>
+<figure class="lab" id="lab2" data-state="idle">
+<h3><span class="tag">LAB 02</span>Nothing at stake vs slashing</h3>
+<p class="labnote">TOY INCENTIVE SIMULATION, 200 ROUNDS. The reward and 30 percent catch chance are chosen for legibility. Ethereum exposes slashable signatures as public evidence, not a random catch game. The modeled 0.0078125 ETH immediate penalty is current for a 32 ETH validator; forced exit, balance drain, and the correlation penalty are omitted.</p>
+<div class="controls">
+<button id="lab2-run" type="button">RUN 200-ROUND RACE</button>
+<button id="lab2-reset" type="button">RESET</button>
+<button id="lab2-copy" type="button" data-copy-src="#lab2-console">COPY RESULT</button>
+<span class="state" id="lab2-state">NOT RUNNING</span>
+<span class="elapsed" id="lab2-el"></span>
+</div>
+<pre class="console" id="lab2-console" role="log" aria-live="polite">idle. press RUN 200-ROUND RACE to watch both economies.</pre>
+<figcaption><span class="figno">Figure 2.</span> The same equivocator under two rule sets. Without slashing, hedging is free. With slashing, the first caught offense burns the floor and the trade flips negative.</figcaption>
+</figure>
+<p>The lesson is not that slashing catches everyone. Most rounds, nobody is watching. The lesson is the incentive gradient: with no rule, cheating is weakly profitable forever; with the rule, cheating is a lottery ticket where the prize is small and the losing ticket costs your deposit. Nobody rational buys that ticket, which is why real equivocations on mainnet are famous precisely because they are so rare, and usually turn out to be software bugs reporting themselves.</p>
+</section>
+<section id="s08" data-n="08">
+<h2><span class="num">08</span>Finality, an economic burn notice</h2>
+<p>Everything so far, votes and fork choice, is soft. Blocks can still be reorganized if the votes swing. Finality is the hard layer on top, and it is where proof of stake does something proof of work never could.</p>
+<p>Every epoch boundary, the last block of the epoch is marked as a checkpoint. Validators include a second vote in their attestations, a checkpoint vote. When a checkpoint collects votes from two thirds of all staked ETH, it becomes justified; when the next checkpoint after it also gets its two thirds, the earlier one is finalized. The lag is two epochs, roughly 12.8 minutes from block to certainty.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d08t">
+<title id="d08t">From checkpoint to justified to finalized, and the burn behind it</title>
+<defs><marker id="d08a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" class="c-nonce" stroke-width="1.5"/></marker></defs>
+<text x="30" y="26" class="f-mut" font-size="11">THE FINALITY LADDER</text>
+<g data-step="1" data-note="Every epoch boundary, the last block of the epoch is marked as a checkpoint, and every attestation carries a second vote for it.">
+<rect x="40" y="60" width="160" height="56" rx="8" class="c-ver" fill="none"/>
+<text x="120" y="82" text-anchor="middle" class="f-ink" font-size="10.5" font-weight="700">LAST BLOCK, EPOCH n</text>
+<text x="120" y="100" text-anchor="middle" class="f-mut" font-size="9.5">becomes the checkpoint</text>
+</g>
+<g data-step="2" data-note="Checkpoint votes from two thirds of all staked ETH make the checkpoint justified.">
+<rect x="260" y="78" width="150" height="18" rx="3" class="c-ver" fill="none"/>
+<rect x="262" y="80" width="99" height="14" style="fill:var(--accent);fill-opacity:.45"/>
+<line x1="360" y1="72" x2="360" y2="102" class="c-time" stroke-dasharray="4 3"/>
+<text x="335" y="68" text-anchor="middle" class="f-mut" font-size="9.5">2/3 of stake</text>
+<text x="335" y="118" text-anchor="middle" class="f-nonce" font-size="11" font-weight="700">JUSTIFIED</text>
+</g>
+<g data-step="3" data-note="When the next checkpoint after it also reaches two thirds, the earlier one is finalized. Total lag: two epochs, about 12.8 minutes from block to certainty.">
+<line x1="414" y1="87" x2="450" y2="87" class="c-nonce" marker-end="url(#d08a)"/>
+<rect x="456" y="60" width="130" height="56" rx="8" class="c-nonce" fill="none"/>
+<text x="521" y="82" text-anchor="middle" class="f-ink" font-size="10.5" font-weight="700">EPOCH n+1</text>
+<text x="521" y="100" text-anchor="middle" class="f-mut" font-size="9.5">also reaches 2/3</text>
+<text x="521" y="134" text-anchor="middle" class="f-nonce" font-size="11" font-weight="700">n is FINALIZED</text>
+</g>
+<g data-step="4" data-note="Casper FFG accounting: two conflicting finalized checkpoints cannot both exist unless at least one third of stake signed contradictions, and those signatures are slashable. Reversal is priced in burnt collateral.">
+<line x1="60" y1="156" x2="620" y2="156" class="c-bad" stroke-dasharray="6 5"/>
+<text x="340" y="176" text-anchor="middle" class="f-bad" font-size="10.5" font-weight="700">undo two finalized checkpoints → at least 1/3 of all stake burned</text>
+<text x="340" y="192" text-anchor="middle" class="f-mut" font-size="9.5">reversal is not impossible, it is priced</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 08</span> The finality ladder. Checkpoint, two thirds justified, a second two thirds finalized, and the burn theorem standing behind the last rung. Step through the climb.</figcaption>
+</figure>
+<p>Now the burn notice. The rule set that governs this, called Casper FFG, comes with an accounting theorem: if two conflicting checkpoints are ever both finalized, then at least one third of all stake must have voted in ways that contradict each other. Not maybe. Must. And contradictory votes are precisely the slashable kind. A finalized transaction cannot be reversed without burning at least one third of everyone's collateral, an amount in the millions of ETH at today's staking levels. That is what the phrase economically final means: reversal is not impossible, it is priced, and the price is destruction on a scale no attacker has ever volunteered for.</p>
+<p>Compare that with the Bitcoin page's <a href="bitcoin-from-zero.html">attacker math</a>. There, an attacker holding a fraction q of the hashrate can catch up from z blocks behind with probability given by the old Satoshi formula, and every extra confirmation just multiplies the odds against them. Six confirmations makes an attack unlikely, not impossible. A hundred makes it astronomically unlikely. The guarantee decays into probability at every depth. Finality is a different animal: below the burn threshold, reversal is not improbable. It is unaffordable by construction. The next lab puts a price tag on it.</p>
+</section>
+<section id="s09" data-n="09">
+<h2><span class="num">09</span>Lab 3, the cost of attacking finality</h2>
+<p>One slider, two ledgers. Pick the attacker's share of staked ETH and the lab prices both worlds. The proof of stake column uses the accounting rule from the last section: reverting a finalized checkpoint burns at least one third of the staked pool, and a solo attacker needs to be that third, so their own deposit is the bill. The proof of work column runs the Satoshi catch up formula for the same share, with six confirmations, the number merchants classically waited for.</p>
+<figure class="lab" id="lab3" data-state="idle">
+<h3><span class="tag">LAB 03</span>Attacker cost calculator</h3>
+<p class="labnote">MODEL, NOT MEASUREMENT. Staked pool fixed at 36,000,000 ETH, the as of-2025 figure from the fact sheet. The PoS column assumes the attacker is the only cheater; the PoW column is the classic q formula with z = 6. Move the slider to recompute.</p>
+<div class="controls">
+<label for="lab3-q" style="flex:1 1 100%">ATTACKER STAKE SHARE <span id="lab3-qv">10</span>% OF STAKED ETH
+<input type="range" id="lab3-q" min="1" max="50" value="10"></label>
+</div>
+<div class="controls">
+<button id="lab3-run" type="button">COMPUTE</button>
+<button id="lab3-reset" type="button">RESET</button>
+<button id="lab3-copy" type="button" data-copy-src="#lab3-console">COPY RESULT</button>
+<span class="state" id="lab3-state">NOT RUNNING</span>
+<span class="elapsed" id="lab3-el"></span>
+</div>
+<pre class="console" id="lab3-console" role="log" aria-live="polite">idle. slide the share, then press COMPUTE.</pre>
+<figcaption><span class="figno">Figure 3.</span> Deterministic burn versus probabilistic catch up. The PoS bill is certain destruction of the attacker's own deposit; the PoW odds are a probability that never quite reaches zero.</figcaption>
+</figure>
+<p>Squint at the two outputs and a shape emerges. The proof of work number is a probability, so it is always arguing about how unlikely you are to lose. The proof of stake number is a bill, so the argument ends the moment you read it. Below one third, the attacker cannot reach finality's undo switch at all; at one third they can stall it, at a cost of their entire deposit; and every ETH they add to win the fight is an ETH the protocol can burn if they try. The attacker is buying a sword that melts in their hands the instant they swing it.</p>
+</section>
+<section id="s10" data-n="10">
+<h2><span class="num">10</span>The bad behavior catalog</h2>
+<p>Slashing only covers actions that are provably malicious from signatures alone. The catalog is short because the standard of proof is high.</p>
+<p><strong>Equivocation</strong>, the lab 2 crime: two signatures for the same slot or two votes for the same target height. Mathematically impossible to do honestly, so it burns. <strong>Surround votes</strong> are sneakier: a validator signs a vote that encircles an earlier vote of its own, effectively claiming it saw the future. Also impossible to produce by accident, also burns. That is the whole slashing list, and its brevity is deliberate: anything a buggy client could do by mistake belongs in the penalty column, not the execution column.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d10t">
+<title id="d10t">The bad behavior catalog: two burns and one leak</title>
+<defs><marker id="d10b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" class="c-bad" stroke-width="1.5"/></marker></defs>
+<text x="30" y="26" class="f-mut" font-size="11">WHAT BURNS, WHAT LEAKS</text>
+<g data-step="1" data-note="Equivocation, the lab 2 crime: two different signatures for the same slot. Mathematically impossible to produce honestly, so it burns.">
+<rect x="40" y="44" width="180" height="120" rx="8" class="c-bad" fill="none"/>
+<text x="130" y="64" text-anchor="middle" class="f-bad" font-size="10.5" font-weight="700">EQUIVOCATION</text>
+<circle cx="90" cy="100" r="9" class="c-ver" fill="none"/>
+<text x="90" y="104" text-anchor="middle" class="f-mut" font-size="8">V</text>
+<line x1="99" y1="96" x2="158" y2="82" class="c-bad" marker-end="url(#d10b)"/>
+<line x1="99" y1="104" x2="158" y2="118" class="c-bad" marker-end="url(#d10b)"/>
+<rect x="164" y="72" width="34" height="18" rx="3" class="c-bad" fill="none"/>
+<rect x="164" y="110" width="34" height="18" rx="3" class="c-bad" fill="none"/>
+<text x="130" y="152" text-anchor="middle" class="f-mut" font-size="9.5">two signs, same slot</text>
+</g>
+<g data-step="2" data-note="Surround votes: a vote that encircles your own earlier vote, effectively claiming you saw the future. Also impossible to do by accident, also burns.">
+<rect x="240" y="44" width="180" height="120" rx="8" class="c-bad" fill="none"/>
+<text x="330" y="64" text-anchor="middle" class="f-bad" font-size="10.5" font-weight="700">SURROUND VOTE</text>
+<path d="M268 140 C300 102 360 102 392 140" fill="none" class="c-ver"/>
+<path d="M258 150 C296 86 364 86 402 150" fill="none" class="c-bad"/>
+<circle cx="268" cy="140" r="3" class="c-ver" fill="none"/>
+<circle cx="392" cy="140" r="3" class="c-ver" fill="none"/>
+<text x="330" y="158" text-anchor="middle" class="f-mut" font-size="9.5">encircles your own past vote</text>
+</g>
+<g data-step="3" data-note="Inactivity: if a third of stake simply goes silent, checkpoints stop reaching two thirds and finality stalls. Nobody cheated, so nobody is slashed; absent validators bleed balance until the pool shrinks back to reachable.">
+<rect x="440" y="44" width="200" height="120" rx="8" class="c-time" fill="none"/>
+<text x="540" y="64" text-anchor="middle" class="f-warn" font-size="10.5" font-weight="700">INACTIVITY LEAK</text>
+<circle cx="500" cy="96" r="9" class="c-ver" fill="none"/>
+<circle cx="540" cy="96" r="9" class="c-time" fill="none" stroke-dasharray="4 3"/>
+<circle cx="580" cy="96" r="9" class="c-time" fill="none" stroke-dasharray="4 3"/>
+<line x1="540" y1="106" x2="540" y2="118" class="c-time"/>
+<line x1="580" y1="106" x2="580" y2="118" class="c-time"/>
+<text x="540" y="136" text-anchor="middle" class="f-mut" font-size="9.5">1/3 silent: no slash,</text>
+<text x="540" y="152" text-anchor="middle" class="f-mut" font-size="9.5">absent balances leak</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 10</span> The catalog. Two signature crimes that cannot be innocent and burn, one silence failure that cannot be slashed and leaks instead. Step through the three entries.</figcaption>
+</figure>
+<p>And the failure mode nobody can slash their way out of: <strong>inactivity</strong>. If more than a third of stake simply goes silent, checkpoints stop reaching their two thirds and finality stalls. No one cheated, so no one can be slashed. The protocol instead enters an inactivity leak: validators that keep voting keep their balance, validators that stay absent bleed stake until their weight is gone. The pool shrinks around the survivors until two thirds of what remains is again reachable and finality resumes. It is ugly, slow, and it has never been needed on mainnet, but it means even a catastrophic blackout ends with the chain finalizing again, not frozen forever.</p>
+<p>One distinction keeps the system fair. Penalties for absence are small leaks, the cost of an unreliable machine. Slashing is reserved for conduct that cannot be innocent. Honest operators with flaky wifi lose coffee money. Cheaters lose the farm.</p>
+</section>
+<section id="s11" data-n="11">
+<h2><span class="num">11</span>The numbers, as of 2026</h2>
+<p>The honest version of this section comes with dates attached, because every figure here moves.</p>
+<p>As of August 2025, about 30 percent of all ETH, roughly 30.14 percent, was staked, around 36 million ETH. Ethereum's official staking documentation recorded more than 1.2 million validator accounts registered by April 2026. That is a count of accounts ever registered, not a count of independent operators or machines. Pectra's 2048 ETH compounding ceiling lets operators consolidate records without reducing their stake.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d11t">
+<title id="d11t">The staking numbers as of 2026, dated because they move</title>
+<text x="30" y="26" class="f-mut" font-size="11">THE RECEIPTS, DATED</text>
+<line x1="198" y1="42" x2="198" y2="176" class="c-ver"/>
+<text x="188" y="66" text-anchor="end" class="f-mut" font-size="10">staked, aug 2025</text>
+<rect x="204" y="53" width="317" height="18" class="c-ver" style="fill:var(--accent);fill-opacity:.22" data-note="About 30.14 percent of all ETH staked as of August 2025, roughly 36 million ETH."/>
+<text x="529" y="66" class="f-ink" font-size="10">36.0M ETH</text>
+<text x="188" y="98" text-anchor="end" class="f-mut" font-size="10">registered, apr 2026</text>
+<rect x="204" y="85" width="380" height="18" class="c-nonce" style="fill:var(--accent);fill-opacity:.38" data-note="More than 1.2 million validator accounts had ever been registered by April 2026, per ethereum.org. This is not an operator count."/>
+<text x="592" y="98" class="f-nonce" font-size="10" font-weight="700">&gt;1.2M accounts</text>
+<text x="188" y="130" text-anchor="end" class="f-mut" font-size="10">validators, feb 2025</text>
+<rect x="204" y="117" width="330" height="18" class="c-ver" style="fill:var(--accent);fill-opacity:.22" data-note="Validator count crossed about one million in February 2025. Consolidation under the 2048 ETH cap shrinks the machine count, not the stake."/>
+<text x="542" y="130" class="f-ink" font-size="10">~1,050,000</text>
+<text x="188" y="162" text-anchor="end" class="f-mut" font-size="10">apr, 2025</text>
+<rect x="204" y="149" width="380" height="18" class="c-ver" fill="none" data-note="Reward rate 2.6 to 3.4 percent APR in 2025: a roughly fixed reward budget, so more stakers means thinner slices."/>
+<rect x="451" y="151" width="76" height="14" style="fill:var(--accent);fill-opacity:.5"/>
+<text x="451" y="178" text-anchor="middle" class="f-mut" font-size="9">2.6</text>
+<text x="527" y="178" text-anchor="middle" class="f-mut" font-size="9">3.4</text>
+<text x="533" y="162" class="f-ink" font-size="10">2.6-3.4%</text>
+<text x="40" y="192" class="f-mut" font-size="9">dates attached: every number here moves</text>
+</svg>
+<figcaption><span class="figno">Fig. 11</span> The pool, as dated. Hover a bar for the number and its date. Solo entry stayed at 32 ETH while the ceiling moved to 2048 ETH per validator.</figcaption>
+</figure>
+<p>Reward rate ran a typical 2.6 to 3.4 percent APR as of 2025, drifting down as the pool grows: the protocol issues a roughly fixed reward budget, so more stakers means thinner slices. After the May 2025 upgrade, the network recognizes a deposit in about thirteen minutes, then the activation queue determines when it starts attesting. Getting out also uses a queue that meters the pace. Pool shares move over time, so this page avoids freezing one provider's percentage into the explanation. The lasting risk is concentration: whoever controls more stake carries more consensus weight.</p>
+<p>The receipt for the whole experiment sits in the numbers from section 01. The roughly 99.95 percent energy drop, measured after the Merge by the Ethereum Foundation and UCL CCRI, has held. By April 2026, more than 1.2 million validator accounts had been registered, although many can run on the same machine or belong to one operator.</p>
+</section>
+<section id="s12" data-n="12">
+<h2><span class="num">12</span>Where the design traveled</h2>
+<p>Ethereum was not the first proof of stake network, but it was the largest thing to switch engines mid flight, and after the Merge the design spread everywhere. Two very different descendants get their own essays in this notebook. <a href="solana.html">Solana</a> kept the collateral idea and threw away the waiting: stake weighted validators plus a cryptographic clock called proof of history let it finalize transactions in under a second, paying for the speed with hardware requirements that would make an Ethereum validator blush. <a href="sui.html">Sui</a> starts from objects rather than accounts and uses its stake set differently still, with ownership declared in the data model so most transactions never contend at all. Same bet as this whole essay, collateral instead of electricity, wildly different chassis. If you want the one page version of all six essays, the <a href="crypto-summary.html">summary page</a> keeps the receipts.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="d12t">
+<title id="d12t">Where the collateral design traveled after the Merge</title>
+<defs><marker id="d12v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" class="c-ver" stroke-width="1.5"/></marker></defs>
+<text x="30" y="26" class="f-mut" font-size="11">THE DESIGN TRAVELED</text>
+<g data-step="1" data-note="Ethereum after the Merge: the entrance ticket is collateral the protocol can burn, not electricity it must waste. The largest engine swap any live chain has survived.">
+<rect x="40" y="78" width="180" height="52" rx="8" class="c-nonce" fill="none" stroke-width="1.5"/>
+<text x="130" y="100" text-anchor="middle" class="f-ink" font-size="11" font-weight="700">ETHEREUM PoS</text>
+<text x="130" y="118" text-anchor="middle" class="f-mut" font-size="9.5">merge, sep 2022</text>
+<text x="130" y="152" text-anchor="middle" class="f-mut" font-size="9.5">the bet: collateral,</text>
+<text x="130" y="167" text-anchor="middle" class="f-mut" font-size="9.5">not electricity</text>
+</g>
+<g data-step="2" data-note="Solana kept the collateral and threw away the waiting: a stake-weighted validator set plus a cryptographic clock, proof of history, finalizes in under a second, paid for in hardware.">
+<line x1="220" y1="92" x2="390" y2="56" class="c-ver" marker-end="url(#d12v)"/>
+<rect x="396" y="36" width="250" height="44" rx="8" class="c-mrk" fill="none"/>
+<text x="521" y="54" text-anchor="middle" class="f-ink" font-size="10.5" font-weight="700">SOLANA</text>
+<text x="521" y="70" text-anchor="middle" class="f-mut" font-size="9.5">stake + history clock, sub-second</text>
+</g>
+<g data-step="3" data-note="Sui starts from objects rather than accounts and uses its stake set differently, with ownership declared in the data model, so most transactions never contend at all.">
+<line x1="220" y1="116" x2="390" y2="152" class="c-ver" marker-end="url(#d12v)"/>
+<rect x="396" y="132" width="250" height="44" rx="8" class="c-mrk" fill="none"/>
+<text x="521" y="150" text-anchor="middle" class="f-ink" font-size="10.5" font-weight="700">SUI</text>
+<text x="521" y="166" text-anchor="middle" class="f-mut" font-size="9.5">objects, most txs never contend</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 12</span> Where the bet traveled. Same collateral idea, three chassis: Ethereum's patient finality, Solana's clock driven speed, Sui's object shortcuts.</figcaption>
+</figure>
+<p>For now, scroll back up. Run the lottery, race the equivocator, price the attack. The security of a hundred billion dollar system is three small programs in your browser tab, and none of it is magic. It is collateral, arithmetic, and a very well designed match.</p>
+</section>
+</div>
+</main>
+<footer class="band foot">
+<nav class="pn" aria-label="Guide navigation"><a href="bitcoin-from-zero.html" rel="prev"><small>Previous</small><strong>Bitcoin</strong></a><a href="solana.html" rel="next"><small>Next</small><strong>Solana</strong></a></nav>
+<p class="colophon">Written by <a href="https://moamenbasel.com">Moamen Basel</a>, security engineer at <a href="https://greycorelabs.com">Grey Core Labs</a>. Handmade in 2026 by Moamen Basel. No ads, no tracking, no cookies. Every lab runs in this file. MIT license. <a href="index.html">Index</a></p>
+</footer>
+<script>
+var POSCORE={};
+POSCORE.sha256Hex=async function(s){var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));var a=new Uint8Array(b);var out="";for(var i=0;i<a.length;i++){out+=a[i].toString(16).padStart(2,"0")}return out};
+POSCORE.lottery=async function(stakes,slots,seed){var total=0;var i;for(i=0;i<stakes.length;i++){total+=stakes[i]}var wins=stakes.map(function(){return 0});var t=0;while(t<slots){var n=Math.min(100,slots-t);var jobs=[];for(i=0;i<n;i++){jobs.push(POSCORE.sha256Hex(seed+":"+(t+i)))}var hs=await Promise.all(jobs);for(i=0;i<n;i++){var r=Number(BigInt("0x"+hs[i])%BigInt(total));var acc=0;for(var j=0;j<stakes.length;j++){acc+=stakes[j];if(r<acc){wins[j]++;break}}}t+=n}return{total:total,wins:wins}};
+POSCORE.race=function(rounds,reward,detect,floor){var netNo=0,netYes=0,caught=-1,rows=[];var a=0,b=0,i;for(i=1;i<=rounds;i++){if(Math.random()<0.5){a++}else{b++}netNo+=reward;netYes+=reward;if(caught<0&&Math.random()<detect){caught=i;netYes-=floor}if(i%20===0||i===rounds){rows.push({round:i,a:a,b:b,netNo:netNo,netYes:netYes,caught:caught})}}return{netNo:netNo,netYes:netYes,caught:caught,rows:rows}};
+POSCORE.fact=function(n){var f=1;for(var i=2;i<=n;i++){f*=i}return f};
+POSCORE.satoshi=function(q,z){if(q>=0.5){return 1}var p=1-q,lam=z*q/p,sum=0,k;for(k=0;k<=z;k++){sum+=Math.exp(-lam)*Math.pow(lam,k)/POSCORE.fact(k)*(1-Math.pow(q/p,z-k))}return 1-sum};
+var POOL=36000000,THIRD=POOL/3;
+function setState(id,st,label){var f=document.getElementById(id);f.dataset.state=st;document.getElementById(id+"-state").textContent=label}
+function logLine(id,txt,reset){var c=document.getElementById(id+"-console");if(reset){c.textContent=""}c.textContent+=txt+"\n";c.scrollTop=c.scrollHeight}
+var lab1Busy=false;
+document.getElementById("lab1-run").addEventListener("click",async function(){if(lab1Busy){return}if(!window.crypto||!crypto.subtle){logLine("lab1","crypto.subtle unavailable in this context; open the file in a normal browser tab.",true);return}lab1Busy=true;setState("lab1","running","RUNNING");var t0=performance.now();var stakes=[];for(var i=0;i<6;i++){stakes.push(Math.max(1,Math.floor(Number(document.getElementById("lab1-s"+i).value)||1)))}var total=stakes.reduce(function(a,b){return a+b},0);logLine("lab1","stake set: "+stakes.join(" + ")+" = "+total+" ETH. drawing 1000 slots with SHA-256...",true);var r=await POSCORE.lottery(stakes,1000,"pos-demo-seed");var maxd=0;for(var j=0;j<6;j++){var exp=stakes[j]/total,act=r.wins[j]/1000,d=Math.abs(exp-act);if(d>maxd){maxd=d}}var clean=[];clean.push("validator  stake  expected  actual     delta");for(var j2=0;j2<6;j2++){var e2=stakes[j2]/total,a2=r.wins[j2]/1000;clean.push("V"+(j2+1)+"  "+String(stakes[j2]).padStart(5)+" ETH  "+(e2*100).toFixed(2).padStart(5)+"%  "+(a2*100).toFixed(2).padStart(5)+"%  "+((a2-e2)*100).toFixed(2)+"pp")}clean.push("total stake "+total+" ETH, slots 1000, seed pos-demo-seed");clean.push("max deviation "+(maxd*100).toFixed(2)+" percentage points");document.getElementById("lab1-console").textContent=clean.join("\n");var ms=(performance.now()-t0).toFixed(1);document.getElementById("lab1-el").textContent=ms+" ms";setState("lab1","done","DONE");lab1Busy=false});
+document.getElementById("lab1-reset").addEventListener("click",function(){for(var i=0;i<6;i++){document.getElementById("lab1-s"+i).value=[32,64,128,512,1024,2048][i]}document.getElementById("lab1-console").textContent="idle. press RUN 1000 SLOTS to draw the lottery.";document.getElementById("lab1-el").textContent="";setState("lab1","idle","NOT RUNNING")});
+for(var si=0;si<6;si++){document.getElementById("lab1-s"+si).addEventListener("input",function(){setState("lab1","idle","NOT RUNNING")})}
+var lab2Busy=false;
+document.getElementById("lab2-run").addEventListener("click",function(){if(lab2Busy){return}lab2Busy=true;setState("lab2","running","RUNNING");var t0=performance.now();var r=POSCORE.race(200,0.00001,0.3,0.0078125);var out=["toy detection model: 200 rounds, 0.00001 ETH reward per round, catch chance 0.3","current isolated-slash immediate penalty for 32 ETH: 0.0078125 ETH","forced exit, balance drain, and correlation penalty omitted","","round  chainA chainB  net(no slash)  net(with slash)"];r.rows.forEach(function(x){out.push(String(x.round).padStart(3)+"     "+String(x.a).padStart(3)+"    "+String(x.b).padStart(3)+"     "+(x.netNo>=0?"+":"")+x.netNo.toFixed(5)+" ETH       "+(x.netYes>=0?"+":"")+x.netYes.toFixed(5)+" ETH"+(x.caught===x.round?"  <- immediate penalty here":""))});out.push("");out.push("no slashing: hedging both forks earned "+r.netNo.toFixed(5)+" ETH in this toy");out.push("with slashing: "+(r.caught<0?"not caught in this sample, net "+r.netYes.toFixed(5)+" ETH":"caught at round "+r.caught+", immediate penalty applied, net "+r.netYes.toFixed(5)+" ETH"));out.push(r.netYes<r.netNo?"verdict: even the immediate penalty flips this toy trade negative":"verdict: this sample avoided detection; actual slashable messages are public evidence");document.getElementById("lab2-console").textContent=out.join("\n");document.getElementById("lab2-el").textContent=(performance.now()-t0).toFixed(1)+" ms";setState("lab2","done","DONE");lab2Busy=false});
+document.getElementById("lab2-reset").addEventListener("click",function(){document.getElementById("lab2-console").textContent="idle. press RUN 200-ROUND RACE to watch both economies.";document.getElementById("lab2-el").textContent="";setState("lab2","idle","NOT RUNNING")});
+function lab3Compute(verbose){var q=Number(document.getElementById("lab3-q").value)/100;document.getElementById("lab3-qv").textContent=(q*100).toFixed(0);var stake=q*POOL;var odds=POSCORE.satoshi(q,6);var out=[];out.push("attacker share "+(q*100).toFixed(0)+"% of staked pool (pool fixed at 36,000,000 ETH, as of 2025)");out.push("");out.push("PROOF OF STAKE, revert one finalized checkpoint:");out.push("  your staked collateral: "+Math.round(stake).toLocaleString("en-US")+" ETH");out.push("  burn threshold to undo finality: one third of pool = "+Math.round(THIRD).toLocaleString("en-US")+" ETH");if(q<1/3){out.push("  at this share you cannot reach the threshold alone; finality holds against you")}else{out.push("  attempting it burns your entire deposit: "+Math.round(stake).toLocaleString("en-US")+" ETH, provably, on-chain")}out.push("");out.push("PROOF OF WORK, same share as hashrate, z = 6 confirmations:");out.push("  Satoshi catch-up odds: "+odds.toFixed(6)+" ("+(odds*100).toFixed(4)+"%)");out.push("  reading: "+(odds>=1?"attacker matches honest power, catch-up is a coin flip or better":odds>0.01?"attack succeeds more than 1 time in 100":odds>0.0001?"unlikely but a live probability":"vanishingly unlikely, yet never exactly zero"));out.push("");out.push("shape of the guarantee: PoS prices reversal as a certain burn; PoW prices it as a probability");document.getElementById("lab3-console").textContent=out.join("\n");if(verbose){setState("lab3","done","DONE");document.getElementById("lab3-el").textContent="<1 ms"}}
+document.getElementById("lab3-run").addEventListener("click",function(){setState("lab3","running","RUNNING");lab3Compute(true)});
+document.getElementById("lab3-q").addEventListener("input",function(){lab3Compute(false);setState("lab3","done","DONE")});
+document.getElementById("lab3-reset").addEventListener("click",function(){document.getElementById("lab3-q").value=10;lab3Compute(false);document.getElementById("lab3-console").textContent="idle. slide the share, then press COMPUTE.";document.getElementById("lab3-el").textContent="";setState("lab3","idle","NOT RUNNING")});
+document.querySelectorAll("button[data-copy-src]").forEach(function(btn){btn.addEventListener("click",function(){var txt=document.querySelector(btn.dataset.copySrc).textContent;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt)}else{var ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta)}})});
+var tt=document.getElementById("theme-toggle");
+function setTheme(t){document.documentElement.dataset.theme=t;tt.textContent=t==="dark"?"LIGHT":"DARK";try{localStorage.setItem("cl-theme",t)}catch(e){}}
+tt.addEventListener("click",function(){var cur=document.documentElement.dataset.theme||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");setTheme(cur==="dark"?"light":"dark")});
+try{var saved=localStorage.getItem("cl-theme");if(saved){document.documentElement.dataset.theme=saved;tt.textContent=saved==="dark"?"LIGHT":"DARK"}}catch(e){}
+var bar=document.getElementById("progress");
+addEventListener("scroll",function(){var h=document.documentElement;var frac=h.scrollTop/(h.scrollHeight-h.clientHeight||1);bar.style.width=(frac*100).toFixed(2)+"%"},{passive:true});
+</script>
+<script>
+(function(){
+"use strict";
+var MQ=window.matchMedia("(prefers-reduced-motion: reduce)");
+var rm=MQ.matches;
+var EASE="cubic-bezier(.22,.75,.3,1)";
+var CSS="figure{position:relative}figure svg text{font-family:var(--mono);letter-spacing:.02em}figure svg *{vector-effect:non-scaling-stroke}.c-bad{stroke:var(--bad)}.f-bad{fill:var(--bad)}.f-warn{fill:var(--warn)}.figctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:.85rem}.figctl button{font-family:var(--mono);font-size:11px;line-height:1;border:1px solid var(--border2);border-radius:8px;padding:4px 10px;background:transparent;color:var(--muted);cursor:pointer;transition:border-color .15s ease,color .15s ease}.figctl button:hover{border-color:var(--accent);color:var(--accent)}.figctl .fign{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.06em}.fignote{position:absolute;top:12px;left:12px;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:12px;line-height:1.5;color:var(--muted);padding:6px 10px;pointer-events:none;opacity:0;transition:opacity .12s ease;z-index:5}.fignote.on{opacity:1}g[data-step]{transition:opacity .25s ease}g[data-step].fs-dim{opacity:.25}g[data-step].fs-cur{animation:figpulse 1.8s ease-in-out infinite}g[data-step].fs-cur line,g[data-step].fs-cur path,g[data-step].fs-cur rect,g[data-step].fs-cur circle,g[data-step].fs-cur polyline,g[data-step].fs-cur polygon{stroke:var(--accent)}g[data-step].fs-cur text{fill:var(--accent)}@keyframes figpulse{0%,100%{opacity:1}50%{opacity:.55}}svg .sa,svg .sb{transition:opacity .25s ease,transform .25s ease}svg.fa .sb{opacity:0;transform:translateY(8px);pointer-events:none}svg.fb .sa{opacity:0;transform:translateY(8px);pointer-events:none}@media(prefers-reduced-motion:reduce){g[data-step].fs-cur{animation:none}g[data-step],svg .sa,svg .sb{transition:none}}@media print{.figctl,.fignote{display:none}figure svg *{opacity:1!important;transform:none!important;stroke-dashoffset:0!important}}";
+var st=document.createElement("style");
+st.textContent=CSS;
+document.head.appendChild(st);
+function anim(el,items,dur,delay){
+el.style.setProperty("transition","none");
+items.forEach(function(p){el.style.setProperty(p[0],p[1])});
+void el.getBoundingClientRect();
+el.style.setProperty("transition",items.map(function(p){return p[0]+" "+dur+"ms "+EASE+" "+delay+"ms"}).join(","));
+void el.getBoundingClientRect();
+items.forEach(function(p){el.style.setProperty(p[0],p[2])});
+}
+function wipe(el,keys){
+el.style.removeProperty("transition");
+keys.forEach(function(k){el.style.removeProperty(k)});
+}
+function mark(el,on){
+if(on){
+el.setAttribute("data-ps",el.style.getPropertyValue("stroke"));
+el.setAttribute("data-pf",el.style.getPropertyValue("fill"));
+var cs=getComputedStyle(el);
+el.style.setProperty("transition","stroke .15s ease,fill .15s ease");
+if(cs.stroke!=="none")el.style.setProperty("stroke","var(--accent)");
+if(cs.fill!=="none"&&cs.fill!=="rgba(0, 0, 0, 0)")el.style.setProperty("fill","var(--accent)");
+}else{
+el.style.setProperty("stroke",el.getAttribute("data-ps"));
+el.style.setProperty("fill",el.getAttribute("data-pf"));
+el.style.removeProperty("transition");
+el.removeAttribute("data-ps");
+el.removeAttribute("data-pf");
+}
+}
+var FIGS=[];
+Array.prototype.forEach.call(document.querySelectorAll("figure"),function(fig){
+var svg=fig.querySelector("svg");
+if(!svg)return;
+var cap=document.createElement("div");
+cap.className="fignote";
+cap.setAttribute("aria-hidden","true");
+fig.appendChild(cap);
+var ctl=document.createElement("div");
+ctl.className="figctl";
+fig.insertBefore(ctl,svg.nextSibling);
+function button(t){var b=document.createElement("button");b.type="button";b.textContent=t;ctl.appendChild(b);return b}
+function say(t){cap.textContent=t;cap.classList.add("on")}
+function hush(){cap.classList.remove("on")}
+var recs=[],gen=0,waits=[],iv=null,seen=false;
+function later(fn,ms){var g=gen;waits.push(setTimeout(function(){if(g===gen)fn()},ms))}
+function halt(){gen++;waits.forEach(clearTimeout);waits=[];if(iv){clearInterval(iv);iv=null}}
+Array.prototype.forEach.call(svg.querySelectorAll("[data-note]"),function(el){
+var txt=el.getAttribute("data-note");
+if(!txt)return;
+el.style.cursor="help";
+el.addEventListener("pointerenter",function(e){if(e.pointerType!=="touch"){say(txt);mark(el,true)}});
+el.addEventListener("pointerleave",function(e){if(e.pointerType!=="touch"){hush();mark(el,false)}});
+el.addEventListener("click",function(){if(cap.classList.contains("on")&&cap.textContent===txt){hush();mark(el,false)}else{say(txt);mark(el,true)}});
+});
+var seq=Array.prototype.slice.call(svg.querySelectorAll("g[data-step]")).sort(function(a,b){return(+a.getAttribute("data-step"))-(+b.getAttribute("data-step"))});
+var at=-1;
+function paint(){
+if(!seq.length)return;
+at=(at+1)%seq.length;
+seq.forEach(function(g,i){g.classList.toggle("fs-dim",i!==at);g.classList.toggle("fs-cur",i===at)});
+var cur=seq[at],note=cur.getAttribute("data-note");
+if(!note){var c=cur.querySelector("[data-note]");if(c)note=c.getAttribute("data-note")}
+counter.textContent="STEP "+(at+1)+"/"+seq.length;
+if(note)say(note);
+}
+function calm(){at=-1;seq.forEach(function(g){g.classList.remove("fs-dim","fs-cur")});counter.textContent="";hush()}
+function parade(){
+if(rm||!seq.length)return;
+var n=seq.length,k=0;
+iv=setInterval(function(){k++;paint();if(k>=n){clearInterval(iv);iv=null;later(calm,1500)}},900);
+}
+var ks=0,kt=0;
+Array.prototype.forEach.call(svg.querySelectorAll("path,line,polyline,circle,rect,ellipse,polygon,text"),function(el){
+if(el.closest(".sb")||el.closest("defs"))return;
+var tag=el.tagName.toLowerCase();
+var r={el:el,tag:tag,keys:["opacity","transform"]};
+if(tag==="text"){r.keys=["opacity"];r.wait=Math.min(kt*60,720);kt++}
+else if(tag==="path"&&el.getTotalLength){r.len=Math.ceil(el.getTotalLength())+2;r.keys=["stroke-dasharray","stroke-dashoffset"];r.wait=Math.min(ks*40,640);ks++}
+else{r.wait=Math.min(ks*40,640);ks++}
+if(!rm){
+if(r.len){el.style.setProperty("stroke-dasharray",String(r.len));el.style.setProperty("stroke-dashoffset",String(r.len))}
+else if(tag==="text"){el.style.setProperty("opacity","0")}
+else{el.style.setProperty("opacity","0");el.style.setProperty("transform","translateY(8px)")}
+}
+recs.push(r);
+});
+function flush(){recs.forEach(function(r){wipe(r.el,r.keys)})}
+function play(){
+halt();calm();
+if(rm)return;
+recs.forEach(function(r){
+if(r.tag==="text")anim(r.el,[["opacity","0","1"]],260,r.wait);
+else if(r.len)anim(r.el,[["stroke-dashoffset",String(r.len),"0"]],480,r.wait);
+else anim(r.el,[["opacity","0","1"],["transform","translateY(8px)","translateY(0)"]],420,r.wait);
+});
+later(flush,1250);
+later(parade,1350);
+}
+var replay=button("REPLAY");
+replay.addEventListener("click",play);
+var counter=document.createElement("span");
+counter.className="fign";
+ctl.appendChild(counter);
+if(seq.length){
+var stepBtn=button("STEP");
+stepBtn.addEventListener("click",function(){halt();paint()});
+}
+if(svg.querySelector(".sa")&&svg.querySelector(".sb")){
+var la=svg.getAttribute("data-fa")||"STATE A",lb=svg.getAttribute("data-fb")||"STATE B";
+svg.classList.add("fa");
+var tog=button("SHOW: "+lb);
+tog.addEventListener("click",function(){
+var toB=svg.classList.contains("fa");
+svg.classList.toggle("fa",!toB);
+svg.classList.toggle("fb",toB);
+tog.textContent="SHOW: "+(toB?la:lb);
+});
+}
+var io=new IntersectionObserver(function(es){
+es.forEach(function(e){
+if(!e.isIntersecting||seen)return;
+seen=true;
+io.disconnect();
+play();
+});
+},{threshold:.15});
+io.observe(fig);
+FIGS.push({halt:halt,flush:flush,calm:calm});
+});
+MQ.addEventListener("change",function(e){
+rm=e.matches;
+if(rm){FIGS.forEach(function(f){f.halt();f.flush();f.calm()})}
+});
+})();
+</script>
+</body>
+</html>

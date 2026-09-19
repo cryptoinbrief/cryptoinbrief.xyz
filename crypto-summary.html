@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-coin="overview">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitcoin and crypto, a drawn summary | Crypto in Brief</title>
+<meta name="description" content="A drawn summary of how Bitcoin and crypto work, one drawing per topic: hashing, mining, the nonce, verification, forks, signatures, addresses, UTXO, Monero privacy and MEV.">
+<link rel="canonical" href="https://cryptoinbrief.xyz/crypto-summary.html">
+<meta property="og:site_name" content="Crypto in Brief">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The whole thing on one page">
+<meta property="og:description" content="Fourteen drawings that sum up Bitcoin, mining, signatures, Monero, proof of stake, Zcash, Solana and Sui. Start here if crypto is brand new to you.">
+<meta property="og:url" content="https://cryptoinbrief.xyz/crypto-summary.html">
+<meta property="og:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The whole thing on one page">
+<meta name="twitter:description" content="Fourteen drawings that sum up Bitcoin, mining, signatures, Monero, proof of stake, Zcash, Solana and Sui.">
+<meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="author" content="Moamen Basel">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The whole thing on one page","description":"Fourteen drawings that sum up Bitcoin, mining, signatures, Monero, proof of stake, Zcash, Solana and Sui. Start here if crypto is brand new to you.","datePublished":"2026-09-19","inLanguage":"en","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz"},"mainEntityOfPage":"https://cryptoinbrief.xyz/crypto-summary.html"}</script>
+<style>
+:root{
+  --bg:#FAFAF8; --surface:#FFFFFF; --surface2:#F4F4F1;
+  --border:#E7E6E1; --border2:#D8D7D1;
+  --ink:#16171A; --muted:#5D6270; --faint:#9B9FA8;
+  --accent:#0B9E6A; --accent-ink:#FFFFFF; --accent-soft:rgba(11,158,106,.10);
+  --good:#0B9E6A; --bad:#D64533; --warn:#B27A22;
+  --term:#0C0E11; --term-border:#1E2229; --term-ink:#DADEE4; --term-dim:#8A909A; --term-accent:#63E2A6;
+  --serif:"Instrument Serif","Georgia",serif;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --measure:66ch; --rail:13rem; --note:13.5rem; --gutter:1.75rem;
+  --ease:cubic-bezier(.25,.8,.35,1);
+  --r-card:16px; --r-btn:10px; --r-chip:999px;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#35D38A; --accent-ink:#07261A; --accent-soft:rgba(53,211,138,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}
+@media(prefers-color-scheme:dark){
+:root:not([data-theme="light"]){
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#35D38A; --accent-ink:#07261A; --accent-soft:rgba(53,211,138,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}}
+*{box-sizing:border-box}
+html{overflow-x:clip;font-size:106.25%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0588rem;line-height:1.72;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent-soft);color:var(--ink)}
+#readprog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+#readprog.on{visibility:visible}
+.band{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:3.25rem;padding-inline:max(1.25rem,calc(50vw - 21rem));font-family:var(--sans);font-size:.75rem;letter-spacing:.02em}
+header.band{position:sticky;top:0;z-index:50;flex-wrap:wrap;padding-block:.5rem;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--border)}
+.band a{color:var(--muted);text-decoration:none;transition:color .15s var(--ease)}
+.band a:hover{color:var(--ink)}
+.band a[aria-current="page"]{color:var(--accent)}
+.band .mark{color:var(--ink);font-weight:650;white-space:nowrap;letter-spacing:-.01em;font-size:.875rem}
+.band nav.series{display:flex;flex-wrap:wrap;gap:.3rem .95rem}
+.band .series a{white-space:nowrap}
+.band .switch{display:flex;gap:1rem;margin:0;white-space:nowrap;font-family:var(--mono);font-size:.7rem}
+.band .switch b{color:var(--ink);font-weight:600}
+.band .none{color:var(--faint)}
+.band button{background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer}
+.band button:hover{color:var(--accent)}
+main{max-width:var(--measure);margin-inline:auto;padding:3rem 1.25rem 5rem;position:relative}
+.reg,main::before,main::after{display:none}
+@media(min-width:1100px){
+main{max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note));display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter)}
+nav.toc.rail{grid-column:1;align-self:start;position:sticky;top:4.5rem}
+.col{grid-column:2;max-width:var(--measure);position:relative}
+}
+.byline{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 1rem}
+.byline,.lead{max-width:60ch}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,1.7rem + 3.2vw,3.6rem);line-height:1.04;letter-spacing:-.015em;margin:.15em 0 .5em}
+.lead{font-size:1.3rem;line-height:1.45;color:var(--muted);margin:0 0 2rem;font-weight:450}
+h2{font-size:1.65rem;line-height:1.25;font-weight:650;letter-spacing:-.015em;margin:3.4em 0 .7em}
+.col>h2:first-of-type{margin-block-start:1.8em}
+h2 .num{font-family:var(--mono);color:var(--accent);font-size:.7em;margin-inline-end:.7em;font-weight:500;letter-spacing:0}
+h3{font-size:1.18rem;line-height:1.35;font-weight:600;margin:2.1em 0 .45em;letter-spacing:-.008em}
+p{margin:0 0 1.15em}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);transition:border-color .15s var(--ease)}
+a:hover{border-bottom-color:var(--accent)}
+code,.hx,.num{font-family:var(--mono);font-size:.85em;font-variant-numeric:tabular-nums}
+code{background:var(--accent-soft);border-radius:5px;padding:.1em .35em}
+strong{font-weight:650}
+figure{margin:2.5rem auto;width:min(72rem,calc(100vw - 2rem));transform:translateX(0);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:1.5rem 1.5rem 1.1rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+[dir="rtl"] figure{margin-inline:auto}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:.9rem}
+figcaption .figno{font-family:var(--mono);color:var(--accent);margin-inline-end:.55em;font-size:.95em}
+.figbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:inherit;border-radius:var(--r-card)}
+.figbtn:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.c-time{stroke:var(--warn)} .c-nonce{stroke:var(--accent)} .c-mrk{stroke:var(--good)} .c-ver{stroke:var(--faint)}
+.f-time{fill:var(--warn)} .f-nonce{fill:var(--accent)} .f-ink{fill:var(--ink)} .f-mut{fill:var(--muted)} .f-pap{fill:var(--surface)}
+table{width:100%;border-collapse:collapse;margin:1.8em 0;font-family:var(--sans);font-size:.875rem}
+th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-bottom:1px solid var(--border)}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+tbody th{font-weight:400;color:var(--muted);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+aside.note{font-size:.875rem;line-height:1.6;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+aside.note.good{border-color:color-mix(in srgb,var(--good) 35%,var(--border))}
+aside.note.bad{border-color:color-mix(in srgb,var(--bad) 35%,var(--border))}
+aside.note p{margin:0 0 .5em}
+aside.note p:last-child{margin:0}
+@media(min-width:1152px){
+aside.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+nav.toc{font-family:var(--sans);font-size:.8125rem;line-height:1.5}
+nav.toc.rail{display:none}
+@media(min-width:1100px){nav.toc.rail{display:block}}
+nav.toc.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;transition:color .15s var(--ease)}
+nav.toc.rail a .leaders{display:none}
+nav.toc.rail a .secno{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover{color:var(--ink)}
+nav.toc.rail a:hover .secno{color:var(--accent)}
+nav.toc.rail a.act{color:var(--accent);font-weight:550}
+nav.toc.rail a.act .secno{color:var(--accent)}
+nav.toc.rail .toclab{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+details.toc{border:1px solid var(--border);border-radius:12px;margin:2rem 0;padding:.35rem 1rem;background:var(--surface)}
+details.toc summary{cursor:pointer;font-weight:600;color:var(--ink);padding:.45rem 0}
+details.toc ol{margin:.4em 0 .6em;padding-inline-start:1.3em}
+details.toc li{margin:.25em 0}
+@media(min-width:1100px){details.toc{display:none}}
+.machine{background:var(--surface2);color:var(--ink);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;width:min(72rem,calc(100vw - 2rem));margin:2.5rem auto;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.machine:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mhead{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0}
+.mtag{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em}
+.mtitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.mchip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted)}
+.mtick{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:7ch;text-align:end}
+.mtick.tk{color:var(--accent)}
+.melapsed{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:6ch;text-align:end}
+.mprog{height:2px;margin:0;background:var(--accent);transform-origin:0 0;transform:scaleX(0)}
+.machine[data-state="running"] .mprog{transform:scaleX(var(--sx,0));transition:transform 120ms linear}
+.machine[data-state="running"] .mprog.ind{transform:none;animation:indbar 900ms linear infinite}
+@keyframes indbar{from{transform:translateX(-40%) scaleX(.28)}to{transform:translateX(120%) scaleX(.28)}}
+.machine[data-state="done"] .mprog{transform:scaleX(1);height:0;transition:transform 140ms var(--ease),height 180ms var(--ease) 160ms}
+.mrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 4px}
+.machine .mrow~.mrow{padding-top:0}
+.machine button{font-family:var(--sans);font-size:.875rem;line-height:1;font-weight:550;padding:10px 18px;min-height:38px;cursor:pointer;border-radius:var(--r-btn);transition:transform .12s var(--ease),background .15s var(--ease),filter .12s var(--ease)}
+.machine .run{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine .run:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine .run:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine .ghost{background:transparent;border:1px solid var(--border2);color:var(--ink)}
+.machine .ghost:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.machine button:disabled{opacity:.4;cursor:not-allowed}
+.machine button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.machine .run.pop{animation:runpop 240ms var(--ease)}
+@keyframes runpop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.machine input,.machine select{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:9px 12px}
+.machine input:focus-visible,.machine select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{background:var(--term);border:1px solid var(--term-border);border-radius:12px;margin:10px 14px 14px;padding:12px 14px;min-height:76px;max-height:240px;overflow-y:auto;font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--term-ink);word-break:break-all;transition:border-color 180ms}
+.machine[data-state="running"] .out{border-color:var(--term-border)}
+.machine .out.flash{border-color:var(--good);transition:border-color 180ms}
+.machine[data-state="error"] .out{border-color:var(--bad)}
+.out p{margin:0 0 2px;animation:linein 120ms var(--ease)}
+@keyframes linein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.out::-webkit-scrollbar{width:6px}
+.out::-webkit-scrollbar-thumb{background:var(--term-border);border-radius:3px}
+.out .hx{font-size:.8rem}
+.out .zeros{color:var(--term-accent);font-weight:700}
+.out .ok{color:var(--good)}
+.out .no{color:var(--bad)}
+.out .dim{color:var(--term-dim);font-size:.72rem;margin-top:6px}
+.out .sA{color:var(--term-dim)}
+.out .sB{color:var(--term-accent)}
+.out .lane{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0}
+.out .lane .ln{width:6ch;color:var(--term-dim);font-size:.72rem}
+.out .blkchip{border:1px solid var(--term-border);border-radius:6px;padding:1px 7px;font-size:.72rem;color:var(--term-ink)}
+.out .blkchip.win{border-color:var(--good);color:var(--good)}
+.out .blkchip.dead{color:var(--term-dim);text-decoration:line-through}
+.mcap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:.7rem 14px 1rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+footer.band{display:block;position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:0;border-top:1px solid var(--border);padding-block:1.5rem 3rem;font-size:.8rem;color:var(--muted);letter-spacing:0}
+footer.band .pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:1.2rem}
+footer.band .pn a{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;color:var(--ink);background:var(--surface);transition:border-color .15s var(--ease)}
+footer.band .pn a:hover{border-color:var(--accent)}
+footer.band .pn a:hover .t{color:var(--accent)}
+footer.band .pn .k{font-family:var(--mono);font-size:.65rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+footer.band .pn .t{font-family:var(--sans);font-size:.95rem;font-weight:550;color:var(--ink)}
+footer.band .pn .next{text-align:end;align-items:flex-end}
+footer.band .colophon{margin:1.5rem 0 0}
+footer.band .colophon a{color:var(--muted);border-bottom:0}
+footer.band .colophon a:hover{color:var(--accent)}
+@media(prefers-contrast:more){
+.machine,.out{border-width:2px}
+.mprog{height:3px}
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.out p{animation:none}
+.machine .run.pop{animation:none}
+.machine button{transition:none}
+.machine[data-state="running"] .mprog,.machine[data-state="running"] .mprog.ind{animation:none;transition:none}
+.machine[data-state="done"] .mprog{transition:none}
+}
+
+/* compat: selectors this page's markup needs from the previous skin */
+:root{--card:var(--surface2);--stamp:var(--accent);--stamp-soft:var(--accent-soft);--good-soft:rgba(11,158,106,.12);--bad-soft:rgba(214,69,51,.12);--q-ver:var(--faint);--q-prev:var(--warn);--q-mrk:var(--good);--q-time:var(--warn);--q-bits:var(--muted);--q-nonce:var(--accent)}
+:root[data-theme="dark"]{--good-soft:rgba(53,211,138,.14);--bad-soft:rgba(242,112,89,.14)}
+#prog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:0 0;z-index:60;border-radius:0 2px 2px 0}
+.sheet{max-width:calc(var(--measure) + var(--rail) + var(--note) + 2 * var(--gutter));margin-inline:auto}
+nav.rail{display:none}
+.tl{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink)}
+.ts{font-family:var(--sans);font-size:12px;fill:var(--muted)}
+.tm{font-family:var(--mono);font-size:12px;fill:var(--ink)}
+.tp{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--accent-ink)}
+.tsp{font-family:var(--sans);font-size:12px;fill:var(--accent-ink)}
+.facts{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border)}
+details.toc a{display:flex;align-items:baseline;gap:.4rem;color:var(--muted);text-decoration:none}
+details.toc a:hover{color:var(--ink)}
+details.toc .num{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+details.toc .leaders{flex:1;border-bottom:1px dotted var(--border2);transform:translateY(-.28em);min-width:1rem}
+@media(min-width:1100px){
+.sheet{display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter)}
+.sheet main{max-width:none;margin-inline:0;display:block;grid-column:2}
+nav.rail{display:block;grid-column:1;align-self:start;position:sticky;top:4.5rem}
+nav.rail ol{list-style:none;margin:0;padding:0}
+nav.rail li{margin:.15rem 0}
+nav.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;padding:.28rem 0}
+nav.rail a .num{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.rail a:hover{color:var(--ink)}
+nav.rail a.on{color:var(--accent);font-weight:550}
+nav.rail a.on .num{color:var(--accent)}
+nav.rail .leaders{display:none}
+}
+</style>
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml"><link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/crypto-summary.html"><link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/crypto-summary-ar.html"><link rel="alternate" hreflang="x-default" href="https://cryptoinbrief.xyz/crypto-summary.html">
+<meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
+<link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div id="prog" aria-hidden="true"></div>
+<header class="site-header">
+  <a class="mark" href="index.html">crypto<span>in</span>brief.</a>
+  <nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="crypto-summary.html">Start here</a></nav>
+  <p class="switch">
+    <span class="lang"><b>EN</b> | <a href="crypto-summary-ar.html" lang="ar" hreflang="ar">AR</a></span>
+    <span class="theme"><span id="themenow">Light</span> | <button type="button" id="themego">Dark</button></span>
+  </p>
+</header>
+
+<div class="sheet">
+<nav class="rail" aria-label="Contents">
+<ol>
+<li><a href="#s1"><span class="num">01</span><span class="t">Who writes the next page</span><span class="leaders"></span></a></li>
+<li><a href="#s2"><span class="num">02</span><span class="t">The hash is a fingerprint machine</span><span class="leaders"></span></a></li>
+<li><a href="#s3"><span class="num">03</span><span class="t">The puzzle miners actually solve</span><span class="leaders"></span></a></li>
+<li><a href="#s4"><span class="num">04</span><span class="t">The nonce and the clock</span><span class="leaders"></span></a></li>
+<li><a href="#s5"><span class="num">05</span><span class="t">Nobody trusts anybody</span><span class="leaders"></span></a></li>
+<li><a href="#s6"><span class="num">06</span><span class="t">Why the history seals itself</span><span class="leaders"></span></a></li>
+<li><a href="#s7"><span class="num">07</span><span class="t">When two miners win at once</span><span class="leaders"></span></a></li>
+<li><a href="#s8"><span class="num">08</span><span class="t">How the chain knows a payment is yours</span><span class="leaders"></span></a></li>
+<li><a href="#s9"><span class="num">09</span><span class="t">The address is not the public key</span><span class="leaders"></span></a></li>
+<li><a href="#s10"><span class="num">10</span><span class="t">UTXO versus the account model</span><span class="leaders"></span></a></li>
+<li><a href="#s11"><span class="num">11</span><span class="t">The blockchain is not a data structure</span><span class="leaders"></span></a></li>
+<li><a href="#s12"><span class="num">12</span><span class="t">Monero makes privacy mandatory</span><span class="leaders"></span></a></li>
+<li><a href="#s13"><span class="num">13</span><span class="t">MEV, the dark side of ordering</span><span class="leaders"></span></a></li>
+</ol>
+</nav>
+
+<main id="main-content">
+<h1>Bitcoin and crypto, from zero</h1>
+<p class="byline">By <a href="https://moamenbasel.com">Moamen Basel</a>, September 2026, 0 labs, ~7 min</p>
+<p class="lead">From how mining works to why Bitcoin picked UTXO. Each topic has one drawing and a short explanation.</p>
+
+<figure class="herofig" data-kind="static">
+<svg viewBox="0 0 680 200" role="img"><title>The original problem</title><desc>A bank solves it with one trusted clerk; Bitcoin deletes the clerk and replaces him with a lottery priced in electricity</desc>
+<g class="p1" data-note="One clerk writes the ledger and you must trust him. One compromise, one forced edit, one bad day, and everyone's history moves."><rect x="30" y="40" width="290" height="120" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="175" y="68" text-anchor="middle">The bank way</text>
+<text class="ts" x="175" y="94" text-anchor="middle">one clerk writes the ledger</text>
+<text class="ts" x="175" y="116" text-anchor="middle">and you must trust him</text>
+<text class="ts" x="175" y="142" text-anchor="middle">one point of failure</text></g>
+<g class="p2" data-note="No one to trust. The right to write the next page is sold in a lottery priced in electricity: a vote per watt, not a vote per person."><rect x="360" y="40" width="290" height="120" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="505" y="68" text-anchor="middle">The Bitcoin way</text>
+<text class="ts" x="505" y="94" text-anchor="middle">no clerk, no one to trust</text>
+<text class="ts" x="505" y="116" text-anchor="middle">the right to write is earned by work</text>
+<text class="ts" x="505" y="142" text-anchor="middle">one vote per watt</text></g>
+</svg>
+<figcaption><span class="figno">Fig. 1.1</span> A bank hands the ledger to one clerk you have to trust. Bitcoin deletes the clerk and prices the pen in electricity.</figcaption>
+</figure>
+
+<details class="toc">
+<summary>Contents</summary>
+<ol>
+<li><a href="#s1"><span class="num">01</span><span class="t">Who writes the next page</span><span class="leaders"></span></a></li>
+<li><a href="#s2"><span class="num">02</span><span class="t">The hash is a fingerprint machine</span><span class="leaders"></span></a></li>
+<li><a href="#s3"><span class="num">03</span><span class="t">The puzzle miners actually solve</span><span class="leaders"></span></a></li>
+<li><a href="#s4"><span class="num">04</span><span class="t">The nonce and the clock</span><span class="leaders"></span></a></li>
+<li><a href="#s5"><span class="num">05</span><span class="t">Nobody trusts anybody</span><span class="leaders"></span></a></li>
+<li><a href="#s6"><span class="num">06</span><span class="t">Why the history seals itself</span><span class="leaders"></span></a></li>
+<li><a href="#s7"><span class="num">07</span><span class="t">When two miners win at once</span><span class="leaders"></span></a></li>
+<li><a href="#s8"><span class="num">08</span><span class="t">How the chain knows a payment is yours</span><span class="leaders"></span></a></li>
+<li><a href="#s9"><span class="num">09</span><span class="t">The address is not the public key</span><span class="leaders"></span></a></li>
+<li><a href="#s10"><span class="num">10</span><span class="t">UTXO versus the account model</span><span class="leaders"></span></a></li>
+<li><a href="#s11"><span class="num">11</span><span class="t">The blockchain is not a data structure</span><span class="leaders"></span></a></li>
+<li><a href="#s12"><span class="num">12</span><span class="t">Monero makes privacy mandatory</span><span class="leaders"></span></a></li>
+<li><a href="#s13"><span class="num">13</span><span class="t">MEV, the dark side of ordering</span><span class="leaders"></span></a></li>
+</ol>
+</details>
+
+<h2 id="s1"><span class="num">01</span> Who writes the next page</h2>
+<p>Strip the price charts and Bitcoin's one shared ledger kept by millions of strangers. No bank. No manager. The whole problem is on the next page. Who gets to write it? Let anyone write and you get <strong>double spends</strong>, the same coins paid to two people. Hold a vote instead and someone manufactures a million fake accounts. That's the Sybil problem. So the write right's sold in a lottery priced in electricity. A vote per watt, not a vote per person. Proof of stake bids for that same job with money instead of watts (<a href="proof-of-stake.html">the full essay</a>).</p>
+
+<figure data-kind="seq">
+<svg viewBox="0 0 680 200" role="img"><title>Three ways to hand out the write right</title><desc>Open writes fail to double spends, votes fail to fake accounts, work priced in electricity holds</desc>
+<defs><marker id="m1n" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker></defs>
+<g class="fstep" data-step="1" data-note="Open the ledger to anyone and the same coins get paid to two people in the same breath. This is the double spend, and it kills the money.">
+<rect x="30" y="30" width="180" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="120" y="57" text-anchor="middle">Anyone writes</text>
+<line x1="120" y1="76" x2="120" y2="96" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
+<rect x="30" y="100" width="180" height="64" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="120" y="126" text-anchor="middle">the same coins</text>
+<text class="ts" x="120" y="146" text-anchor="middle">paid twice</text>
+</g>
+<g class="fstep" data-step="2" data-note="One vote per account instead, and someone manufactures a million of them overnight. The Sybil problem: identity is free to fake.">
+<rect x="250" y="30" width="180" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="340" y="57" text-anchor="middle">One vote per account</text>
+<line x1="340" y1="76" x2="340" y2="96" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
+<rect x="250" y="100" width="180" height="64" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="340" y="126" text-anchor="middle">a million fake</text>
+<text class="ts" x="340" y="146" text-anchor="middle">accounts vote</text>
+</g>
+<g class="fstep" data-step="3" data-note="Sell the write right in a lottery priced in electricity. A vote per watt, not per person: writing costs real work, so spam prices itself out. This one holds.">
+<rect x="470" y="30" width="180" height="44" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="560" y="57" text-anchor="middle">A vote per watt</text>
+<line x1="560" y1="76" x2="560" y2="96" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
+<rect x="470" y="100" width="180" height="64" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+<text class="ts" x="560" y="126" text-anchor="middle">writing costs real work,</text>
+<text class="ts" x="560" y="146" text-anchor="middle">so spam prices itself out</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 1.2</span> Two ways to hand out the write right fail, each to its own attack. The third, work priced in electricity, is the one Bitcoin runs on.</figcaption>
+</figure>
+
+<h2 id="s2"><span class="num">02</span> The hash is a fingerprint machine</h2>
+<p>A hash is <strong>not encryption</strong>. There is no decryption key. SHA-256 takes any input and returns a fixed 256-bit fingerprint, usually written as 64 hex characters. Deterministic means the same bytes produce the same fingerprint. One way means recovering an arbitrary input from its hash is computationally infeasible. Avalanche means a tiny input change unpredictably changes the output. A double SHA 256 calculation is cheap. The live fingerprint lab sits in <a href="bitcoin-from-zero.html#hash">Bitcoin from zero</a>.</p>
+
+<figure class="avl" data-kind="toggle" data-ta="send 10" data-tb="send 90">
+<svg viewBox="0 0 680 210" role="img"><title>The avalanche property of a hash</title><desc>Changing one digit in the message flips the fingerprint completely</desc>
+<defs><marker id="m2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker></defs>
+<g class="stA" data-note="Deterministic: the exact message Send 10 bitcoin always hashes to eaf36db... Same input in, same fingerprint out, on every machine.">
+<rect x="30" y="30" width="190" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tm" x="125" y="57" text-anchor="middle">Send 10 bitcoin</text>
+<rect x="270" y="30" width="120" height="44" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="330" y="57" text-anchor="middle">SHA-256</text>
+<rect x="440" y="30" width="210" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tm" x="545" y="57" text-anchor="middle">eaf36db&#8230;</text>
+<line x1="224" y1="52" x2="266" y2="52" stroke="var(--muted)" stroke-width="1" marker-end="url(#m2)"/>
+<line x1="394" y1="52" x2="436" y2="52" stroke="var(--muted)" stroke-width="1" marker-end="url(#m2)"/>
+</g>
+<g class="stB" data-note="The avalanche: flip one digit, 10 to 90, and every bit of the fingerprint turns over. The two outputs share nothing visible, and there is no way back to the input.">
+<rect x="30" y="120" width="190" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tm" x="125" y="147" text-anchor="middle">Send 90 bitcoin</text>
+<rect x="270" y="120" width="120" height="44" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="330" y="147" text-anchor="middle">SHA-256</text>
+<rect x="440" y="120" width="210" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tm" x="545" y="147" text-anchor="middle">4c1b7d7&#8230;</text>
+<line x1="224" y1="142" x2="266" y2="142" stroke="var(--muted)" stroke-width="1" marker-end="url(#m2)"/>
+<line x1="394" y1="142" x2="436" y2="142" stroke="var(--muted)" stroke-width="1" marker-end="url(#m2)"/>
+</g>
+<text class="ts" x="340" y="196" text-anchor="middle">One digit apart, two fingerprints with nothing in common.</text>
+</svg>
+<figcaption><span class="figno">Fig. 2.1</span> Change one digit of the message and the fingerprint turns over completely, with no visible relation between the two outputs.</figcaption>
+</figure>
+
+<h2 id="s3"><span class="num">03</span> The puzzle miners actually solve</h2>
+<p>The effort is not in computing one fingerprint. The demand runs the other way: <strong>find a header whose double SHA-256 value is below the network target</strong>. No useful shortcut is known, so miners test many candidates. In the simplified leading zero model, each extra hex zero multiplies expected work by 16. Bitcoin itself uses a numeric target that adjusts every 2,016 blocks. The same loop is in <a href="bitcoin-from-zero.html#mining">the mining lab</a>.</p>
+
+<figure data-kind="seq">
+<svg viewBox="0 0 680 340" role="img"><title>The mining loop</title><desc>Build the block once, then guess the nonce until the hash drops under the target</desc>
+<defs><marker id="m3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker></defs>
+<g class="fstep" data-step="1" data-note="Assemble the candidate block: pending transactions plus a coinbase that pays the miner.">
+<rect x="180" y="24" width="320" height="40" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="340" y="48" text-anchor="middle">Build the block: transactions + coinbase</text>
+</g>
+<g class="fstep" data-step="2" data-note="The transaction identifiers are committed into one 32-byte Merkle root, written into the header.">
+<line x1="340" y1="64" x2="340" y2="86" stroke="var(--muted)" stroke-width="1" marker-end="url(#m3)"/>
+<rect x="180" y="90" width="320" height="40" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="340" y="114" text-anchor="middle">Compute the Merkle root, put it in the header</text>
+</g>
+<g class="fstep" data-step="3" data-note="Double SHA-256 over the 80-byte header. A single candidate is cheap to test.">
+<line x1="340" y1="130" x2="340" y2="152" stroke="var(--muted)" stroke-width="1" marker-end="url(#m3)"/>
+<rect x="180" y="156" width="320" height="40" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="340" y="180" text-anchor="middle">Hash the header (80 bytes)</text>
+</g>
+<g class="fstep" data-step="4" data-note="The target says how many leading zeros the hash needs. Is this hash numerically smaller?">
+<line x1="340" y1="196" x2="340" y2="218" stroke="var(--muted)" stroke-width="1" marker-end="url(#m3)"/>
+<rect x="230" y="222" width="220" height="40" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="340" y="246" text-anchor="middle">Hash under the target?</text>
+</g>
+<g class="fstep" data-step="5" data-note="Almost always no. Flip the nonce, hash again, trillions of times. Every extra zero multiplies the work by 16.">
+<line x1="450" y1="242" x2="536" y2="242" stroke="var(--muted)" stroke-width="1" marker-end="url(#m3)"/>
+<rect x="540" y="222" width="120" height="40" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="600" y="245" text-anchor="middle">No: change</text>
+<text class="ts" x="600" y="257" text-anchor="middle">the nonce</text>
+<path d="M600 222 L600 176 L504 176" fill="none" stroke="var(--muted)" stroke-width="1" marker-end="url(#m3)"/>
+</g>
+<g class="fstep" data-step="6" data-note="Under target at last: broadcast. Every node on the network re-checks the win with a double SHA 256 calculation.">
+<line x1="340" y1="262" x2="340" y2="284" stroke="var(--muted)" stroke-width="1" marker-end="url(#m3)"/>
+<rect x="200" y="288" width="280" height="40" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+<text class="tl" x="340" y="312" text-anchor="middle">Yes: broadcast the block</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 3.1</span> Build the block once, then guess nonces until the fingerprint drops under the target.</figcaption>
+</figure>
+
+<aside class="note"><p>The puzzle is deliberately shortcut resistant. Miners test header candidates until a double SHA-256 result falls below the numeric target. A node checks that proof with one double hash, then separately validates every transaction and consensus rule.</p></aside>
+
+<h2 id="s4"><span class="num">04</span> The nonce and the clock</h2>
+<p>The <strong>nonce</strong> is not an anti replay value here. It is the fastest header field to vary between attempts. Miners can also alter the timestamp, version bits, transaction selection, or an extraNonce in the coinbase that changes the Merkle root. The timestamp helps enforce time bounds and retune difficulty every 2,016 blocks. A valid timestamp must be greater than the median of the previous 11 blocks and no more than two hours ahead of the validating node's clock.</p>
+
+<figure data-kind="seq">
+<svg viewBox="0 0 680 150" role="img"><title>The block header fields</title><desc>The 80-byte header has six fields, with the nonce as the fastest field to vary</desc>
+<text class="tl" x="30" y="28">The header, 80 bytes</text>
+<g class="fstep" data-step="1" data-note="The fingerprint of the previous block. This one field is what welds blocks into a chain.">
+<rect x="30" y="44" width="170" height="48" fill="var(--q-prev)"/>
+<text class="tsp" x="115" y="64" text-anchor="middle">Prev hash</text>
+<text class="tsp" x="115" y="82" text-anchor="middle">32 B</text>
+</g>
+<g class="fstep" data-step="2" data-note="Every transaction in the block summed into one 32-byte root.">
+<rect x="200" y="44" width="170" height="48" fill="var(--q-mrk)"/>
+<text class="tsp" x="285" y="64" text-anchor="middle">Merkle root</text>
+<text class="tsp" x="285" y="82" text-anchor="middle">32 B</text>
+</g>
+<g class="fstep" data-step="3" data-note="Version and softfork tracking flags.">
+<rect x="370" y="44" width="70" height="48" fill="var(--q-ver)"/>
+<text class="tsp" x="405" y="64" text-anchor="middle">Version</text>
+<text class="tsp" x="405" y="82" text-anchor="middle">4 B</text>
+</g>
+<g class="fstep" data-step="4" data-note="The timestamp, clamped by consensus between the median of the last 11 blocks and the checker's clock plus two hours.">
+<rect x="440" y="44" width="70" height="48" fill="var(--q-time)"/>
+<text class="tsp" x="475" y="64" text-anchor="middle">Time</text>
+<text class="tsp" x="475" y="82" text-anchor="middle">4 B</text>
+</g>
+<g class="fstep" data-step="5" data-note="The target in compact form: how hard a valid hash must be. Retuned every 2016 blocks.">
+<rect x="510" y="44" width="70" height="48" fill="var(--q-bits)"/>
+<text class="tsp" x="545" y="64" text-anchor="middle">Bits</text>
+<text class="tsp" x="545" y="82" text-anchor="middle">4 B</text>
+</g>
+<g class="fstep" data-step="6" data-note="The fastest field to vary. Four bytes provide about 4.3 billion values before the miner changes the timestamp or coinbase extraNonce.">
+<rect x="580" y="44" width="70" height="48" fill="var(--q-nonce)"/>
+<text class="tsp" x="615" y="64" text-anchor="middle">Nonce</text>
+<text class="tsp" x="615" y="82" text-anchor="middle">4 B</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 4.1</span> The 80-byte header as six cells. Previous hash and Merkle root take 64 bytes, while the nonce is the fastest field to vary.</figcaption>
+</figure>
+
+<h2 id="s5"><span class="num">05</span> Nobody trusts anybody</h2>
+<p>When a miner announces a block, every <strong>node</strong> re checks the whole thing locally. Is the hash under the target? Are the signatures valid? A double spend is a fail. So is a coinbase past its cap. Break one rule and the block is discarded, not relayed. Cheating isn't forbidden on paper. It's simply the most expensive way to burn your own money.</p>
+
+<figure data-kind="seq">
+<svg viewBox="0 0 680 250" role="img"><title>Independent verification</title><desc>The block reaches several nodes and each one checks it alone, then accepts or rejects</desc>
+<defs><marker id="m5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker></defs>
+<g class="fstep" data-step="1" data-note="A miner finds a valid block and shouts it to its peers. Nobody is asked to trust anyone.">
+<rect x="250" y="20" width="180" height="40" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="340" y="44" text-anchor="middle">The miner broadcasts</text>
+<line x1="300" y1="60" x2="160" y2="94" stroke="var(--muted)" stroke-width="1" marker-end="url(#m5)"/>
+<line x1="340" y1="60" x2="340" y2="94" stroke="var(--muted)" stroke-width="1" marker-end="url(#m5)"/>
+<line x1="380" y1="60" x2="520" y2="94" stroke="var(--muted)" stroke-width="1" marker-end="url(#m5)"/>
+</g>
+<g class="fstep" data-step="2" data-note="The block fans out. Every full node receives its own complete copy.">
+<rect x="70" y="98" width="160" height="36" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="150" y="120" text-anchor="middle">Node A</text>
+<rect x="260" y="98" width="160" height="36" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="340" y="120" text-anchor="middle">Node B</text>
+<rect x="450" y="98" width="160" height="36" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="530" y="120" text-anchor="middle">Node C</text>
+</g>
+<g class="fstep" data-step="3" data-note="Each node checks alone: hash under target, signatures valid, no double spend, coinbase within cap.">
+<rect x="70" y="150" width="540" height="46" fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" x="340" y="170" text-anchor="middle">every node checks alone: the hash, the signatures, no double spend, the coinbase cap</text>
+<text class="ts" x="340" y="188" text-anchor="middle">nobody asks anyone for trust</text>
+</g>
+<g class="fstep" data-step="4" data-note="Pass every check and the node accepts and relays. Fail one and the block is discarded, not repaired.">
+<line x1="200" y1="196" x2="197" y2="212" stroke="var(--muted)" stroke-width="1" marker-end="url(#m5)"/>
+<line x1="480" y1="196" x2="483" y2="212" stroke="var(--muted)" stroke-width="1" marker-end="url(#m5)"/>
+<rect x="60" y="216" width="260" height="30" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+<text class="ts" x="190" y="235" text-anchor="middle">all checks pass: accept and relay</text>
+<rect x="360" y="216" width="260" height="30" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="490" y="235" text-anchor="middle">any check fails: drop it</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 5.1</span> Each node re checks the block on its own and either accepts and relays it or throws it away.</figcaption>
+</figure>
+
+<h2 id="s6"><span class="num">06</span> Why the history seals itself</h2>
+<p>Every block stores the hash of the block before it. That link is the chain. Change a transaction inside an old block and its Merkle root changes, which changes its header hash and breaks the next block's link. Rewriting that history requires rebuilding the proof of work from that point while the honest chain continues growing.</p>
+
+<figure data-kind="toggle" data-ta="sealed" data-tb="tampered">
+<svg viewBox="0 0 680 170" role="img"><title>Blocks chained by hashes</title><desc>Editing one block breaks every link after it</desc>
+<defs><marker id="m6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--bad)" stroke-width="1.5"/></marker>
+<marker id="m6g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--good)" stroke-width="1.5"/></marker></defs>
+<g class="stA" data-note="Sealed: each block stores the hash of the one before it, so the links hold and the history is fixed.">
+<rect x="40" y="50" width="160" height="70" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="120" y="74" text-anchor="middle">Block 1</text>
+<text class="ts" x="120" y="96" text-anchor="middle">sealed by its hash</text>
+<rect x="260" y="50" width="160" height="70" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="340" y="74" text-anchor="middle">Block 2</text>
+<text class="ts" x="340" y="96" text-anchor="middle">prev hash matches</text>
+<rect x="480" y="50" width="160" height="70" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="560" y="74" text-anchor="middle">Block 3</text>
+<text class="ts" x="560" y="96" text-anchor="middle">prev hash matches</text>
+<line x1="260" y1="85" x2="204" y2="85" stroke="var(--good)" stroke-width="1" marker-end="url(#m6g)"/>
+<line x1="480" y1="85" x2="424" y2="85" stroke="var(--good)" stroke-width="1" marker-end="url(#m6g)"/>
+<text class="ts" x="340" y="145" text-anchor="middle">every block carries the hash of the one before it; the links hold</text>
+</g>
+<g class="stB" data-note="Forge one transaction inside Block 1 and its hash changes. Block 2's prev link turns false, and the break cascades. The only repair is re-mining every block after it, mid-race.">
+<rect x="40" y="50" width="160" height="70" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="tl" x="120" y="74" text-anchor="middle">Block 1</text>
+<text class="ts" x="120" y="96" text-anchor="middle">edited, new hash</text>
+<rect x="260" y="50" width="160" height="70" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="tl" x="340" y="74" text-anchor="middle">Block 2</text>
+<text class="ts" x="340" y="96" text-anchor="middle">prev link now wrong</text>
+<rect x="480" y="50" width="160" height="70" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="tl" x="560" y="74" text-anchor="middle">Block 3</text>
+<text class="ts" x="560" y="96" text-anchor="middle">broken as well</text>
+<line x1="260" y1="85" x2="204" y2="85" stroke="var(--bad)" stroke-width="1" marker-end="url(#m6)"/>
+<line x1="480" y1="85" x2="424" y2="85" stroke="var(--bad)" stroke-width="1" marker-end="url(#m6)"/>
+<text class="ts" x="340" y="145" text-anchor="middle">one edit breaks every link after it; the only repair is re-mining them all</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 6.1</span> Edit one old block and every link after it snaps. Re mining all of them, mid race, is the only repair.</figcaption>
+</figure>
+
+<h2 id="s7"><span class="num">07</span> When two miners win at once</h2>
+<p>You'll get two miners finding a block in the same second. Two different blocks with different hashes. The network splits for a moment. The system <strong>does not judge which block is better</strong>; it waits for the next draw. Whoever extends one branch first gives it more accumulated work, and everyone jumps to it. The losing branch is called stale. Its transactions go back into the queue. The rule is <strong>the most work</strong>, not the most blocks. Historic forks and the exact tiebreak are in <a href="bitcoin-from-zero.html#forks">Bitcoin from zero</a>; other chains split the question differently, <a href="solana.html#poh">Solana orders first</a> and <a href="sui.html#consensus">Sui chases finality first</a>.</p>
+
+<figure data-kind="toggle" data-ta="the tie" data-tb="resolved">
+<svg viewBox="0 0 680 210" role="img"><title>Fork resolution</title><desc>Two branches compete and the next draw settles it for the one with more work</desc>
+<defs><marker id="m7a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker>
+<marker id="m7b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--good)" stroke-width="1.5"/></marker></defs>
+<g class="stA" data-note="Two miners find valid blocks in the same second. Both are honest. The system does not judge which is better; it waits for the next draw.">
+<rect x="40" y="85" width="90" height="40" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tm" x="85" y="109" text-anchor="middle">104</text>
+<rect x="200" y="35" width="90" height="40" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tm" x="245" y="59" text-anchor="middle">105-A</text>
+<rect x="200" y="135" width="90" height="40" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text class="tm" x="245" y="159" text-anchor="middle" fill="var(--muted)">105-B</text>
+<line x1="200" y1="60" x2="140" y2="95" stroke="var(--muted)" stroke-width="1" marker-end="url(#m7a)"/>
+<line x1="200" y1="150" x2="140" y2="115" stroke="var(--muted)" stroke-width="1" marker-end="url(#m7a)"/>
+<text class="ts" x="415" y="100" text-anchor="middle">two valid blocks at once: nobody picks, everyone waits</text>
+</g>
+<g class="stB" data-note="The next draw lands on branch A. It now has more accumulated work, everyone jumps to it, and 105-B turns stale.">
+<rect x="40" y="85" width="90" height="40" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tm" x="85" y="109" text-anchor="middle">104</text>
+<rect x="200" y="35" width="90" height="40" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+<text class="tm" x="245" y="59" text-anchor="middle">105-A</text>
+<rect x="360" y="35" width="90" height="40" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+<text class="tm" x="405" y="59" text-anchor="middle">106-A</text>
+<rect x="200" y="135" width="90" height="40" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text class="tm" x="245" y="159" text-anchor="middle" fill="var(--muted)">105-B</text>
+<line x1="200" y1="60" x2="140" y2="95" stroke="var(--good)" stroke-width="1" marker-end="url(#m7b)"/>
+<line x1="200" y1="150" x2="140" y2="115" stroke="var(--muted)" stroke-width="1" marker-end="url(#m7a)"/>
+<line x1="360" y1="55" x2="294" y2="55" stroke="var(--good)" stroke-width="1" marker-end="url(#m7b)"/>
+<text class="ts" x="415" y="100" text-anchor="middle">the branch with more work wins</text>
+<text class="ts" x="245" y="200" text-anchor="middle">105-B is stale now, its transactions return to the queue</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 7.1</span> The next draw settles it: the branch with more accumulated work wins and 105-B turns stale.</figcaption>
+</figure>
+
+<h2 id="s8"><span class="num">08</span> How the chain knows a payment is yours</h2>
+<p>There's no balance field anywhere. What you own are <strong>signed cheques made out to you</strong>, the UTXOs. To pay, you destroy an old cheque and mint new ones, and your signature proves the right to do it. Keys come in a pair. Private stays secret. Public is derived from it. The private key produces a signature, and anyone holding the public key can check it without ever seeing the secret. Alter one byte of the payment and the signature breaks.</p>
+
+<figure data-kind="seq">
+<svg viewBox="0 0 680 200" role="img"><title>Signing and verification</title><desc>The private key signs and the public key verifies without revealing the secret</desc>
+<defs><marker id="m8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker></defs>
+<g class="fstep" data-step="1" data-note="The private key never leaves the sender. It produces a signature (r,s) over the exact bytes of the payment.">
+<rect x="30" y="40" width="180" height="120" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="120" y="66" text-anchor="middle">The sender</text>
+<text class="ts" x="120" y="92" text-anchor="middle">private key (secret)</text>
+<text class="ts" x="120" y="118" text-anchor="middle">signs the payment</text>
+<text class="tm" x="120" y="142" text-anchor="middle">signature (r,s)</text>
+</g>
+<g class="fstep" data-step="2" data-note="Only the payment and the signature travel. Not the secret, ever.">
+<line x1="214" y1="100" x2="246" y2="100" stroke="var(--muted)" stroke-width="1" marker-end="url(#m8)"/>
+<rect x="250" y="70" width="180" height="60" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="340" y="94" text-anchor="middle">on the network:</text>
+<text class="ts" x="340" y="114" text-anchor="middle">payment + signature</text>
+</g>
+<g class="fstep" data-step="3" data-note="Any node checks the signature with the public key. Alter one byte of the payment and the check fails.">
+<line x1="434" y1="100" x2="466" y2="100" stroke="var(--muted)" stroke-width="1" marker-end="url(#m8)"/>
+<rect x="470" y="40" width="180" height="120" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+<text class="tl" x="560" y="66" text-anchor="middle">Any node</text>
+<text class="ts" x="560" y="92" text-anchor="middle">public key</text>
+<text class="ts" x="560" y="118" text-anchor="middle">verifies it</text>
+<text class="ts" x="560" y="142" text-anchor="middle">the secret never shows</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 8.1</span> The private key signs, any node verifies with the public key, and the secret never leaves the sender.</figcaption>
+</figure>
+
+<aside class="note bad"><p>The signature proves I own this cheque. You've also got the link back to the previous transaction, which proves this cheque really is mine. The sum check proves I'm not minting money out of thin air. They let every node accept your payment with no trust in anyone.</p></aside>
+
+<h2 id="s9"><span class="num">09</span> The address is not the public key</h2>
+<p>A classic Bitcoin P2PKH address is <strong>derived</strong> from a public key. Hash it with SHA-256 then RIPEMD-160, add a version byte and checksum, then encode the result in Base58Check. The checksum catches common typing errors and the version distinguishes networks. This describes legacy P2PKH addresses. SegWit and Taproot use different address encodings and scripts.</p>
+
+<figure data-kind="seq">
+<svg viewBox="0 0 680 130" role="img"><title>Deriving the address</title><desc>From the public key through hash, checksum and encoding to the final address</desc>
+<defs><marker id="m9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker></defs>
+<g class="fstep" data-step="1" data-note="The public key: a point on the secp256k1 curve, derived from the secret but useless for recovering it.">
+<rect x="20" y="45" width="120" height="44" fill="var(--q-ver)"/>
+<text class="tsp" x="80" y="70" text-anchor="middle">Public key</text>
+</g>
+<g class="fstep" data-step="2" data-note="SHA-256, then RIPEMD-160. Twenty bytes out, and no way back.">
+<line x1="144" y1="67" x2="166" y2="67" stroke="var(--muted)" stroke-width="1" marker-end="url(#m9)"/>
+<rect x="170" y="45" width="120" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="230" y="70" text-anchor="middle">HASH160</text>
+</g>
+<g class="fstep" data-step="3" data-note="A version byte names the network, four checksum bytes catch typos before funds move.">
+<line x1="294" y1="67" x2="316" y2="67" stroke="var(--muted)" stroke-width="1" marker-end="url(#m9)"/>
+<rect x="320" y="45" width="120" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="380" y="63" text-anchor="middle">+ version</text>
+<text class="ts" x="380" y="81" text-anchor="middle">+ checksum</text>
+</g>
+<g class="fstep" data-step="4" data-note="Base58 strips the confusing characters (0, O, I, l) and encodes the rest.">
+<line x1="444" y1="67" x2="466" y2="67" stroke="var(--muted)" stroke-width="1" marker-end="url(#m9)"/>
+<rect x="470" y="45" width="120" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="530" y="70" text-anchor="middle">Base58</text>
+</g>
+<g class="fstep" data-step="5" data-note="The address is a hash of the key, not the key. What the world sees cannot be used to reconstruct what signs.">
+<line x1="594" y1="67" x2="596" y2="67" stroke="var(--muted)" stroke-width="1" marker-end="url(#m9)"/>
+<rect x="600" y="45" width="60" height="44" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="ts" x="630" y="70" text-anchor="middle">1K1j&#8230;</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 9.1</span> Public key to address: hash, version byte, checksum, Base58.</figcaption>
+</figure>
+
+<h2 id="s10"><span class="num">10</span> UTXO versus the account model</h2>
+<p>Bitcoin runs on <strong>UTXO</strong>, the cheque model. Each output can be spent once. Ethereum uses accounts, where balances and contract state change in place. A repeated Bitcoin spend references an output that is already consumed, so validation rejects it. Explicit UTXO dependencies can also expose independent work. Account chains use per account nonces to order transactions and reject repeats.</p>
+
+<figure data-kind="toggle" data-ta="accounts" data-tb="UTXO">
+<svg viewBox="0 0 680 200" role="img"><title>A replay attack in both models</title><desc>An account model without a nonce pays the same transfer twice; UTXO rejects the copy by itself</desc>
+<g class="stA" data-note="Accounts: one balances table edited in place. Replay the same signed transfer and it simply executes again, so Omar pays twice. The fix is bolting a nonce counter onto every account.">
+<rect x="30" y="30" width="290" height="150" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="175" y="54" text-anchor="middle">Accounts, no nonce</text>
+<text class="ts" x="175" y="82" text-anchor="middle">copy 1: move 5, accepted</text>
+<text class="ts" x="175" y="106" text-anchor="middle">copy 2: move 5, accepted</text>
+<text class="tl" x="175" y="138" text-anchor="middle" fill="var(--bad)">Omar is down 10: robbed</text>
+<text class="ts" x="175" y="162" text-anchor="middle">you must bolt on a nonce counter</text>
+</g>
+<g class="stB" data-note="UTXO: outputs are consumed on spend. A repeated spend references an output that is no longer unspent, so validation rejects it.">
+<rect x="360" y="30" width="290" height="150" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="505" y="54" text-anchor="middle">UTXO</text>
+<text class="ts" x="505" y="82" text-anchor="middle">copy 1: spend cheque #ab, accepted</text>
+<text class="ts" x="505" y="106" text-anchor="middle">the cheque is gone</text>
+<text class="tl" x="505" y="138" text-anchor="middle" fill="var(--good)">copy 2: rejected</text>
+<text class="ts" x="505" y="162" text-anchor="middle">the spent output cannot be reused</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 10.1</span> Without a nonce the account model pays the same transfer twice. UTXO rejects the copy without any extra machinery.</figcaption>
+</figure>
+
+<h2 id="s11"><span class="num">11</span> The blockchain is not a data structure</h2>
+<p>There's no <code>import blockchain</code> anywhere. A blockchain is <strong>a system architecture</strong>, not a data type, the same way a database or an operating system isn't one structure. It's an assembly. A hash linked list for the blocks, a Merkle tree for the transactions, a key value store for disk, a set for the UTXO, a hash map for the mempool. If one structure must represent it, take the hash linked list: a linked list whose pointer is a hash of the content, so any forgery snaps the chain.</p>
+
+<figure data-kind="static">
+<svg viewBox="0 0 680 190" role="img"><title>The parts of a blockchain</title><desc>One system assembled from several ordinary data structures</desc>
+<g data-note="There is no import blockchain anywhere. It is an architecture assembled from ordinary structures, each doing one job.">
+<rect x="190" y="20" width="300" height="40" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="340" y="44" text-anchor="middle">a blockchain is a system</text>
+</g>
+<g data-note="A linked list whose pointer is the hash of the content. Any edit changes the hash and snaps the link.">
+<rect x="30" y="90" width="130" height="80" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="95" y="118" text-anchor="middle">hash-linked list</text>
+<text class="ts" x="95" y="146" text-anchor="middle">joins the blocks</text>
+</g>
+<g data-note="Commits transaction identifiers into one root. Membership is provable with log(n) sibling hashes.">
+<rect x="175" y="90" width="130" height="80" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="240" y="118" text-anchor="middle">Merkle tree</text>
+<text class="ts" x="240" y="146" text-anchor="middle">commits transactions</text>
+</g>
+<g data-note="LevelDB-style storage where blocks actually live on disk.">
+<rect x="320" y="90" width="130" height="80" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="385" y="118" text-anchor="middle">key-value DB</text>
+<text class="ts" x="385" y="146" text-anchor="middle">stores the blocks</text>
+</g>
+<g data-note="The UTXO set: every unspent cheque, consulted for every input of every transaction.">
+<rect x="465" y="90" width="90" height="80" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="510" y="118" text-anchor="middle">set</text>
+<text class="ts" x="510" y="146" text-anchor="middle">UTXO</text>
+</g>
+<g data-note="The mempool: pending transactions queued by fee, waiting for a block.">
+<rect x="570" y="90" width="90" height="80" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="615" y="118" text-anchor="middle">hash map</text>
+<text class="ts" x="615" y="146" text-anchor="middle">mempool</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 11.1</span> One system assembled from several ordinary structures, each doing one job.</figcaption>
+</figure>
+
+<h2 id="s12"><span class="num">12</span> Monero makes privacy mandatory</h2>
+<p>Bitcoin's ledger is public. Monero hides receivers with one time addresses, obscures the signer with a ring signature, and hides amounts with RingCT while still proving balance. <strong>Transaction privacy is mandatory</strong>, so private transactions share an anonymity set. Network metadata remains a separate problem. Monero uses relay protections such as Dandelion++, but Tor or I2P can still matter against network observers. The machinery is dissected in <a href="monero-under-the-hood.html#stealth">Monero under the hood</a>; Zcash makes a different tradeoff with <a href="zcash.html#shielded">proofs instead of decoys</a>.</p>
+
+<figure data-kind="static">
+<svg viewBox="0 0 680 170" role="img"><title>Monero's three hidden layers</title><desc>Receiver, sender and amount are hidden on-chain; the network layer stays exposed</desc>
+<g data-note="Stealth addresses: a fresh one-time address for every payment. On-chain, payments cannot be linked to the receiver.">
+<rect x="30" y="30" width="200" height="70" fill="var(--q-ver)"/>
+<text class="tp" x="130" y="56" text-anchor="middle">The receiver</text>
+<text class="tsp" x="130" y="80" text-anchor="middle">stealth address</text>
+</g>
+<g data-note="Ring signatures: one real signer hidden among 16 decoys. Which one actually signed is unknowable.">
+<rect x="240" y="30" width="200" height="70" fill="var(--q-mrk)"/>
+<text class="tp" x="340" y="56" text-anchor="middle">The sender</text>
+<text class="tsp" x="340" y="80" text-anchor="middle">ring signature, 1 of 16</text>
+</g>
+<g data-note="RingCT: amounts become commitments that still provably balance to zero.">
+<rect x="450" y="30" width="200" height="70" fill="var(--q-time)"/>
+<text class="tp" x="550" y="56" text-anchor="middle">The amount</text>
+<text class="tsp" x="550" y="80" text-anchor="middle">RingCT</text>
+</g>
+<g data-note="Network metadata remains separate from on-chain privacy. Relay protections help, while Tor or I2P can add another layer.">
+<rect x="120" y="118" width="440" height="36" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="340" y="140" text-anchor="middle">network metadata needs its own protections</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 12.1</span> Receiver, sender and amount hidden on chain; the network layer stays as exposed as Bitcoin's.</figcaption>
+</figure>
+
+<aside class="note good"><p>Bitcoin prioritizes a publicly auditable ledger and proof of work security. Monero prioritizes transaction privacy. Security depends on the adversary and the property you need to protect.</p></aside>
+
+<h2 id="s13"><span class="num">13</span> MEV, the dark side of ordering</h2>
+<p>Whoever builds the block has ordering power. Taking higher fee transactions first is the normal auction for scarce block space. MEV appears when a builder earns from relative ordering, such as placing a buy before a victim and a sell after it. Plain Bitcoin transfers usually expose less ordering value than on chain exchange trades, but Bitcoin still has fee ordering and other forms of miner extractable value. <a href="solana.html#machine">Solana's ordering market</a> and <a href="bitcoin-from-zero.html#mev">Bitcoin's corner of it</a> are covered in their own essays.</p>
+
+<figure data-kind="toggle" data-ta="fair order" data-tb="sandwiched">
+<svg viewBox="0 0 680 160" role="img"><title>The sandwich attack</title><desc>The builder puts his buy before the victim and his sell after her</desc>
+<defs><marker id="m13" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker></defs>
+<g class="stA" data-note="Without a frontrunning builder, the victim's buy executes first against the pool. Plain Bitcoin transfers generally expose less ordering value than an on-chain exchange trade.">
+<rect x="260" y="55" width="160" height="50" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="340" y="76" text-anchor="middle">the victim buys</text>
+<text class="ts" x="340" y="94" text-anchor="middle">at the market price</text>
+<text class="ts" x="340" y="138" text-anchor="middle">no builder in the queue: the order carries nothing to steal</text>
+</g>
+<g class="stB" data-note="The builder sees the pending buy, jumps in front of it, and sells right behind it. The spread he created is paid by the victim.">
+<rect x="40" y="55" width="160" height="50" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="120" y="76" text-anchor="middle">1. the builder buys</text>
+<text class="ts" x="120" y="94" text-anchor="middle">ahead of the victim</text>
+<rect x="260" y="55" width="160" height="50" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="ts" x="340" y="76" text-anchor="middle">2. the victim buys</text>
+<text class="ts" x="340" y="94" text-anchor="middle">at a worse price</text>
+<rect x="480" y="55" width="160" height="50" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="ts" x="560" y="76" text-anchor="middle">3. the builder sells</text>
+<text class="ts" x="560" y="94" text-anchor="middle">and pockets the spread</text>
+<line x1="204" y1="80" x2="256" y2="80" stroke="var(--muted)" stroke-width="1" marker-end="url(#m13)"/>
+<line x1="424" y1="80" x2="476" y2="80" stroke="var(--muted)" stroke-width="1" marker-end="url(#m13)"/>
+<text class="ts" x="340" y="138" text-anchor="middle">the builder's profit is the price difference he forced on the victim</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 13.1</span> The builder's buy lands before the victim and his sell right after; the profit is the price gap he created.</figcaption>
+</figure>
+
+<p class="facts">This page sums up a long conversation series on how Bitcoin and crypto work. Details and live experiments are in <a href="bitcoin-from-zero.html">Bitcoin from zero</a> and <a href="monero-under-the-hood.html">Monero under the hood</a>. As of September 2026 the block reward is 3.125 BTC. Monero ring size is 16. FCMP++ is audited but not yet activated.</p>
+
+</main>
+</div>
+
+<footer class="band foot">
+  <nav class="pn" aria-label="Guide navigation"><a href="index.html" rel="prev"><small>Previous</small><strong>All guides</strong></a><a href="bitcoin-from-zero.html" rel="next"><small>Next</small><strong>Bitcoin</strong></a></nav>
+  <p class="colophon">Written by <a href="https://moamenbasel.com">Moamen Basel</a>, security engineer at <a href="https://greycorelabs.com">Grey Core Labs</a>. Moamen Basel, 2026, facts current September 2026. <a href="index.html">Index</a></p>
+</footer>
+
+<script>
+(function(){
+var d=document.documentElement;
+var saved=null;
+try{saved=localStorage.getItem('cln-theme')}catch(e){}
+d.dataset.theme=saved||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+function flip(){
+var dark=d.dataset.theme==='dark';
+document.getElementById('themenow').textContent=dark?'Dark':'Light';
+document.getElementById('themego').textContent=dark?'Light':'Dark';
+}
+flip();
+document.getElementById('themego').addEventListener('click',function(){
+d.dataset.theme=d.dataset.theme==='dark'?'light':'dark';
+try{localStorage.setItem('cln-theme',d.dataset.theme)}catch(e){}
+flip();
+});
+var p=document.getElementById('prog');
+function prog(){
+var m=d.scrollHeight-window.innerHeight;
+p.style.transform='scaleX('+(m>0?window.scrollY/m:0)+')';
+p.style.visibility=window.scrollY>8?'visible':'hidden';
+}
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+addEventListener('scrollend',prog);
+}else{
+var queued=false;
+addEventListener('scroll',function(){
+if(!queued){queued=true;requestAnimationFrame(function(){prog();queued=false})}
+});
+}
+addEventListener('resize',prog);
+prog();
+var ar=document.querySelector('.lang a');
+function arhash(){
+var h=location.hash;
+ar.setAttribute('href','crypto-summary-ar.html'+(/^#s\d+$/.test(h)?h:''));
+}
+addEventListener('hashchange',arhash);
+arhash();
+var links=document.querySelectorAll('nav.rail a');
+if('IntersectionObserver' in window){
+var io=new IntersectionObserver(function(entries){
+entries.forEach(function(en){
+if(en.isIntersecting){
+links.forEach(function(l){
+l.classList.toggle('on',l.getAttribute('href')==='#'+en.target.id);
+});
+}
+});
+},{rootMargin:'0px 0px -72% 0px'});
+document.querySelectorAll('main h2[id]').forEach(function(h){io.observe(h)});
+}
+})();
+</script>
+<script>
+(function(){
+var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var st=document.createElement('style');
+st.textContent='figure{position:relative}.figctl{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}.figctl button{font-family:var(--mono);font-size:11px;line-height:1.2;padding:4px 10px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;transition:border-color .15s ease,color .15s ease}.figctl button:hover{border-color:var(--accent);color:var(--ink)}.figctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.figcap{position:absolute;top:.6rem;left:.6rem;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.45rem .65rem;font-family:var(--sans);font-size:12px;line-height:1.5;color:var(--muted);pointer-events:none;opacity:0;transform:translateY(2px);transition:opacity .12s ease,transform .12s ease;z-index:4;box-shadow:0 4px 14px rgba(0,0,0,.08)}.figcap.on{opacity:1;transform:none}figure svg [data-note]{cursor:help}figure svg [data-note] rect,figure svg [data-note] path,figure svg [data-note] line{transition:stroke .15s ease}[data-note].hi:is(rect,path,line),[data-note].hi rect,[data-note].hi path,[data-note].hi line{stroke:var(--accent)!important}[data-note].hi text{fill:var(--accent)!important}.stA,.stB{transition:opacity .25s var(--ease),transform .25s var(--ease)}svg.fa .stB{opacity:0;transform:translateY(6px);pointer-events:none}svg.fb .stA{opacity:0;transform:translateY(6px);pointer-events:none}.fstep{transition:opacity .25s var(--ease)}.fstep.dim{opacity:.22}.fstep.cur{animation:figpulse 1.3s ease-in-out infinite}@keyframes figpulse{0%,100%{opacity:1}50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.fstep.cur{animation:none}.stA,.stB,.fstep{transition:none}}';
+document.head.appendChild(st);
+var GEOM={rect:1,circle:1,ellipse:1,line:1,polyline:1,polygon:1,path:1};
+function clean(el){el.style.transition='';el.style.opacity='';el.style.transform='';el.style.strokeDasharray='';el.style.strokeDashoffset=''}
+function drawin(fig){
+var svg=fig.querySelector('svg');
+if(!svg)return;
+if(fig._cl){clearTimeout(fig._cl);fig._cl=0}
+if(fig._ai){clearInterval(fig._ai);fig._ai=0}
+if(fig._at){clearTimeout(fig._at);fig._at=0}
+var shapes=[],texts=[];
+[].forEach.call(svg.querySelectorAll('*'),function(el){
+if(el.closest('defs'))return;
+if(GEOM[el.tagName])shapes.push(el);
+else if(el.tagName==='text')texts.push(el);
+});
+if(RM){shapes.forEach(clean);texts.forEach(clean);return}
+var sd=Math.min(40,480/Math.max(shapes.length,1));
+shapes.forEach(function(el){
+var L=0,sk=el.getAttribute('stroke');
+if(sk&&sk!=='none'){try{L=el.getTotalLength()}catch(e){L=0}}
+el.style.transition='none';el.style.opacity='0';
+el._l=L>1?L:0;
+if(el._l){el.style.strokeDasharray=L+' '+L;el.style.strokeDashoffset=L}
+});
+texts.forEach(function(el){el.style.transition='none';el.style.opacity='0';el.style.transform='translateY(4px)'});
+fig.getBoundingClientRect();
+shapes.forEach(function(el,i){
+var d=Math.round(i*sd),tr='opacity 520ms cubic-bezier(.25,.8,.35,1) '+d+'ms';
+if(el._l)tr+=', stroke-dashoffset 520ms cubic-bezier(.25,.8,.35,1) '+d+'ms';
+el.style.transition=tr;el.style.opacity='1';
+if(el._l)el.style.strokeDashoffset='0';
+});
+var td=Math.min(60,420/Math.max(texts.length,1));
+texts.forEach(function(el,i){
+var d=Math.round(320+i*td);
+el.style.transition='opacity 420ms cubic-bezier(.25,.8,.35,1) '+d+'ms, transform 420ms cubic-bezier(.25,.8,.35,1) '+d+'ms';
+el.style.opacity='1';el.style.transform='none';
+});
+fig._cl=setTimeout(function(){shapes.forEach(clean);texts.forEach(clean)},1250);
+}
+function capSet(fig,txt,on){
+var c=fig._cap;
+if(!c)return;
+if(txt!=null)c.textContent=txt;
+c.classList.toggle('on',!!on&&!!c.textContent);
+}
+function wireNotes(fig){
+var svg=fig.querySelector('svg');
+var c=document.createElement('div');
+c.className='figcap';c.setAttribute('aria-hidden','true');
+fig.appendChild(c);fig._cap=c;
+var cur=null;
+function show(el){if(cur&&cur!==el)cur.classList.remove('hi');cur=el;el.classList.add('hi');capSet(fig,el.getAttribute('data-note'),true)}
+function hide(el){el.classList.remove('hi');if(cur===el){cur=null;capSet(fig,null,false)}}
+[].forEach.call(svg.querySelectorAll('[data-note]'),function(el){
+el.addEventListener('pointerenter',function(e){if(e.pointerType!=='touch')show(el)});
+el.addEventListener('pointerleave',function(e){if(e.pointerType!=='touch')hide(el)});
+el.addEventListener('pointerdown',function(e){if(e.pointerType==='touch'){cur===el?hide(el):show(el)}});
+});
+}
+function wireSeq(fig){
+var svg=fig.querySelector('svg');
+var steps=[].slice.call(svg.querySelectorAll('[data-step]')).sort(function(a,b){return (+a.getAttribute('data-step'))-(+b.getAttribute('data-step'))});
+if(!steps.length)return;
+var btn=fig._ctl.querySelector('[data-act="step"]');
+function reset(){steps.forEach(function(g){g.classList.remove('dim','cur')});fig._si=-1;btn.textContent='Step';capSet(fig,null,false)}
+function show(i){
+fig._si=i;
+steps.forEach(function(g,j){g.classList.toggle('dim',j<i);g.classList.toggle('cur',j===i)});
+btn.textContent='Step '+(i+1)+'/'+steps.length;
+var n=steps[i].getAttribute('data-note');
+capSet(fig,n,!!n);
+}
+btn.addEventListener('click',function(){show(((fig._si|0)+1)%steps.length)});
+fig._reset=reset;
+if(!RM){
+fig._auto=function(){
+var i=0;show(0);
+fig._ai=setInterval(function(){i++;if(i>=steps.length){reset();return}show(i)},900);
+};
+}
+}
+function wireToggle(fig){
+var svg=fig.querySelector('svg');
+svg.classList.add('fa');
+var btn=fig._ctl.querySelector('[data-act="toggle"]');
+var A=fig.getAttribute('data-ta')||'Before',B=fig.getAttribute('data-tb')||'After';
+btn.textContent=B;
+btn.addEventListener('click',function(){
+var b=svg.classList.toggle('fb');
+svg.classList.toggle('fa',!b);
+btn.textContent=b?A:B;
+});
+fig._reset=function(){svg.classList.add('fa');svg.classList.remove('fb');btn.textContent=B};
+}
+function wire(fig){
+var svg=fig.querySelector('svg');
+if(!svg)return 0;
+var kind=fig.getAttribute('data-kind')||'static';
+var d=document.createElement('div');
+d.className='figctl';
+var r=document.createElement('button');
+r.type='button';r.textContent='Replay';r.setAttribute('data-act','replay');
+d.appendChild(r);
+if(kind==='seq'){
+var s=document.createElement('button');
+s.type='button';s.textContent='Step';s.setAttribute('data-act','step');
+d.appendChild(s);
+}
+if(kind==='toggle'){
+var t=document.createElement('button');
+t.type='button';t.setAttribute('data-act','toggle');
+d.appendChild(t);
+}
+fig.appendChild(d);fig._ctl=d;
+r.addEventListener('click',function(){if(fig._reset)fig._reset();drawin(fig)});
+wireNotes(fig);
+if(kind==='seq')wireSeq(fig);
+else if(kind==='toggle')wireToggle(fig);
+return 1;
+}
+function activate(fig){
+drawin(fig);
+if(fig._auto)fig._at=setTimeout(fig._auto,700);
+}
+var figs=[].slice.call(document.querySelectorAll('figure'));
+var wired=0;
+figs.forEach(function(f){wired+=wire(f)});
+window.__figengine={total:figs.length,wired:wired};
+if('IntersectionObserver' in window){
+var io=new IntersectionObserver(function(ens){
+ens.forEach(function(en){
+if(!en.isIntersecting)return;
+io.unobserve(en.target);
+activate(en.target);
+});
+},{threshold:.15});
+figs.forEach(function(f){if(f._ctl)io.observe(f)});
+}else{figs.forEach(function(f){if(f._ctl)activate(f)})}
+})();
+</script>
+</body>
+</html>

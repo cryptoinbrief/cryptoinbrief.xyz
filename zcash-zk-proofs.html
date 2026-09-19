@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zcash and zero knowledge are now separate | Crypto in Brief</title>
+<meta name="description" content="The original Zcash and zero knowledge guide is now two focused interactive essays.">
+<meta name="robots" content="noindex,follow">
+<meta name="author" content="Moamen Basel">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+:root{color-scheme:light dark;--bg:#f5f4ef;--ink:#141416;--muted:#62636a;--line:#d7d5cc;--paper:#fff;--zcash:#f4b728;--zk:#8b8f99}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0c0e;--ink:#f1f1ef;--muted:#a1a3aa;--line:#2b2d31;--paper:#121418;--zk:#c4c7cf}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.65 "Schibsted Grotesk",sans-serif}
+header,main,footer{width:min(70rem,calc(100% - 2rem));margin-inline:auto}
+header{display:flex;justify-content:space-between;align-items:center;min-height:4rem;border-bottom:1px solid var(--line)}
+a{color:inherit;text-decoration:none}
+.mark{font-weight:600}
+.tag{font:600 .7rem/1 "Martian Mono",monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+main{padding:clamp(4rem,10vw,8rem) 0}
+.eyebrow{font:600 .72rem/1 "Martian Mono",monospace;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+h1{font:800 clamp(3rem,8vw,7.4rem)/.9 "Syne",sans-serif;letter-spacing:-.055em;max-width:11ch;margin:.3em 0}
+.lead{font-size:clamp(1.05rem,2vw,1.35rem);max-width:42rem;color:var(--muted);margin-bottom:3rem}
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--line);background:var(--paper)}
+.card{min-height:27rem;padding:clamp(1.5rem,4vw,3rem);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:background .2s ease,color .2s ease}
+.card:first-child{border-right:1px solid var(--line)}
+.card::before{content:"";position:absolute;inset:0;transform:scaleY(.018);transform-origin:bottom;transition:transform .35s cubic-bezier(.16,1,.3,1);z-index:0}
+.card.zcash::before{background:var(--zcash)}
+.card.zk::before{background:var(--zk)}
+.card:hover::before,.card:focus-within::before{transform:scaleY(1)}
+.card>*{position:relative;z-index:1}
+.num{font:600 .7rem/1 "Martian Mono",monospace;letter-spacing:.1em}
+h2{font:800 clamp(2.2rem,5vw,4.6rem)/.95 "Syne",sans-serif;letter-spacing:-.045em;margin:.55em 0 .35em;max-width:8ch}
+.card p{max-width:31rem}
+.cta{margin-top:auto;display:inline-flex;align-items:center;gap:.7rem;font:600 .78rem/1 "Martian Mono",monospace;text-transform:uppercase;letter-spacing:.08em}
+.cta span{transition:transform .2s ease}
+.cta:hover span,.cta:focus span{transform:translateX(.35rem)}
+.anchor{position:absolute;top:0;left:0;scroll-margin-top:2rem}
+footer{padding:1.5rem 0 3rem;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+footer a{text-decoration:underline;text-underline-offset:.2em}
+@media(max-width:720px){.split{grid-template-columns:1fr}.card:first-child{border-right:0;border-bottom:1px solid var(--line)}.card{min-height:23rem}}
+@media(prefers-reduced-motion:reduce){.card::before,.cta span{transition:none}}
+</style>
+<link rel="stylesheet" href="assets/fonts.css"></head>
+<body>
+<header>
+<a class="mark" href="index.html">Crypto in Brief</a>
+<span class="tag">Guide update</span>
+</header>
+<main>
+<p class="eyebrow">One long guide became two focused essays</p>
+<h1>Pick the question you came to answer.</h1>
+<p class="lead">The original combined page is preserved as this gateway. Zcash now has its own money and ledger guide. Zero knowledge now has its own proof and identity guide. Every lab moved with its subject.</p>
+<div class="split">
+<article class="card zcash">
+<span class="anchor" id="problem"></span><span class="anchor" id="origin"></span><span class="anchor" id="shielded"></span><span class="anchor" id="seallab"></span><span class="anchor" id="scorecard"></span>
+<span class="num">01 / THE COIN</span>
+<h2>Zcash from zero</h2>
+<p>Shielded notes, commitment trees, nullifiers, viewing keys, the research origin, and two browser labs that make the ledger move.</p>
+<a class="cta" href="zcash.html">Open the Zcash guide <span aria-hidden="true">→</span></a>
+</article>
+<article class="card zk">
+<span class="anchor" id="cave"></span><span class="anchor" id="cavelab"></span><span class="anchor" id="snark"></span><span class="anchor" id="honeypot"></span><span class="anchor" id="passport"></span><span class="anchor" id="ecosystem"></span>
+<span class="num">02 / THE PROOF</span>
+<h2>Zero knowledge from zero</h2>
+<p>The cave, Fiat Shamir, SNARKs and STARKs, selective disclosure, digital identity limits, and three browser labs.</p>
+<a class="cta" href="zero-knowledge-from-zero.html">Open the proof guide <span aria-hidden="true">→</span></a>
+</article>
+</div>
+</main>
+<footer>Written by <a href="https://moamenbasel.com">Moamen Basel</a>, security engineer at <a href="https://greycorelabs.com">Grey Core Labs</a>.</footer>
+<script>
+var routes={problem:'zcash.html#problem',origin:'zcash.html#origin',shielded:'zcash.html#shielded',seallab:'zcash.html#seallab',scorecard:'zcash.html#scorecard',cave:'zero-knowledge-from-zero.html#cave',cavelab:'zero-knowledge-from-zero.html#cave',snark:'zero-knowledge-from-zero.html#snark',honeypot:'zero-knowledge-from-zero.html#honeypot',passport:'zero-knowledge-from-zero.html#passport',ecosystem:'zero-knowledge-from-zero.html#today'};
+function routeOldFragment(){var old=location.hash.slice(1);if(routes[old])location.replace(routes[old])}routeOldFragment();window.addEventListener('hashchange',routeOldFragment);
+</script>
+</body>
+</html>

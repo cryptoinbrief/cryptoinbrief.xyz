@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-coin="zcash">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zcash from zero | Crypto in Brief</title>
+<meta name="description" content="How Zcash hides sender, receiver, and amount while keeping its ledger valid. Two interactive browser labs explain shielded notes, nullifiers, viewing keys, and the privacy tradeoffs.">
+<link rel="canonical" href="https://cryptoinbrief.xyz/zcash.html">
+<meta property="og:site_name" content="Crypto in Brief">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zcash from zero">
+<meta property="og:description" content="Shielded notes, nullifiers, viewing keys, and the privacy tradeoffs. Two interactive browser labs included.">
+<meta property="og:url" content="https://cryptoinbrief.xyz/zcash.html">
+<meta property="og:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Zcash from zero">
+<meta name="twitter:description" content="How shielded Zcash payments work, with two interactive browser labs.">
+<meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="author" content="Moamen Basel">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Zcash from zero","description":"Zcash explained from zero with two runnable browser labs.","datePublished":"2026-09-19","inLanguage":"en","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz"},"mainEntityOfPage":"https://cryptoinbrief.xyz/zcash.html"}</script>
+<style>
+:root{
+  --bg:#FAFAF8; --surface:#FFFFFF; --surface2:#F4F4F1;
+  --border:#E7E6E1; --border2:#D8D7D1;
+  --ink:#16171A; --muted:#5D6270; --faint:#9B9FA8;
+  --accent:#A87A10; --accent-ink:#FFFFFF; --accent-soft:rgba(168,122,16,.12);
+  --good:#0B9E6A; --bad:#D64533; --warn:#B27A22;
+  --term:#0C0E11; --term-border:#1E2229; --term-ink:#DADEE4; --term-dim:#8A909A; --term-accent:#63E2A6;
+  --serif:"Instrument Serif","Georgia",serif;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --measure:66ch; --rail:13rem; --note:13.5rem; --gutter:1.75rem;
+  --ease:cubic-bezier(.25,.8,.35,1);
+  --r-card:16px; --r-btn:10px; --r-chip:999px;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#F4B728; --accent-ink:#241A04; --accent-soft:rgba(244,183,40,.14);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}
+@media(prefers-color-scheme:dark){
+:root:not([data-theme="light"]){
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#F4B728; --accent-ink:#241A04; --accent-soft:rgba(244,183,40,.14);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}}
+*{box-sizing:border-box}
+html{overflow-x:clip;font-size:106.25%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0588rem;line-height:1.72;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent-soft);color:var(--ink)}
+#readprog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+#readprog.on{visibility:visible}
+.band{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:3.25rem;padding-inline:max(1.25rem,calc(50vw - 21rem));font-family:var(--sans);font-size:.75rem;letter-spacing:.02em}
+header.band{position:sticky;top:0;z-index:50;flex-wrap:wrap;padding-block:.5rem;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--border)}
+.band a{color:var(--muted);text-decoration:none;transition:color .15s var(--ease)}
+.band a:hover{color:var(--ink)}
+.band a[aria-current="page"]{color:var(--accent)}
+.band .mark{color:var(--ink);font-weight:650;white-space:nowrap;letter-spacing:-.01em;font-size:.875rem}
+.band nav.series{display:flex;flex-wrap:wrap;gap:.3rem .95rem}
+.band .series a{white-space:nowrap}
+.band .switch{display:flex;gap:1rem;margin:0;white-space:nowrap;font-family:var(--mono);font-size:.7rem}
+.band .switch b{color:var(--ink);font-weight:600}
+.band .none{color:var(--faint)}
+.band button{background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer}
+.band button:hover{color:var(--accent)}
+main{max-width:var(--measure);margin-inline:auto;padding:3rem 1.25rem 5rem;position:relative}
+.reg,main::before,main::after{display:none}
+@media(min-width:1100px){
+main{max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note));display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter)}
+nav.toc.rail{grid-column:1;align-self:start;position:sticky;top:4.5rem}
+.col{grid-column:2;max-width:var(--measure);position:relative}
+}
+.byline{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 1rem}
+.byline,.lead{max-width:60ch}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,1.7rem + 3.2vw,3.6rem);line-height:1.04;letter-spacing:-.015em;margin:.15em 0 .5em}
+.lead{font-size:1.3rem;line-height:1.45;color:var(--muted);margin:0 0 2rem;font-weight:450}
+h2{font-size:1.65rem;line-height:1.25;font-weight:650;letter-spacing:-.015em;margin:3.4em 0 .7em}
+.col>h2:first-of-type{margin-block-start:1.8em}
+h2 .num{font-family:var(--mono);color:var(--accent);font-size:.7em;margin-inline-end:.7em;font-weight:500;letter-spacing:0}
+h3{font-size:1.18rem;line-height:1.35;font-weight:600;margin:2.1em 0 .45em;letter-spacing:-.008em}
+p{margin:0 0 1.15em}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);transition:border-color .15s var(--ease)}
+a:hover{border-bottom-color:var(--accent)}
+code,.hx,.num{font-family:var(--mono);font-size:.85em;font-variant-numeric:tabular-nums}
+code{background:var(--accent-soft);border-radius:5px;padding:.1em .35em}
+strong{font-weight:650}
+figure{margin:2.5rem auto;width:min(72rem,calc(100vw - 2rem));transform:translateX(0);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:1.5rem 1.5rem 1.1rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.col>figure,.col>.machine{position:relative;left:50%;transform:translateX(-50%)}
+[dir="rtl"] figure{margin-inline:auto}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:.9rem}
+figcaption .figno{font-family:var(--mono);color:var(--accent);margin-inline-end:.55em;font-size:.95em}
+.figbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:inherit;border-radius:var(--r-card)}
+.figbtn:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.c-time{stroke:var(--warn)} .c-nonce{stroke:var(--accent)} .c-mrk{stroke:var(--good)} .c-ver{stroke:var(--faint)}
+.f-time{fill:var(--warn)} .f-nonce{fill:var(--accent)} .f-ink{fill:var(--ink)} .f-mut{fill:var(--muted)} .f-pap{fill:var(--surface)}
+table{width:100%;border-collapse:collapse;margin:1.8em 0;font-family:var(--sans);font-size:.875rem}
+@media(max-width:720px){table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}}
+th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-bottom:1px solid var(--border)}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+tbody th{font-weight:400;color:var(--muted);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+aside.note{font-size:.875rem;line-height:1.6;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+aside.note.good{border-color:color-mix(in srgb,var(--good) 35%,var(--border))}
+aside.note.bad{border-color:color-mix(in srgb,var(--bad) 35%,var(--border))}
+aside.note p{margin:0 0 .5em}
+aside.note p:last-child{margin:0}
+@media(min-width:1152px){
+aside.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+nav.toc{font-family:var(--sans);font-size:.8125rem;line-height:1.5}
+nav.toc.rail{display:none}
+@media(min-width:1100px){nav.toc.rail{display:block}}
+nav.toc.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;transition:color .15s var(--ease)}
+nav.toc.rail a .leaders{display:none}
+nav.toc.rail a .secno{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover{color:var(--ink)}
+nav.toc.rail a:hover .secno{color:var(--accent)}
+nav.toc.rail a.act{color:var(--accent);font-weight:550}
+nav.toc.rail a.act .secno{color:var(--accent)}
+nav.toc.rail .toclab{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+details.toc{border:1px solid var(--border);border-radius:12px;margin:2rem 0;padding:.35rem 1rem;background:var(--surface)}
+details.toc summary{cursor:pointer;font-weight:600;color:var(--ink);padding:.45rem 0}
+details.toc ol{margin:.4em 0 .6em;padding-inline-start:1.3em}
+details.toc li{margin:.25em 0}
+@media(min-width:1100px){details.toc{display:none}}
+.machine{background:var(--surface2);color:var(--ink);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;width:min(72rem,calc(100vw - 2rem));margin:2.5rem auto;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.machine:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mhead{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0}
+.mtag{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em}
+.mtitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.mchip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted)}
+.mtick{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:7ch;text-align:end}
+.mtick.tk{color:var(--accent)}
+.melapsed{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:6ch;text-align:end}
+.mprog{height:2px;margin:0;background:var(--accent);transform-origin:0 0;transform:scaleX(0)}
+.machine[data-state="running"] .mprog{transform:scaleX(var(--sx,0));transition:transform 120ms linear}
+.machine[data-state="running"] .mprog.ind{transform:none;animation:indbar 900ms linear infinite}
+@keyframes indbar{from{transform:translateX(-40%) scaleX(.28)}to{transform:translateX(120%) scaleX(.28)}}
+.machine[data-state="done"] .mprog{transform:scaleX(1);height:0;transition:transform 140ms var(--ease),height 180ms var(--ease) 160ms}
+.mrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 4px}
+.machine .mrow~.mrow{padding-top:0}
+.machine button{font-family:var(--sans);font-size:.875rem;line-height:1;font-weight:550;padding:10px 18px;min-height:38px;cursor:pointer;border-radius:var(--r-btn);transition:transform .12s var(--ease),background .15s var(--ease),filter .12s var(--ease)}
+.machine .run{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine .run:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine .run:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine .ghost{background:transparent;border:1px solid var(--border2);color:var(--ink)}
+.machine .ghost:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.machine button:disabled{opacity:.4;cursor:not-allowed}
+.machine button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.machine .run.pop{animation:runpop 240ms var(--ease)}
+@keyframes runpop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.machine input,.machine select{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:9px 12px}
+.machine input:focus-visible,.machine select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{background:var(--term);border:1px solid var(--term-border);border-radius:12px;margin:10px 14px 14px;padding:12px 14px;min-height:76px;max-height:240px;overflow-y:auto;font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--term-ink);word-break:break-all;transition:border-color 180ms}
+.machine[data-state="running"] .out{border-color:var(--term-border)}
+.machine .out.flash{border-color:var(--good);transition:border-color 180ms}
+.machine[data-state="error"] .out{border-color:var(--bad)}
+.out p{margin:0 0 2px;animation:linein 120ms var(--ease)}
+@keyframes linein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.out::-webkit-scrollbar{width:6px}
+.out::-webkit-scrollbar-thumb{background:var(--term-border);border-radius:3px}
+.out .hx{font-size:.8rem}
+.out .zeros{color:var(--term-accent);font-weight:700}
+.out .ok{color:var(--good)}
+.out .no{color:var(--bad)}
+.out .dim{color:var(--term-dim);font-size:.72rem;margin-top:6px}
+.out .sA{color:var(--term-dim)}
+.out .sB{color:var(--term-accent)}
+.out .lane{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0}
+.out .lane .ln{width:6ch;color:var(--term-dim);font-size:.72rem}
+.out .blkchip{border:1px solid var(--term-border);border-radius:6px;padding:1px 7px;font-size:.72rem;color:var(--term-ink)}
+.out .blkchip.win{border-color:var(--good);color:var(--good)}
+.out .blkchip.dead{color:var(--term-dim);text-decoration:line-through}
+.mcap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:.7rem 14px 1rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+footer.band{display:block;position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:0;border-top:1px solid var(--border);padding-block:1.5rem 3rem;font-size:.8rem;color:var(--muted);letter-spacing:0}
+footer.band .pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:1.2rem}
+footer.band .pn a{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;color:var(--ink);background:var(--surface);transition:border-color .15s var(--ease)}
+footer.band .pn a:hover{border-color:var(--accent)}
+footer.band .pn a:hover .t{color:var(--accent)}
+footer.band .pn .k{font-family:var(--mono);font-size:.65rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+footer.band .pn .t{font-family:var(--sans);font-size:.95rem;font-weight:550;color:var(--ink)}
+footer.band .pn .next{text-align:end;align-items:flex-end}
+footer.band .colophon{margin:1.5rem 0 0}
+footer.band .colophon a{color:var(--muted);border-bottom:0}
+footer.band .colophon a:hover{color:var(--accent)}
+@media(prefers-contrast:more){
+.machine,.out{border-width:2px}
+.mprog{height:3px}
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.out p{animation:none}
+.machine .run.pop{animation:none}
+.machine button{transition:none}
+.machine[data-state="running"] .mprog,.machine[data-state="running"] .mprog.ind{animation:none;transition:none}
+.machine[data-state="done"] .mprog{transition:none}
+}
+
+.coinbadge{display:inline-flex;width:54px;height:54px;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin-inline-end:.7rem;vertical-align:-14px}.coinbadge svg{width:38px;height:38px;display:block}
+
+:root{--q-nonce:var(--accent);--q-mrk:var(--good)}
+.c-mrk{fill:var(--good)}
+.c-nonce{fill:var(--accent)}
+.figlbl{font-family:var(--sans);font-size:12px;fill:var(--ink)}
+.figdim{font-family:var(--sans);font-size:11px;fill:var(--muted)}
+.figmono{font-family:var(--mono);font-size:11px;fill:var(--ink)}
+.note .nno{font-family:var(--mono);color:var(--accent);font-size:.72em;display:block;margin-bottom:.25rem}
+.machine .hi{color:var(--accent);font-weight:600}
+.out .ln{margin:0 0 2px;animation:linein 120ms var(--ease)}
+.machine[data-state="idle"] .out .ln{opacity:.75}
+.out .hi{color:var(--term-accent);font-weight:700}
+.machine .out.goodflash{border-color:var(--good)}
+.machine .out.badflash{border-color:var(--bad)}
+td.g{background:var(--accent-soft)}
+td.b{background:color-mix(in srgb,var(--bad) 10%,transparent)}
+td.m{background:var(--surface2)}
+footer.band .pn .ghost{visibility:hidden}
+@media(prefers-reduced-motion:reduce){.out .ln{animation:none}}
+</style>
+
+<style>
+:root{--bg:#E9E3D5;--ink:#17140D;--muted:#4E4A3C;--faint:#7E7867;--border:color-mix(in srgb,#17140D 18%,transparent);--border2:color-mix(in srgb,#17140D 26%,transparent);--surface:color-mix(in srgb,#17140D 4%,var(--bg));--surface2:color-mix(in srgb,#17140D 7%,var(--bg));--accent:#A87A10;--accent-ink:#1A1404;--good:#1F7A4D;--coin:#C8960C;--coin2:#F0DFAE;--serif:"Syne",sans-serif;--sans:"Schibsted Grotesk",system-ui,sans-serif;--mono:"Martian Mono",ui-monospace,monospace}
+:root[data-theme="dark"]{--bg:#15130E;--ink:#EDE7D8;--muted:#A39B85;--faint:#6B6452;--border:color-mix(in srgb,#EDE7D8 20%,transparent);--border2:color-mix(in srgb,#EDE7D8 28%,transparent);--surface:color-mix(in srgb,#EDE7D8 4%,var(--bg));--surface2:color-mix(in srgb,#EDE7D8 7%,var(--bg));--accent:#F4B728;--accent-ink:#1A1404;--good:#3DDC97}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15130E;--ink:#EDE7D8;--muted:#A39B85;--faint:#6B6452;--border:color-mix(in srgb,#EDE7D8 20%,transparent);--border2:color-mix(in srgb,#EDE7D8 28%,transparent);--surface:color-mix(in srgb,#EDE7D8 4%,var(--bg));--surface2:color-mix(in srgb,#EDE7D8 7%,var(--bg));--accent:#F4B728;--accent-ink:#1A1404;--good:#3DDC97}}
+*{border-radius:0!important}
+body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.045;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")}
+:root[data-theme="dark"] body::after{opacity:.07;mix-blend-mode:overlay}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) body::after{opacity:.07;mix-blend-mode:overlay}}
+::selection{background:var(--coin);color:#1A1404}
+h1{font-family:"Syne",sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1.04}
+h2{font-family:"Syne",sans-serif;font-weight:700;letter-spacing:-.02em}
+header.band{position:static;backdrop-filter:none;-webkit-backdrop-filter:none;background:none;border-bottom:1px solid var(--border)}
+header.band .series a,header.band .mark,header.band .switch{font-family:"Martian Mono",monospace;font-size:.625rem;letter-spacing:.02em}
+.spine{position:fixed;left:0;top:0;width:6px;height:100dvh;z-index:45;background:linear-gradient(180deg,#C8960C 0 50%,#F0DFAE 50% 100%);opacity:.35}
+.spine i{position:absolute;inset:0;background:linear-gradient(180deg,#C8960C 0 50%,#F0DFAE 50% 100%);transform-origin:top;transform:scaleY(0);animation:spinefill linear;animation-timeline:scroll()}
+@keyframes spinefill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.spine i{animation:none;transform:scaleY(1)}}
+.bay{margin-inline:calc(50% - 50vw);width:100vw;background:linear-gradient(90deg,#C8960C 0 50%,#F0DFAE 50% 100%);color:#1A1404;padding:2.2rem max(1.25rem,3vw) 2rem;overflow:clip;clip-path:inset(0 100% 0 0);animation:bayfill .64s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes bayfill{to{clip-path:inset(0 0 0 0)}}
+@media(prefers-reduced-motion:reduce){.bay{animation:none;clip-path:none}}
+.bay .byline,.bay .lead{color:#241C06}
+.bay .byline a{color:#1A1404}
+.bay h1{color:#1A1404;max-width:22ch}
+.bay p:not(.byline):not(.lead){color:#241C06}
+.bay a{color:#1A1404}
+.coinbadge{background:#C8960C;border-color:#1A1404}
+.bay .coinbadge{background:#C8960C;border-color:#1A1404}
+.bay figure{background:rgba(255,255,255,.28);border:0;padding:1.1rem 1.2rem 0.9rem;width:100%;margin:1.4rem 0 0;max-width:38rem}
+.bay figcaption{color:#241C06;border-top:1px solid rgba(26,20,4,.3);margin-top:.7rem;padding-top:.5rem}
+.bay{--q-nonce:#1A1404;--q-mrk:#0E5A38}
+.bay .c-nonce{stroke:#1A1404;fill:#1A1404}
+.bay .c-mrk{stroke:#0E5A38;fill:#0E5A38}
+.bay .figlbl{fill:#1A1404}
+.bay .figdim{fill:#3A3010}
+.bay .figmono{fill:#1A1404}
+.bay .figctl button{color:#241C06;border-color:rgba(26,20,4,.4)}
+.bay .figctl button:hover{border-color:#1A1404;color:#1A1404}
+footer.band .pn a{border:0;background:linear-gradient(90deg,color-mix(in srgb,#C8960C 35%,var(--bg)) 0 50%,color-mix(in srgb,#F0DFAE 35%,var(--bg)) 50% 100%);min-height:6rem;align-items:flex-end;justify-content:flex-start;padding:1rem 1.2rem}
+footer.band .pn a .t{font-family:"Syne",sans-serif;font-weight:700;letter-spacing:-.02em}
+nav.toc.rail a.act{color:var(--accent);box-shadow:none;border-bottom:0}
+nav.toc.rail a{font-family:"Schibsted Grotesk",sans-serif}
+nav.toc .toclab{font-family:"Martian Mono",monospace}
+.machine{background:var(--surface2);border:1px solid var(--border)}
+figure{background:var(--surface)}
+code{background:color-mix(in srgb,#C8960C 14%,transparent)}
+aside.note{background:var(--surface)}
+</style>
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml">
+<meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
+<link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+<link rel="stylesheet" href="assets/privacy-story.css">
+<script defer src="assets/privacy-story.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="spine" aria-hidden="true"><i></i></div>
+<div id="readprog" aria-hidden="true"></div>
+<header class="site-header">
+<a class="mark" href="index.html">crypto<span>in</span>brief.</a>
+<nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="crypto-summary.html">Start here</a></nav>
+<p class="switch">
+<span class="lang"><b>EN</b> | <span class="none" title="لم تُكتب بعد">AR</span></span>
+<span class="theme"><span id="themenow">Light</span> | <button type="button" id="themego">Dark</button></span>
+</p>
+</header>
+<main id="main-content">
+<nav class="toc rail" aria-label="Contents">
+<p class="toclab">Contents</p>
+<a href="#problem"><span>The privacy problem, restated</span><span class="leaders"></span><span class="secno">01</span></a>
+<a href="#origin"><span>Haifa and Tel Aviv first</span><span class="leaders"></span><span class="secno">02</span></a>
+<a href="#shielded"><span>How a shielded spend works</span><span class="leaders"></span><span class="secno">03</span></a>
+<a href="#seallab"><span>Seal a note, spend it twice</span><span class="leaders"></span><span class="secno">04</span></a>
+<a href="#viewing"><span>The viewing key door</span><span class="leaders"></span><span class="secno">05</span></a>
+<a href="#network"><span>What the chain still shows</span><span class="leaders"></span><span class="secno">06</span></a>
+<a href="#scorecard"><span>The honest scorecard</span><span class="leaders"></span><span class="secno">07</span></a>
+</nav>
+<div class="col">
+<section class="bay"><p class="byline">By <a href="https://moamenbasel.com">Moamen Basel</a>, September 2026, 2 labs, about 20 minutes</p>
+<span class="coinbadge"><img src="assets/coins/zcash.svg" alt="Zcash" width="34" height="34"></span><h1>Zcash from zero</h1>
+<p class="lead">The coin that proves every rule was followed and shows nobody.</p>
+<p>This page is about the coin. Zcash keeps a Bitcoin shaped ledger and adds a second pool where a payment can prove it breaks no rule while saying nothing about who paid, who received, or how much moved. I build the machinery small enough to run in your browser: notes, seals, nullifiers, viewing keys. Two labs, real arithmetic, no libraries.</p>
+<p>One boundary up front. How a proof can convince a verifier without revealing the secret behind it, why that is possible at all, is its own essay: <a href="zero-knowledge-from-zero.html">zero knowledge from zero</a>. The proof machinery itself is that essay's subject. This one stays on the money. When a spend needs a proof I will say so, mark where it sits, and move on.</p>
+<h2 id="problem"><span class="num">01</span>The privacy problem, restated</h2>
+<figure aria-labelledby="fig11cap">
+<svg viewBox="0 0 680 200" role="img" aria-label="Left: Monero hides the real spender inside a ring of sixteen possible signers. Right: Zcash proves the spend follows every rule while showing no signer at all." data-fig="step">
+<line x1="340" y1="16" x2="340" y2="184" stroke="currentColor" stroke-width="1" stroke-dasharray="3 5" opacity=".4"/>
+<g data-step="1" data-note="Monero: the real spender signs inside a ring of decoys. An observer sees sixteen candidates and no certainty, but the crowd is finite and statistics can nibble at it.">
+<text x="170" y="34" class="figlbl" text-anchor="middle">Monero: hide in a crowd</text>
+<circle cx="46" cy="66" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="82" cy="66" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="118" cy="66" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="154" cy="66" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="190" cy="66" r="10" class="c-nonce" data-note="the one real signer, indistinguishable from the decoys to a naked read of the chain"/>
+<circle cx="226" cy="66" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="262" cy="66" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="298" cy="66" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="46" cy="106" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="82" cy="106" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="118" cy="106" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="154" cy="106" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="190" cy="106" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="226" cy="106" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="262" cy="106" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<circle cx="298" cy="106" r="10" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="170" y="146" class="figdim" text-anchor="middle">16 possible signers, one real</text>
+<text x="170" y="164" class="figdim" text-anchor="middle">the crowd is finite; statistics nibble</text>
+</g>
+<g data-step="2" data-note="Zcash: no crowd at all. A short proof says the spend follows every rule and names nobody. The anonymity set is the entire shielded pool.">
+<text x="510" y="34" class="figlbl" text-anchor="middle">Zcash: prove, don't show</text>
+<rect x="378" y="56" width="118" height="54" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="437" y="78" class="figlbl" text-anchor="middle">the spend</text>
+<text x="437" y="96" class="figdim" text-anchor="middle">who and how much: hidden</text>
+<path d="M496 83 L536 83" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="536,83 528,79 528,87" class="c-mrk"/>
+<rect x="540" y="56" width="100" height="54" fill="none" stroke="var(--q-nonce)" stroke-width="1.5" data-note="the proof: a few hundred bytes, verifiable in milliseconds, carrying no residue"/>
+<text x="590" y="78" class="figlbl" text-anchor="middle">proof</text>
+<text x="590" y="96" class="figmono" text-anchor="middle">~192 B</text>
+<text x="510" y="146" class="figdim" text-anchor="middle">no decoys to chip at</text>
+<text x="510" y="164" class="figdim" text-anchor="middle">the crowd is the whole shielded pool</text>
+</g>
+</svg>
+<figcaption id="fig11cap"><span class="figno">Fig. 1.1</span>Two ways to disappear. Monero hides the spender inside a finite crowd of decoys. Zcash removes the spender from the picture and proves the rules were followed.</figcaption>
+</figure></section>
+<p>The <a href="monero-under-the-hood.html">Monero page</a> in this notebook told one privacy story, hiding the real spender inside a crowd of decoys. Every Monero transaction signs with a <a href="monero-under-the-hood.html#rings">ring</a> of possible signers, so an observer staring at the chain sees many candidates and still walks off with no certainty about who spent. It works. It keeps working. The crowd is finite though, 16 signatures today, the whole chain someday if <a href="monero-under-the-hood.html#fcmp">FCMP++</a> lands. Zcash grew out of a stranger question. What if a payment could prove it is legitimate while saying nothing at all about the people or the amounts? A proof that a secret exists, and not one digit of the secret itself.</p>
+<p>The name for that object is a <strong>zero knowledge proof</strong>, and the whole essay about how such a thing can exist is the <a href="zero-knowledge-from-zero.html">sibling page</a>. For this page three facts are enough. The proofs are short, a few hundred bytes. They verify in milliseconds. And they leak nothing about what they prove, which is why a chain full of them can stay auditable and private at the same time.</p>
+<p>A public ledger like <a href="bitcoin-from-zero.html">Bitcoin's</a> is public on purpose. Anyone can audit the money supply and every balance transfer ever made. Privacy work is the attempt to keep the audit and lose the surveillance. Zcash is the most radical attempt so far, and its failures teach as much as its wins.</p>
+
+<h2 id="origin"><span class="num">02</span>Haifa and Tel Aviv first</h2>
+<p>This has a history. A lot of the machinery came out of Israeli computer science departments, and I'm putting names and dates on that because the industry those labs started is still here.</p>
+<p>The academic chain starts with <strong>Zerocoin</strong>, a 2013 paper from Johns Hopkins. A year later the direct ancestor of Zcash appeared. The <a href="https://zerocash-project.org/paper">Zerocash paper</a>, published at the 2014 IEEE Symposium on Security and Privacy, has seven authors: Eli Ben Sasson, Alessandro Chiesa, Christina Garman, Matthew Green, Ian Miers, Eran Tromer, and Madars Virza.</p>
+<p>The affiliations matter. Ben Sasson was at the Technion in Haifa and Tromer was at Tel Aviv University. Chiesa and Virza were at MIT, while Garman, Green, and Miers were at Johns Hopkins. The founding research was Israeli and American together. That is the precise claim supported by the paper.</p>
+<p>Shipping the coin was a different operation. <strong>Zcash</strong> launched in 2016 through the Zcash Company, now called Electric Coin Company. ECC's own <a href="https://electriccoin.co/wp-content/uploads/2024/03/Transparency-Report-March-2023.pdf">transparency report</a> identifies it as a United States company headquartered in Denver and incorporated in Delaware. Calling Zcash an Israeli company is false. Israeli researchers helped create the science. A US company shipped the coin.</p>
+<p>In 2018, Ben Sasson and Chiesa joined Michael Riabzev and Uri Kolodny to found <strong>StarkWare Industries</strong>. StarkWare's <a href="https://starkware.co/media-kit/">official media kit</a> lists those four founders, and its office is in Netanya, Israel. StarkWare is a separate Israeli company built around STARK technology. It is part of the same research lineage, not the company that created Zcash.</p>
+<aside class="note"><span class="nno">N.01</span>The short version: Israeli and American academics coauthored Zerocash. A US company launched Zcash. A separate Israeli company, StarkWare, was later founded by two Zerocash authors and two other cofounders.</aside>
+<figure aria-labelledby="fig21cap">
+<svg viewBox="0 0 680 200" role="img" aria-label="A timeline from the 2013 Zerocoin paper to the 2019 Halo construction: Zerocoin, Zerocash, the Zcash launch, StarkWare, and Halo." data-fig="step">
+<line x1="30" y1="104" x2="650" y2="104" stroke="currentColor" stroke-width="1" opacity=".35"/>
+<g data-step="1" data-note="2013: Zerocoin, the Johns Hopkins paper led by Ian Miers, bolts one-way cryptographic locks onto Bitcoin. Real anonymity, slow proofs.">
+<line x1="40" y1="104" x2="58" y2="104" stroke="var(--q-nonce)" stroke-width="2"/>
+<circle cx="70" cy="104" r="5" class="c-nonce"/>
+<text x="70" y="86" class="figmono" text-anchor="middle">2013</text>
+<text x="70" y="128" class="figlbl" text-anchor="middle">Zerocoin</text>
+<text x="70" y="144" class="figdim" text-anchor="middle">Johns Hopkins</text>
+</g>
+<g data-step="2" data-note="2014: Zerocash is published at IEEE S&amp;P by Ben-Sasson, Chiesa, Garman, Green, Miers, Tromer, and Virza.">
+<line x1="82" y1="104" x2="184" y2="104" stroke="var(--q-nonce)" stroke-width="2"/>
+<circle cx="196" cy="104" r="5" class="c-nonce"/>
+<text x="196" y="86" class="figmono" text-anchor="middle">2014</text>
+<text x="196" y="128" class="figlbl" text-anchor="middle">Zerocash</text>
+<text x="196" y="144" class="figdim" text-anchor="middle">IEEE S&amp;P, 7 authors</text>
+</g>
+<g data-step="3" data-note="2016: the Zcash Company of Denver, led by Zooko Wilcox, ships the coin on 28 October with the six-person Sprout ceremony behind it.">
+<line x1="208" y1="104" x2="310" y2="104" stroke="var(--q-nonce)" stroke-width="2"/>
+<circle cx="322" cy="104" r="5" class="c-nonce"/>
+<text x="322" y="86" class="figmono" text-anchor="middle">2016</text>
+<text x="322" y="128" class="figlbl" text-anchor="middle">Zcash launches</text>
+<text x="322" y="144" class="figdim" text-anchor="middle">Denver, 28 October</text>
+</g>
+<g data-step="4" data-note="2018: Ben-Sasson, Chiesa, Riabzev, and Kolodny found StarkWare in Netanya. The same year the Sapling ceremony takes over 90 contributions.">
+<line x1="334" y1="104" x2="436" y2="104" stroke="var(--q-nonce)" stroke-width="2"/>
+<circle cx="448" cy="104" r="5" class="c-nonce"/>
+<text x="448" y="86" class="figmono" text-anchor="middle">2018</text>
+<text x="448" y="128" class="figlbl" text-anchor="middle">StarkWare</text>
+<text x="448" y="144" class="figdim" text-anchor="middle">Netanya</text>
+</g>
+<g data-step="5" data-note="2019: Sean Bowe at ECC publishes Halo, recursive proofs with no trusted setup. Its descendant halo 2 goes live with Orchard in NU5 on 31 May 2022.">
+<line x1="460" y1="104" x2="562" y2="104" stroke="var(--q-nonce)" stroke-width="2"/>
+<circle cx="574" cy="104" r="5" class="c-nonce"/>
+<text x="574" y="86" class="figmono" text-anchor="middle">2019</text>
+<text x="574" y="128" class="figlbl" text-anchor="middle">Halo</text>
+<text x="574" y="144" class="figdim" text-anchor="middle">no trusted setup</text>
+</g>
+</svg>
+<figcaption id="fig21cap"><span class="figno">Fig. 2.1</span>The paper trail. Science out of Technion, Tel Aviv, Johns Hopkins, and Berkeley; a Denver company shipped the coin; Netanya shipped the successor. Step through it.</figcaption>
+</figure>
+<h2 id="shielded"><span class="num">03</span>How a shielded spend works</h2>
+<p>Zcash is two ledgers sharing one chain. The transparent side looks like Bitcoin. t addresses and amounts sit in the open. Anyone can audit them. The <strong>shielded pool</strong> is the other ledger, and that's where the strange part lives. Move funds in and they vanish from public view. The network still verifies every rule, because verification is what the proofs actually carry.</p>
+<p>A payment inside the pool creates a <strong>note</strong>. That's a packed record holding the recipient's address, the amount, an optional memo line, and a random nonce called rho that makes this note unique in history even if every other field matches. The note never appears. What the chain sees is its commitment, a hash derived seal that binds the note's contents without showing them. It's a tamper evident envelope. You can tell it's sealed, but you can't read it while it's closed. Later you can confirm what sat inside. Two envelopes holding the same contents still look different because rho is in the hash. Every commitment joins a global Merkle tree. That tree of fingerprints lets you prove "my seal is one of the seals on the chain" in a handful of hash checks, and you never learn which seals anyone else owns.</p>
+<p>Spending flips the machinery. To spend a note you publish two things. The first is a <strong>nullifier</strong>, a tag derived from your secret spending key and that note's rho. Each note produces exactly one nullifier, so publishing it twice is instantly visible, and that is the entire double spend defense. The second is a zk SNARK proof. The name stacks four claims. Zero knowledge means it leaks nothing. Succinct is the size, a few hundred bytes that verify in milliseconds. Non interactive is one message, no back and forth. Argument of knowledge is the part that says whoever built the proof actually holds the secret. The proof claims I know a note whose commitment sits in the tree, I own its spending key, the nullifier I published is the correct one for that note, and the values in and out balance. The chain checks the proof and records the nullifier. It appends fresh commitments for the recipient. It never learns the amount, and it never sees who sent or who received.</p>
+<figure aria-labelledby="fig31cap">
+<svg viewBox="0 0 720 250" role="img" aria-label="A shielded payment drawn as a flow: a note is sealed into a commitment that joins a public tree, and a spend publishes only a nullifier and a proof." data-fig="step">
+<line x1="8" y1="18" x2="8" y2="236" stroke="currentColor" stroke-width="1" opacity=".3"/>
+<text x="16" y="26" class="figdim">what only you hold</text>
+<text x="712" y="26" class="figdim" text-anchor="end">what everyone sees</text>
+<g data-step="1" data-note="The note: recipient address, amount, optional memo, and rho, a nonce that makes this note unique in history. It never appears in public.">
+<rect x="16" y="40" width="150" height="64" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="91" y="62" class="figlbl" text-anchor="middle">note</text>
+<text x="91" y="78" class="figmono" text-anchor="middle">to, 7 ZEC, rho</text>
+<text x="91" y="94" class="figdim" text-anchor="middle">never published</text>
+<path d="M166 72 L216 72" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="216,72 208,68 208,76" class="c-mrk"/>
+</g>
+<g data-step="2" data-note="The commitment cm = seal(note): a tamper-evident envelope. Same contents plus a fresh rho still yields a fresh seal. Every seal joins the global Merkle tree.">
+<rect x="218" y="40" width="150" height="64" fill="none" stroke="var(--q-mrk)" stroke-width="1.5"/>
+<text x="293" y="62" class="figlbl" text-anchor="middle">commitment</text>
+<text x="293" y="78" class="figmono" text-anchor="middle">cm = seal(note)</text>
+<text x="293" y="94" class="figdim" text-anchor="middle">the envelope on chain</text>
+<path d="M368 72 L418 72" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="418,72 410,68 410,76" class="c-mrk"/>
+<rect x="420" y="40" width="284" height="64" fill="none" stroke="currentColor" stroke-width="1.5" data-note="the commitment tree: prove your seal is one of millions without pointing at your leaf"/>
+<text x="562" y="60" class="figlbl" text-anchor="middle">the commitment tree</text>
+<rect x="436" y="72" width="16" height="16" class="c-mrk"/>
+<rect x="460" y="72" width="16" height="16" class="c-mrk"/>
+<rect x="484" y="72" width="16" height="16" class="c-mrk"/>
+<rect x="508" y="72" width="16" height="16" class="c-mrk"/>
+<rect x="532" y="72" width="16" height="16" class="c-mrk"/>
+<rect x="556" y="72" width="16" height="16" class="c-mrk"/>
+<text x="676" y="84" class="figmono" text-anchor="end">millions of leaves</text>
+<text x="436" y="98" class="figdim">anyone can prove membership, nobody can pick your leaf out</text>
+</g>
+<g data-step="3" data-note="Spending: your secret key and the note's rho derive exactly one nullifier, forever. Publishing it twice is instantly visible. That is the entire double-spend defense.">
+<rect x="16" y="150" width="150" height="64" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="91" y="172" class="figlbl" text-anchor="middle">spend secret</text>
+<text x="91" y="188" class="figmono" text-anchor="middle">key + rho</text>
+<text x="91" y="204" class="figdim" text-anchor="middle">stays in your wallet</text>
+<path d="M166 182 L216 182" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="216,182 208,178 208,186" class="c-nonce"/>
+<rect x="218" y="150" width="150" height="64" fill="none" stroke="var(--q-nonce)" stroke-width="1.5" data-note="the nullifier: one per note, derived from your key and rho"/>
+<text x="293" y="172" class="figlbl" text-anchor="middle">nullifier</text>
+<text x="293" y="188" class="figmono" text-anchor="middle">nf</text>
+<text x="293" y="204" class="figdim" text-anchor="middle">one per note, forever</text>
+<path d="M368 182 L418 182" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="418,182 410,178 410,186" class="c-nonce"/>
+</g>
+<g data-step="4" data-note="Plus one zk-SNARK: a few hundred bytes carrying every check at once. The chain verifies it and never learns the amount, the sender, or the receiver.">
+<rect x="420" y="150" width="284" height="64" fill="none" stroke="currentColor" stroke-width="1.5" data-note="the proof: succinct, non-interactive, zero-knowledge"/>
+<text x="562" y="170" class="figlbl" text-anchor="middle">plus one zk-SNARK</text>
+<text x="436" y="190" class="figmono">proof: my note is in the tree, key is mine,</text>
+<text x="436" y="206" class="figmono">nf is correct, values balance</text>
+</g>
+</svg>
+<figcaption id="fig31cap"><span class="figno">Fig. 3.1</span>One shielded payment. Seals go on chain. What comes back is a nullifier and a proof, and no amount ever crosses the public line.</figcaption>
+</figure>
+<p>The pool has grown plumbing since 2016. The current shielded generation is called <strong>Orchard</strong>, live since the NU5 upgrade of 31 May 2022. It runs proof system halo 2. Addresses got unified in a way that lets one address receive across pools without the user thinking about it. Hand an auditor a viewing key and they can watch your incoming shielded activity without ever gaining the power to spend. You pick who sees. They still can't move funds. That door gets its own section, and its own lab, below.</p>
+<h3>Why the ceremony scared people</h3>
+<p>Older zk SNARKs had a catch. Before any proof could be made, someone had to generate a set of starting parameters, and that generation left behind a piece of toxic waste: a secret that, in the wrong hands, allows forging proofs, which for a currency means minting invisible money. The fix was ceremony. Many independent contributors each folded their own randomness into the parameters and then destroyed their secret, so the toxic waste survives only if every single participant is dishonest or compromised.</p>
+<p>Zcash ran these rituals twice at scale. The 2016 Sprout setup had just six participants, a small enough circle that all six colluding, or all six being surveilled, was a scenario people honestly worried about back then. The 2018 Sapling setup did it properly. An open "Powers of Tau" first phase concluded in April 2018 with 88 participants, and a Sapling specific second phase accepted over 90 contributions by August 2018. One honest participant anywhere in the chain, and the waste is gone forever.</p>
+<p>Then Zcash introduced a route around that catch. In 2019 Sean Bowe at the Electric Coin Company published <strong>Halo</strong>, a construction for recursive proofs with no trusted setup. Its descendant halo 2 shipped with Orchard in NU5. Since 31 May 2022, creating Orchard proofs has required no ceremony. The older Sprout and Sapling systems keep the assumptions of their original parameters, so this change applies specifically to Orchard.</p>
+<aside class="note"><span class="nno">N.02</span>The "toxic waste" was never a key to existing funds. It was a counterfeiting trapdoor for future proofs. Still worth killing. Good that it's dead.</aside>
+
+<h2 id="seallab"><span class="num">04</span>Seal a note, spend it twice</h2>
+<div class="machine" id="m1" data-state="idle" tabindex="0" role="group" aria-labelledby="m1t">
+<div class="mhead">
+<span class="mtag">LAB 01</span>
+<span class="mtitle" id="m1t">Commitment in, nullifier out</span>
+<span class="mchip">ZK</span>
+<span class="mtick" id="m1tick" hidden></span>
+<span class="melapsed" id="m1el"></span>
+</div>
+<div class="mprog" id="m1bar" aria-hidden="true"></div>
+<div class="mrow">
+<button type="button" class="run" id="m1run">Run</button>
+<button type="button" class="ghost" id="m1rst">Reset</button>
+<button type="button" class="ghost" id="m1cpy" disabled>Copy result</button>
+</div>
+<div class="out" id="m1out" role="log" aria-live="polite" aria-relevant="additions"><div class="ln dim">Idle. The run will shield a note, spend it, try to spend it again, and spend a second note. Watch the ledger, not the amounts: none ever print.</div></div>
+<p class="mcap">Lab 01. Real equations in the toy group p = 2027, generator g = 4. The commitment is a seal over the full note. The nullifier is a seal over your key and the note's rho. The zk SNARK step is marked where it would sit. This lab builds the objects it proves things about.</p>
+</div>
+<p>Four moves, one console. The note gets sealed, and only the seal boards the chain. The spend publishes a nullifier, and the ledger records it without learning anything. The replay publishes the identical nullifier, because it's the same note, and the network refuses it on sight. A second, different note produces a different nullifier and the network accepts it. Scroll through the console. Do the analyst's job. Match each nullifier to the commitment that birthed it. There's nothing to match on. That gap is what a zero knowledge proof stands in for, and in the real system that proof is a few hundred bytes you can check in milliseconds without learning the note.</p>
+<figure aria-labelledby="fig41cap">
+<svg viewBox="0 0 680 200" role="img" aria-label="The nullifier ledger under a second spend: replaying the same note recomputes the same nullifier and is rejected, while a fresh note publishes a new nullifier and is accepted." data-fig="toggle" data-a="Replay the same note" data-b="Spend a fresh note">
+<text x="340" y="24" class="figlbl" text-anchor="middle">the nullifier ledger, second spend attempt</text>
+<rect x="190" y="40" width="300" height="46" fill="none" stroke="currentColor" stroke-width="1.5" data-note="the set of nullifiers the chain has already seen"/>
+<text x="340" y="60" class="figlbl" text-anchor="middle">seen nullifiers</text>
+<text x="340" y="76" class="figmono" text-anchor="middle">nf1 (from spend 1)</text>
+<g class="sa" data-note="Same note, same rho: the nullifier recomputes identically. The ledger refuses on sight, without learning who tried or how much was involved.">
+<rect x="220" y="118" width="240" height="40" fill="none" stroke="var(--q-nonce)" stroke-width="1.5"/>
+<text x="340" y="142" class="figmono" text-anchor="middle">publishes nf1 again</text>
+<path d="M340 86 L340 114" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="340,116 334,106 346,106" class="c-nonce"/>
+<text x="340" y="184" class="figmono" text-anchor="middle" style="fill:var(--bad)">REJECTED: nf1 already spent</text>
+</g>
+<g class="sb" data-note="A different note carries a different rho, so its nullifier is new. Accepted, and nothing visible links it to any commitment.">
+<rect x="220" y="118" width="240" height="40" fill="none" stroke="var(--q-mrk)" stroke-width="1.5"/>
+<text x="340" y="142" class="figmono" text-anchor="middle">publishes nf2 (fresh rho)</text>
+<path d="M340 86 L340 114" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="340,116 334,106 346,106" class="c-mrk"/>
+<text x="340" y="184" class="figmono" text-anchor="middle" style="fill:var(--good)">ACCEPTED: no visible link to cm1 or cm2</text>
+</g>
+</svg>
+<figcaption id="fig41cap"><span class="figno">Fig. 4.1</span>The double spend defense is one set lookup. Toggle the second spend. Same note, same nullifier, refusal. Fresh note, fresh nullifier, acceptance, and amounts never print in either world.</figcaption>
+</figure>
+<details class="toc" aria-label="Contents">
+<summary>Contents</summary>
+<ol>
+<li><a href="#problem">01 The privacy problem, restated</a></li>
+<li><a href="#origin">02 Haifa and Tel Aviv first</a></li>
+<li><a href="#shielded">03 How a shielded spend works</a></li>
+<li><a href="#seallab">04 Seal a note, spend it twice</a></li>
+<li><a href="#viewing">05 The viewing key door</a></li>
+<li><a href="#network">06 What the chain still shows</a></li>
+<li><a href="#scorecard">07 The honest scorecard</a></li>
+</ol>
+</details>
+<aside class="note"><span class="nno">N.03</span>Before you hit run. Real Zcash computes on pairing friendly curves with numbers near 2 to the 251st, folded into a zk SNARK of a few hundred bytes. Both labs on this page keep the same algebraic shapes, just inside the pocket sized group the Monero page already uses, the safe prime p = 2027. The equations are real. The key sizes are toys, labeled as such.</aside>
+
+<h2 id="viewing"><span class="num">05</span>The viewing key door</h2>
+<p>Privacy coins collect a fair question. If nobody can see the money, how does anyone check anything? Zcash answers with a key hierarchy. Above the spending key sits a viewing key, and the split is enforced by the same mathematics that hides the notes. Hand the viewing key to an auditor or a tax office and they can read every note that arrives at your addresses. What they cannot do is spend. The read path and the spend path run on different secrets, and only one of them ever leaves your wallet.</p>
+<p>Orchard inherits the Sapling design here. A spending key derives an incoming viewing key, and that viewing key derives the addresses you hand out. Notes travel encrypted under a key agreement between the sender and the address, so a viewer holding the viewing key can decrypt what arrived, recompute each note's seal, and confirm it in the commitment tree. The nullifier is the wall. It derives from the spending key together with the note's rho, so the viewer reads the seal but cannot produce the tag the ledger demands. Read without spend is not a policy promise. It is arithmetic.</p>
+<p>The door gets used. Exchanges prove reserves, funds show auditors their inflows, and regulated custody keeps compliance somewhere better than the transparent pool, where the only disclosure setting is everything. Monero has its own view key split, so the idea is not a Zcash invention, but Zcash pairs it with the larger anonymity set. The cost is real too. A leaked viewing key is permanent, and the default key covers incoming notes only, while outgoing activity needs a separate, newer key that fewer wallets expose. You are trading a secret for an oversight channel, and the trade cannot be undone quietly.</p>
+<aside class="note"><span class="nno">N.04</span>What the default viewing key sees is incoming. Outgoing needs the outgoing viewing key, which derives from the spending key and is supported unevenly across wallets. An auditor asking for "the" viewing key almost always means the incoming one.</aside>
+<div class="machine" id="m2" data-state="idle" tabindex="0" role="group" aria-labelledby="m2t">
+<div class="mhead">
+<span class="mtag">LAB 02</span>
+<span class="mtitle" id="m2t">View, but do not spend</span>
+<span class="mchip">ZK</span>
+<span class="mtick" id="m2tick" hidden></span>
+<span class="melapsed" id="m2el"></span>
+</div>
+<div class="mprog" id="m2bar" aria-hidden="true"></div>
+<div class="mrow">
+<button type="button" class="run" id="m2run">Run</button>
+<button type="button" class="ghost" id="m2rst">Reset</button>
+<button type="button" class="ghost" id="m2cpy" disabled>Copy result</button>
+</div>
+<div class="out" id="m2out" role="log" aria-live="polite" aria-relevant="additions"><div class="ln dim">Idle. The run builds a wallet, hands the viewing key to an auditor, receives a shielded payment, lets the auditor read it, then lets the auditor try to spend it. Watch which key opens which door.</div></div>
+<p class="mcap">Lab 02. Real key agreement and masking arithmetic in the toy group p = 2027, generator g = 4. The address derives from the viewing key, the note travels masked under a Diffie Hellman secret, and the nullifier wants the spending key. The zk SNARK binding of nullifier to commitment is marked simulated here.</p>
+</div>
+<p>Run it and watch the two powers separate. The auditor's key recomputes the sender's secret, unmasked, and the amount appears next to a seal that matches the leaf on chain. That is the entire audit. Then the auditor reaches for the nullifier and the arithmetic refuses. Same note, same rho, wrong key, and the forged tag names nothing the ledger will accept. The owner's key produces the real tag in one line. Reading and spending were never the same permission, and the boundary is not a permission check in some server. It is which exponent you hold.</p>
+<figure aria-labelledby="fig51cap">
+<svg viewBox="0 0 680 258" role="img" aria-label="The viewing key door: the chain shows a leaf and a sealed blob, the viewing key turns the blob back into a note and its seal, and the nullifier still requires the spending key." data-fig="step">
+<g data-step="1" data-note="What everyone sees: a leaf in the commitment tree and a masked note blob. Amounts sealed, key hidden.">
+<text x="20" y="24" class="figdim">what everyone sees</text>
+<rect x="20" y="36" width="150" height="46" fill="none" stroke="currentColor" stroke-width="1.5" data-note="the seal in the commitment tree: proves a note exists, says nothing about it"/>
+<text x="95" y="58" class="figlbl" text-anchor="middle">leaf cm</text>
+<text x="95" y="74" class="figdim" text-anchor="middle">in the tree</text>
+<path d="M172 59 L196 59" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="198,59 190,55 190,63" class="c-mrk"/>
+<rect x="202" y="36" width="200" height="46" fill="none" stroke="var(--q-nonce)" stroke-width="1.5" data-note="the masked note: only the key agreement secret opens it"/>
+<text x="302" y="58" class="figlbl" text-anchor="middle">note ciphertext</text>
+<text x="302" y="74" class="figmono" text-anchor="middle">epk, ct</text>
+<text x="422" y="60" class="figdim">amounts sealed, key hidden</text>
+</g>
+<g data-step="2" data-note="The auditor holds the viewing key: it derives the address and unlocks the key agreement, so the note opens and its seal recomputes to the leaf.">
+<text x="20" y="110" class="figdim">the auditor holds vk</text>
+<rect x="20" y="120" width="130" height="46" fill="none" stroke="var(--q-nonce)" stroke-width="1.5" data-note="the viewing key: derives the address and decrypts what arrives"/>
+<text x="85" y="140" class="figlbl" text-anchor="middle">viewing key</text>
+<text x="85" y="156" class="figmono" text-anchor="middle">addr = g^vk</text>
+<path d="M152 143 L176 143" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="178,143 170,139 170,147" class="c-mrk"/>
+<text x="165" y="132" class="figmono" text-anchor="middle">K = epk^vk</text>
+<rect x="182" y="120" width="180" height="46" fill="none" stroke="currentColor" stroke-width="1.5" data-note="the decrypted note: address, amount, rho"/>
+<text x="272" y="140" class="figlbl" text-anchor="middle">note: addr, 5 ZEC, rho</text>
+<text x="272" y="156" class="figdim" text-anchor="middle">the amount appears</text>
+<path d="M364 143 L388 143" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="390,143 382,139 382,147" class="c-mrk"/>
+<rect x="396" y="120" width="170" height="46" fill="none" stroke="var(--q-mrk)" stroke-width="1.5" data-note="the seal recomputes and matches the leaf: view succeeds"/>
+<text x="481" y="140" class="figlbl" text-anchor="middle">cm matches leaf</text>
+<text x="481" y="156" class="figmono" text-anchor="middle">VIEW OK</text>
+</g>
+<g data-step="3" data-note="The spend still wants the spending key. The viewing key cannot derive the nullifier, and the ledger refuses anything else.">
+<text x="20" y="196" class="figdim">the spend</text>
+<rect x="20" y="206" width="130" height="42" fill="none" stroke="currentColor" stroke-width="1.5" data-note="the spending key: never handed out"/>
+<text x="85" y="224" class="figlbl" text-anchor="middle">spending key</text>
+<text x="85" y="240" class="figdim" text-anchor="middle">never leaves</text>
+<path d="M152 227 L176 227" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="178,227 170,223 170,231" class="c-mrk"/>
+<rect x="182" y="206" width="110" height="42" fill="none" stroke="var(--q-nonce)" stroke-width="1.5" data-note="the nullifier: derived from the spending key and rho"/>
+<text x="237" y="231" class="figlbl" text-anchor="middle">nf</text>
+<path d="M294 227 L318 227" stroke="currentColor" stroke-width="1.5"/>
+<polygon points="320,227 312,223 312,231" class="c-mrk"/>
+<rect x="326" y="206" width="160" height="42" fill="none" stroke="var(--q-mrk)" stroke-width="1.5" data-note="accepted: the tag names the note and the proof binds it"/>
+<text x="406" y="231" class="figlbl" text-anchor="middle">ledger ACCEPTS</text>
+<path d="M85 166 C 85 192 150 200 205 220" fill="none" stroke="var(--bad)" stroke-width="1.5" stroke-dasharray="4 4" data-note="the viewing key path: cannot derive the nullifier, forged tags name nothing"/>
+<text x="96" y="192" class="figmono" style="fill:var(--bad)">vk cannot derive nf</text>
+</g>
+</svg>
+<figcaption id="fig51cap"><span class="figno">Fig. 5.1</span>The audit door. A viewing key turns the sealed blob back into a note and its seal. The nullifier still wants the spending key, and the ledger refuses anything else.</figcaption>
+</figure>
+<h2 id="network"><span class="num">06</span>What the chain still shows</h2>
+<p>Zcash supports transparent and shielded activity on one chain. The <a href="https://zips.z.cash/protocol/protocol.pdf">protocol specification</a> is explicit: transfers between transparent and shielded value pools reveal the amount crossing the boundary. A fully shielded Orchard transfer hides the addresses and amounts inside the pool. Privacy therefore depends on the path a wallet chooses, not only on the proof system.</p>
+<p>The 31 May 2022 <a href="https://z.cash/upgrade/nu5/">NU5 upgrade</a> activated Orchard and moved Zcash to Halo, removing Orchard's need for a trusted setup. It also introduced unified addresses so wallets can present one address while choosing supported receiver types. That improves the default experience, but it does not make transparent transfers private or erase information already published.</p>
+<aside class="note"><span class="nno">N.05</span>A shielded proof hides the transaction fields it is designed to hide. It does not hide network metadata, wallet mistakes, exchange records, or a later transfer into the transparent pool.</aside>
+<figure aria-labelledby="fig61cap">
+<svg viewBox="0 0 680 210" role="img" aria-label="A comparison of transparent, boundary, and shielded Zcash activity showing which transaction fields remain public." data-fig="step">
+<g data-step="1" data-note="Transparent activity publishes addresses and amounts, like Bitcoin.">
+<rect x="30" y="54" width="180" height="96" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="120" y="82" class="figlbl" text-anchor="middle">transparent</text>
+<text x="120" y="108" class="figmono" text-anchor="middle">from, to, amount</text>
+<text x="120" y="130" class="figdim" text-anchor="middle">all public</text>
+</g>
+<g data-step="2" data-note="Crossing between value pools reveals the value transferred across that boundary.">
+<rect x="250" y="54" width="180" height="96" fill="none" stroke="var(--warn)" stroke-width="1.5"/>
+<text x="340" y="82" class="figlbl" text-anchor="middle">pool boundary</text>
+<text x="340" y="108" class="figmono" text-anchor="middle">value crossing</text>
+<text x="340" y="130" class="figdim" text-anchor="middle">amount public</text>
+</g>
+<g data-step="3" data-note="Inside Orchard, commitments, nullifiers, and proofs remain public while recipient and amount stay hidden.">
+<rect x="470" y="54" width="180" height="96" fill="var(--accent-soft)" stroke="var(--q-nonce)" stroke-width="1.5"/>
+<text x="560" y="82" class="figlbl" text-anchor="middle">shielded Orchard</text>
+<text x="560" y="108" class="figmono" text-anchor="middle">commitment, nf, proof</text>
+<text x="560" y="130" class="figdim" text-anchor="middle">addresses and amount hidden</text>
+</g>
+<path d="M210 102 L246 102" stroke="currentColor" stroke-width="1.5"/>
+<path d="M430 102 L466 102" stroke="currentColor" stroke-width="1.5"/>
+</svg>
+<figcaption id="fig61cap"><span class="figno">Fig. 6.1</span>The privacy boundary. Step through the three states and watch what the public ledger learns.</figcaption>
+</figure>
+<h2 id="scorecard"><span class="num">07</span>The honest scorecard</h2>
+<p>So who wins? Depends who is asking.</p>
+<p>Against a stranger reading the chain, a fully shielded Zcash transfer reveals no sender, recipient, or amount. There are no decoys to classify. The transparent side is the counterweight. A user or wallet can still publish a Bitcoin like transfer, and crossing between value pools reveals the amount at the boundary. Monero makes privacy mandatory at the protocol layer. Bitcoin is the baseline the whole notebook starts from, and <a href="bitcoin-from-zero.html">its essay</a> draws that world at full size.</p>
+<table>
+<thead>
+<tr><th scope="col">Property</th><th scope="col">Zcash</th><th scope="col">Monero</th><th scope="col">Bitcoin</th></tr>
+</thead>
+<tbody>
+<tr><td>A stranger reads the chain</td><td class="m">shielded transfer opaque; transparent transfer visible</td><td class="g">transaction fields private by default</td><td class="b">amounts and addresses public</td></tr>
+<tr><td>Tracing an average user</td><td class="m">strong inside the pool; pool crossings leak</td><td class="m">endpoints and pre-2017 transactions</td><td class="b">routine, industrialized</td></tr>
+<tr><td>Privacy without user effort</td><td class="b">a choice the user must make</td><td class="g">no other mode exists</td><td class="b">none</td></tr>
+<tr><td>Anonymity ceiling</td><td class="g">eligible notes in the shielded pool</td><td class="m">finite ring today, broader set if FCMP++ lands</td><td class="m">none to speak of</td></tr>
+<tr><td>Third party audit</td><td class="g">viewing keys: read without spend</td><td class="m">view key exists, smaller crowd behind it</td><td class="b">everything public or nothing</td></tr>
+<tr><td>Supply auditability</td><td class="m">transparent side trivial, shielded side rests on proof soundness</td><td class="m">rests on proof soundness</td><td class="g">sum the coins</td></tr>
+</tbody>
+</table>
+<p>The auditability row is the honest cost of hiding. A transparent chain can audit supply by adding public values. Zcash verifies shielded value through proof soundness, while its transparent side remains directly auditable. The Monero page scores similar tradeoffs from Monero's side, including its <a href="monero-under-the-hood.html#rings">ring signatures</a> and <a href="monero-under-the-hood.html#fcmp">FCMP++</a> work.</p>
+<figure aria-labelledby="fig71cap">
+<svg viewBox="0 0 680 210" role="img" aria-label="Anonymity scope compared across a Zcash shielded pool, a Monero ring, and a transparent chain." data-fig="step">
+<text x="340" y="22" class="figdim" text-anchor="middle">who can be watching with you: the anonymity set (log-squashed)</text>
+<line x1="40" y1="170" x2="640" y2="170" stroke="currentColor" stroke-width="1" opacity=".4"/>
+<g data-step="1" data-note="Zcash shielded: the spend proves membership in the eligible shielded note set without naming the note.">
+<rect x="90" y="46" width="70" height="124" fill="var(--accent-soft)" stroke="var(--q-nonce)" stroke-width="1.5"/>
+<text x="125" y="38" class="figmono" text-anchor="middle">pool</text>
+<text x="125" y="192" class="figlbl" text-anchor="middle">Zcash shielded pool</text>
+</g>
+<g data-step="2" data-note="Monero: the spender hides in a finite ring of possible signers today, with broader membership proofs under development.">
+<rect x="300" y="128" width="70" height="42" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="335" y="118" class="figmono" text-anchor="middle">ring</text>
+<text x="335" y="192" class="figlbl" text-anchor="middle">Monero ring today</text>
+</g>
+<g data-step="3" data-note="A transparent chain: an anonymity set of one. Every amount and counterparty in the open, which is the Bitcoin baseline.">
+<rect x="510" y="158" width="70" height="12" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="545" y="148" class="figmono" text-anchor="middle">1</text>
+<text x="545" y="192" class="figlbl" text-anchor="middle">transparent chain</text>
+</g>
+</svg>
+<figcaption id="fig71cap"><span class="figno">Fig. 7.1</span>The privacy scope, drawn. Step through a shielded pool, a finite ring, and a transparent transfer.</figcaption>
+</figure>
+<p>My verdict is narrower. Zcash built a strong privacy instrument, but users only receive its full protection inside the shielded path. Viewing keys make selective audits possible without granting spending power. Transparent transfers and pool crossings remain visible. The larger idea, proofs that reveal a fact without exposing the source data, continues in <a href="zero-knowledge-from-zero.html">the zero knowledge essay</a>.</p>
+<details class="toc" aria-label="Primary sources">
+<summary>Primary sources</summary>
+<ul>
+<li><a href="https://zerocash-project.org/paper">Zerocash paper and author affiliations</a></li>
+<li><a href="https://zips.z.cash/protocol/protocol.pdf">Zcash protocol specification</a></li>
+<li><a href="https://z.cash/upgrade/nu5/">Zcash NU5 and Orchard</a></li>
+<li><a href="https://electriccoin.co/wp-content/uploads/2024/03/Transparency-Report-March-2023.pdf">Electric Coin Company location and legal entity</a></li>
+<li><a href="https://starkware.co/media-kit/">StarkWare founders and company details</a></li>
+</ul>
+</details>
+</div>
+</main>
+<footer class="band foot">
+<nav class="pn" aria-label="Guide navigation"><a href="monero-under-the-hood.html" rel="prev"><small>Previous</small><strong>Monero</strong></a><a href="zero-knowledge-from-zero.html" rel="next"><small>Next</small><strong>Zero knowledge</strong></a></nav>
+<p class="colophon">Written by <a href="https://moamenbasel.com">Moamen Basel</a>, security engineer at <a href="https://greycorelabs.com">Grey Core Labs</a>. Moamen Basel, 2026, facts current September 2026. <a href="index.html">Index</a></p>
+</footer>
+<script>
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function crng(){var a=new Uint32Array(1);return function(){crypto.getRandomValues(a);return a[0]/4294967296}}
+function rint(rng,lo,hi){return lo+Math.floor(rng()*(hi-lo+1))}
+function rbig(rng,lo,hi){return BigInt(rint(rng,Number(lo),Number(hi)))}
+function modpow(b,e,m){b%=m;var r=1n;while(e>0n){if(e&1n)r=r*b%m;b=b*b%m;e>>=1n}return r}
+var P=2027n,Q=1013n,G=4n;
+var ENC=new TextEncoder();
+async function Hs(){var a=[],i;for(i=0;i<arguments.length;i++)a.push(arguments[i].toString());var d=await crypto.subtle.digest('SHA-256',ENC.encode(a.join('|')));var u=new Uint8Array(d),h='';for(i=0;i<u.length;i++)h+=u[i].toString(16).padStart(2,'0');return BigInt('0x'+h)%Q}
+async function noteCommit(v,rho,addr){return modpow(G,await Hs('cm',addr,v,rho),P)}
+async function nullifierOf(sk,rho){return modpow(G,await Hs('nf',sk,rho),P)}
+async function makeNote(rng,v){var rho=rbig(rng,1,1012);var addr=modpow(G,rbig(rng,1,1012),P);return{v:BigInt(v),rho:rho,addr:addr}}
+function el(i){return document.getElementById(i)}
+var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var RND=crng();
+function nap(ms){return new Promise(function(r){setTimeout(r,RM?Math.max(ms,520):ms)})}
+function fmtT(ms){var s=Math.floor(ms/100)/10;if(s<60)return s.toFixed(1)+'s';var m=Math.floor(s/60);var r=(s-m*60).toFixed(1);return m+':'+(r.length<4?'0'+r:r)}
+function clip(t){function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(ta)}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).catch(fb)}else fb()}
+function mk(mid){var m=el(mid);var K={m:m,run:el(mid+'run'),rst:el(mid+'rst'),cpy:el(mid+'cpy'),tickEl:el(mid+'tick'),elEl:el(mid+'el'),out:el(mid+'out'),bar:el(mid+'bar'),ticks:0,t0:0,raf:0,last:'',startfn:null,resetfn:null,stopfn:null,lab:el(mid+'run').textContent};K.set=function(s){m.setAttribute('data-state',s);if(K.run){K.run.disabled=(s==='running');K.run.textContent=(s==='running')?'Running':K.lab}if(s!=='running')K.clock(false)};K.line=function(html,cls){var d=document.createElement('div');d.className='ln'+(cls?' '+cls:'');d.innerHTML=html;var pin=(K.out.scrollHeight-K.out.scrollTop-K.out.clientHeight)<48;K.out.appendChild(d);while(K.out.children.length>12)K.out.removeChild(K.out.firstChild);if(pin)K.out.scrollTop=K.out.scrollHeight;K.last=d.textContent;return d};K.tick=function(n){K.ticks=n;K.tickEl.textContent=n.toLocaleString('en-US');K.tickEl.style.display='inline';K.tickEl.style.color='var(--machine-stamp)';setTimeout(function(){K.tickEl.style.color=''},240)};K.clock=function(on){if(on){K.t0=performance.now();var lp=function(){K.elEl.textContent=fmtT(performance.now()-K.t0);K.raf=requestAnimationFrame(lp)};lp()}else if(K.raf){cancelAnimationFrame(K.raf);K.raf=0}};K.prog=function(x){K.bar.style.opacity='1';K.bar.style.transform='scaleX('+x+')'};K.finish=function(good){K.set('done');K.bar.style.opacity='0';if(K.cpy)K.cpy.disabled=false;K.elEl.textContent=fmtT(performance.now()-K.t0);K.clock(false);K.out.classList.add(good?'goodflash':'badflash');setTimeout(function(){K.out.classList.remove('goodflash');K.out.classList.remove('badflash')},420)};K.reset=function(){K.set('idle');K.out.innerHTML='';K.tickEl.style.display='none';K.ticks=0;K.elEl.textContent='';K.bar.style.transform='scaleX(0)';K.bar.style.opacity='0';if(K.cpy){K.cpy.disabled=true;K.cpy.textContent='Copy result'}K.out.classList.remove('goodflash');K.out.classList.remove('badflash')};K.copy=function(){if(!K.last)return;clip(K.last);K.cpy.textContent='Copied';setTimeout(function(){K.cpy.textContent='Copy result'},1400)};if(K.run)K.run.addEventListener('click',function(){if(K.startfn&&!K.run.disabled)K.startfn()});if(K.rst)K.rst.addEventListener('click',function(){if(K.resetfn)K.resetfn();else K.reset()});if(K.cpy)K.cpy.addEventListener('click',function(){K.copy()});m.addEventListener('keydown',function(e){var t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA')){if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();if(K.startfn&&!K.run.disabled)K.startfn()}return}if(e.key==='Enter'||((e.metaKey||e.ctrlKey)&&e.key==='Enter')){e.preventDefault();if(K.startfn&&!K.run.disabled)K.startfn()}else if(e.shiftKey&&(e.key==='R'||e.key==='r')){e.preventDefault();if(K.resetfn)K.resetfn();else K.reset()}else if(e.shiftKey&&(e.key==='C'||e.key==='c')){e.preventDefault();if(!K.cpy.disabled)K.copy()}else if(e.key==='Escape'){if(K.stopfn)K.stopfn();else m.blur()}});return K}
+var K1=mk('m1');var SEEN=new Set();
+K1.resetfn=function(){SEEN=new Set();K1.reset()};
+K1.startfn=async function(){K1.reset();SEEN=new Set();K1.set('running');K1.clock(true);var op=0,rng=RND;var sk=rbig(rng,1,1012);K1.line('your wallet secret key, never published: sk = '+sk,'dim');await nap(150);var n1=await makeNote(rng,7);op++;K1.tick(op);K1.prog(op/5);var cm1=await noteCommit(n1.v,n1.rho,n1.addr);K1.line('shield 7 ZEC: note sealed, secret nonce rho = '+n1.rho);await nap(170);K1.line('chain: new leaf cm1 = <span class="hi">'+cm1+'</span> joined the commitment tree. No amount printed.');await nap(190);var nf1=await nullifierOf(sk,n1.rho);op++;K1.tick(op);K1.prog(op/5);K1.line('spend 1: publish nullifier nf1 = <span class="hi">'+nf1+'</span> plus one proof [real network verifies the zk-SNARK here]');await nap(190);if(!SEEN.has(nf1.toString())){SEEN.add(nf1.toString());K1.line('ledger: nf1 unseen, ACCEPTED and recorded.','ok')}await nap(210);op++;K1.tick(op);K1.prog(op/5);var nf1b=await nullifierOf(sk,n1.rho);K1.line('spend the SAME note again: nullifier recomputes to '+nf1b+' ...');await nap(190);K1.line('ledger: REJECTED, nullifier already spent. No amounts were ever shown.','no');await nap(230);var n2=await makeNote(rng,3);var cm2=await noteCommit(n2.v,n2.rho,n2.addr);K1.line('shield a second note, 3 ZEC, fresh rho = '+n2.rho+': leaf cm2 = <span class="hi">'+cm2+'</span>');await nap(190);var nf2=await nullifierOf(sk,n2.rho);op++;K1.tick(op);K1.prog(op/5);K1.line('spend 2: nullifier nf2 = <span class="hi">'+nf2+'</span> ...');await nap(170);if(!SEEN.has(nf2.toString())){SEEN.add(nf2.toString());K1.line('ledger: ACCEPTED. Different rho, different nullifier, no visible link to cm1 or cm2.','ok')}await nap(230);op++;K1.tick(op);K1.prog(1);K1.line('the analyst view: leaves ['+cm1+', '+cm2+'] nullifiers ['+nf1+', '+nf2+'] amounts: none anywhere. Try to match them; there is nothing to match on.','dim');K1.finish(true)};
+var K2=mk('m2');
+K2.resetfn=function(){K2.reset()};
+K2.startfn=async function(){K2.reset();K2.set('running');K2.clock(true);var op=0,rng=RND;var m=rbig(rng,1,1012);var sks=await Hs('sk',m);var skv=await Hs('vk',m);var addr=modpow(G,skv,P);op++;K2.tick(op);K2.prog(op/8);K2.line('wallet created. spending key sk_spend = '+sks+' [never leaves your wallet]','dim');await nap(160);K2.line('viewing key handed to the auditor: vk = '+skv);await nap(160);K2.line('shielded address, derived from vk: addr = g^vk = <span class="hi">'+addr+'</span>');await nap(190);var v=5n,rho=rbig(rng,1,1012);var cm=await noteCommit(v,rho,addr);op++;K2.tick(op);K2.prog(op/8);K2.line('someone pays you 5 ZEC: note (addr, 5, rho = '+rho+') sealed, leaf cm = <span class="hi">'+cm+'</span> joins the tree');await nap(190);var esk=rbig(rng,1,1012);var epk=modpow(G,esk,P);var K=modpow(addr,esk,P);var ctv=(v+K)%Q,ctr=(rho+K)%Q;K2.line('note travels masked: epk = '+epk+', ct = ('+ctv+', '+ctr+'). Key agreement secret stays off chain.');await nap(210);var Kv=modpow(epk,skv,P);op++;K2.tick(op);K2.prog(op/8);K2.line('auditor: K = epk^vk = '+Kv+(Kv===K?' = sender\'s addr^esk. Same secret, no communication needed.':''));await nap(170);var dv=((ctv-Kv)%Q+Q)%Q,dr=((ctr-Kv)%Q+Q)%Q;var cmv=await noteCommit(dv,dr,addr);K2.line('auditor unmasks: note = (addr, '+dv+' ZEC, rho = '+dr+'), recomputes cm = '+cmv);await nap(190);if(cmv===cm){K2.line('cm matches the leaf. VIEW OK: the designated viewer sees the incoming amount.','ok')}else{K2.line('cm mismatch, view failed','no')}await nap(230);var nfTrue=await nullifierOf(sks,rho);var nfForge=await nullifierOf(skv,rho);op++;K2.tick(op);K2.prog(op/8);K2.line('auditor tries to spend: nullifier needs sk_spend. Forges nf-wrong = g^H(nf, vk, rho) = '+nfForge);await nap(190);K2.line('network: the spend proof must bind the nullifier to the spending key behind cm [zk-SNARK check]. REJECTED.','no');await nap(230);op++;K2.tick(op);K2.prog(1);K2.line('owner spends: nf = g^H(nf, sk_spend, rho) = '+nfTrue+' ... ACCEPTED');await nap(190);K2.line('the auditor watching sees nf appear, and nothing links it back to cm. Read without spend, exactly as designed.','dim');K2.finish(true)};
+function updProg(){var sy=window.scrollY;var den=document.documentElement.scrollHeight-window.innerHeight;var f=den>0?sy/den:0;var p=el('readprog');p.style.transform='scaleX('+(isFinite(f)?Math.min(1,f):0)+')';p.classList.toggle('on',sy>8)}
+if(RM){window.addEventListener('scrollend',updProg);updProg()}else{var pr=false;window.addEventListener('scroll',function(){if(!pr){pr=true;requestAnimationFrame(function(){updProg();pr=false})}},{passive:true})}
+updProg();
+function setThemeT(d){document.documentElement.setAttribute('data-theme',d?'dark':'light');el('themenow').textContent=d?'Dark':'Light';el('themego').textContent=d?'Light':'Dark'}
+var saved=null;try{saved=localStorage.getItem('cln-theme')}catch(e){}
+if(saved){setThemeT(saved==='dark')}else{setThemeT(matchMedia('(prefers-color-scheme: dark)').matches)}
+el('themego').addEventListener('click',function(){var d=document.documentElement.getAttribute('data-theme')!=='dark';try{localStorage.setItem('cln-theme',d?'dark':'light')}catch(e){};setThemeT(d)});
+var railLinks=document.querySelectorAll('nav.toc.rail a');
+if('IntersectionObserver' in window){var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){railLinks.forEach(function(a){a.classList.toggle('act',a.getAttribute('href')==='#'+e.target.id)})}})},{rootMargin:'0px 0px -72% 0px'});document.querySelectorAll('main h2[id]').forEach(function(h){obs.observe(h)})}
+</script>
+<script>
+(function(){
+'use strict';
+var STILL=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var st=document.createElement('style');
+st.textContent='.figctl{display:flex;flex-wrap:wrap;gap:6px;margin-top:.85rem}.figctl button{font-family:var(--mono);font-size:11px;line-height:1.5;letter-spacing:.02em;border:1px solid var(--border2);border-radius:8px;padding:4px 10px;background:transparent;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s}.figctl button:hover{border-color:var(--accent);color:var(--ink)}.figctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.fignote-pop{position:absolute;top:10px;left:10px;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font:12px/1.5 var(--sans);color:var(--muted);padding:6px 10px;pointer-events:none;opacity:0;transition:opacity .12s;z-index:6;box-shadow:0 2px 10px rgba(0,0,0,.07)}.fignote-pop.on{opacity:1}figure svg g[data-step]{transition:opacity .25s ease}figure svg g[data-step].fdim{opacity:.2}figure svg g[data-step].fpulse{animation:figpulse .9s ease-out 1}@keyframes figpulse{0%{opacity:1}45%{opacity:.5}100%{opacity:1}}figure svg .sa,figure svg .sb{transition:opacity .25s ease,transform .25s ease}figure svg.fa .sb{opacity:.15;transform:translateY(3px)}figure svg.fb .sa{opacity:.15;transform:translateY(3px)}';
+document.head.appendChild(st);
+function popEl(fig){if(!fig._pop){var p=document.createElement('div');p.className='fignote-pop';fig.appendChild(p);fig._pop=p}return fig._pop}
+function noteOn(fig,text){popEl(fig).textContent=text;popEl(fig).classList.add('on')}
+function noteOff(fig){if(fig._pop)fig._pop.classList.remove('on')}
+function hot(el,on){var cs=getComputedStyle(el),t=el.tagName.toLowerCase();el.style.transition='stroke .15s ease,fill .15s ease,filter .15s ease';if(on){if(cs.stroke!=='none')el.style.stroke='var(--accent)';if(t!=='text'&&cs.fill!=='none')el.style.fill='var(--accent)';el.style.filter='drop-shadow(0 0 4px var(--accent))'}else{el.style.stroke='';el.style.fill='';el.style.filter=''}}
+function cool(fig){if(fig._hot){hot(fig._hot,false);fig._hot=null;noteOff(fig)}}
+function wireNotes(fig,svg){Array.prototype.forEach.call(svg.querySelectorAll('[data-note]'),function(el){el.addEventListener('pointerenter',function(){if(fig._hot&&fig._hot!==el)hot(fig._hot,false);fig._hot=el;hot(el,true);noteOn(fig,el.getAttribute('data-note'))});el.addEventListener('pointerleave',function(){if(fig._hot===el)cool(fig)});el.addEventListener('click',function(){if(fig._hot===el)cool(fig)})})}
+function drawIn(fig){if(STILL||document.hidden)return;var svg=fig.querySelector('svg');if(!svg||svg._busy)return;svg._busy=1;setTimeout(function(){svg._busy=0;for(var w=0;w<sk.length;w++){sk[w][0].style.transition='';sk[w][0].style.strokeDasharray='';sk[w][0].style.strokeDashoffset='';sk[w][0].style.opacity=''}for(w=0;w<fd.length;w++){fd[w].style.transition='';fd[w].style.opacity='';fd[w].style.transform=''}for(w=0;w<tx.length;w++)tx[w].style.transition=''},2600);var sk=[],fd=[],tx=[],i,j,k;var sh=svg.querySelectorAll('path,line,rect,circle,ellipse,polygon,polyline');for(i=0;i<sh.length;i++){var el=sh[i],L=0;if(!el.getAttribute('stroke-dasharray')){var cs=getComputedStyle(el);try{L=el.getTotalLength()}catch(e){L=0}if(cs.stroke==='none'||!(L>1))L=0}if(L>1)sk.push([el,L]);else fd.push(el)}var tl=svg.querySelectorAll('text');for(i=0;i<tl.length;i++)tx.push(tl[i]);for(j=0;j<sk.length;j++){sk[j][0].style.transition='none';sk[j][0].style.strokeDasharray=sk[j][1]+'px';sk[j][0].style.strokeDashoffset=sk[j][1]+'px';sk[j][0].style.opacity='0'}for(j=0;j<fd.length;j++){fd[j].style.transition='none';fd[j].style.opacity='0';fd[j].style.transform='translateY(6px)'}for(j=0;j<tx.length;j++){tx[j].style.transition='none';tx[j].style.opacity='0'}requestAnimationFrame(function(){requestAnimationFrame(function(){for(j=0;j<sk.length;j++){var d=Math.min(j*40,340);sk[j][0].style.transition='stroke-dashoffset .7s cubic-bezier(.25,.8,.35,1) '+d+'ms,opacity .3s ease '+d+'ms';sk[j][0].style.strokeDashoffset='0';sk[j][0].style.opacity=''}for(j=0;j<fd.length;j++){var d2=Math.min(120+j*60,600);fd[j].style.transition='opacity .5s ease '+d2+'ms,transform .5s cubic-bezier(.25,.8,.35,1) '+d2+'ms';fd[j].style.opacity='';fd[j].style.transform=''}for(j=0;j<tx.length;j++){var d3=Math.min(200+j*60,700);tx[j].style.transition='opacity .45s ease '+d3+'ms';tx[j].style.opacity=''}setTimeout(function(){for(k=0;k<sk.length;k++){sk[k][0].style.transition='';sk[k][0].style.strokeDasharray='';sk[k][0].style.strokeDashoffset=''}for(k=0;k<fd.length;k++){fd[k].style.transition='';fd[k].style.transform=''}for(k=0;k<tx.length;k++)tx[k].style.transition='';svg._busy=0},1500)})})}
+function wireSteps(fig,svg){var g=Array.prototype.slice.call(svg.querySelectorAll('g[data-step]')).sort(function(a,b){return(+a.getAttribute('data-step')||0)-(+b.getAttribute('data-step')||0)});if(!g.length)return null;var a={i:-1,timer:0,g:g};a.show=function(n){a.i=n;for(var j=0;j<g.length;j++){g[j].classList.remove('fpulse');g[j].classList.toggle('fdim',j!==n)}g[n].classList.add('fpulse');var t=g[n].getAttribute('data-note');if(t)noteOn(fig,t)};a.halt=function(){if(a.timer){clearInterval(a.timer);a.timer=0}};a.clear=function(){a.halt();a.i=-1;for(var j=0;j<g.length;j++)g[j].classList.remove('fdim','fpulse');noteOff(fig)};a.next=function(){a.halt();a.show((a.i+1)%g.length)};a.auto=function(){if(STILL)return;a.halt();var n=0;a.show(0);a.timer=setInterval(function(){n++;if(n>=g.length){a.halt();a.clear();return}a.show(n)},900)};return a}
+function wireToggle(svg){if(!svg.querySelector('.sa')&&!svg.querySelector('.sb'))return null;var a={n:0,btn:null,la:svg.getAttribute('data-a')||'state A',lb:svg.getAttribute('data-b')||'state B'};a.flip=function(){a.n++;var first=a.n%2===1;svg.classList.toggle('fa',first);svg.classList.toggle('fb',!first);if(a.btn)a.btn.textContent=first?a.lb:a.la};a.reset=function(){a.n=0;svg.classList.remove('fa','fb');if(a.btn)a.btn.textContent=a.la};return a}
+function controls(fig,svg,steps,tog){var row=document.createElement('div');row.className='figctl';function btn(t,fn){var b=document.createElement('button');b.type='button';b.textContent=t;b.addEventListener('click',fn);row.appendChild(b);return b}btn('Replay',function(){if(steps)steps.clear();if(tog)tog.reset();drawIn(fig);if(steps)setTimeout(steps.auto,STILL?0:1600)});if(steps)btn('Step',steps.next);if(tog){tog.btn=btn(tog.la,tog.flip)}svg.insertAdjacentElement('afterend',row)}
+var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting)return;io.unobserve(en.target);var f=en.target;drawIn(f);if(f._figsteps)setTimeout(f._figsteps.auto,1600)})},{threshold:.15}):null;
+Array.prototype.forEach.call(document.querySelectorAll('figure'),function(fig){var svg=fig.querySelector('svg');if(!svg)return;fig.style.position='relative';wireNotes(fig,svg);var steps=null,tog=null,kind=svg.getAttribute('data-fig');if(kind==='step')steps=wireSteps(fig,svg);else if(kind==='toggle')tog=wireToggle(svg);controls(fig,svg,steps,tog);fig._figsteps=steps;if(io)io.observe(fig);else{drawIn(fig);if(steps)setTimeout(steps.auto,1600)}});
+})();
+</script>
+</body>
+</html>

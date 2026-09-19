@@ -1,0 +1,18 @@
+/* SITE */
+Name: Crypto in Brief
+URL: https://cryptoinbrief.xyz
+Purpose: Illustrated cryptocurrency explainers with interactive browser labs
+Languages: English and Arabic
+Technology: Static HTML, CSS, SVG, and JavaScript
+Analytics: No analytics or advertising scripts
+
+/* AUTHOR */
+Author: Moamen Basel
+Website: https://moamenbasel.com
+Role: Security engineer at Grey Core Labs
+Company: https://greycorelabs.com
+
+/* SOURCE */
+Repository: https://github.com/cryptoinbrief/cryptoinbrief.xyz
+License: MIT
+Corrections: Open an issue or pull request in the public repository

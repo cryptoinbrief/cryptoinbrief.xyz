@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Crypto in Brief</title>
+    <link>https://cryptoinbrief.xyz/</link>
+    <description>Illustrated cryptocurrency explainers with interactive browser labs for readers with no assumed background. Written by Moamen Basel.</description>
+    <language>en</language>
+    <lastBuildDate>Sun, 20 Sep 2026 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://cryptoinbrief.xyz/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Bitcoin and crypto, an illustrated overview</title>
+      <link>https://cryptoinbrief.xyz/crypto-summary.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/crypto-summary.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>A visual overview of hashing, mining, signatures, transaction models, privacy, consensus, and execution.</description>
+    </item>
+    <item>
+      <title>Bitcoin from zero</title>
+      <link>https://cryptoinbrief.xyz/bitcoin-from-zero.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/bitcoin-from-zero.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Hashing, blocks, Merkle trees, mining, signatures, forks, finality, and transaction ordering with browser labs.</description>
+    </item>
+    <item>
+      <title>Proof of stake from zero</title>
+      <link>https://cryptoinbrief.xyz/proof-of-stake.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/proof-of-stake.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Validators, proposer selection, attestations, fork choice, slashing, and economic finality through Ethereum examples and simulations.</description>
+    </item>
+    <item>
+      <title>Solana from zero</title>
+      <link>https://cryptoinbrief.xyz/solana.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/solana.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Proof of history, slots, Tower BFT, validator voting, and parallel execution with three interactive labs.</description>
+    </item>
+    <item>
+      <title>Sui from zero</title>
+      <link>https://cryptoinbrief.xyz/sui.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/sui.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>The object model, owned and shared transactions, Mysticeti consensus, Move types, and zkLogin.</description>
+    </item>
+    <item>
+      <title>Monero under the hood</title>
+      <link>https://cryptoinbrief.xyz/monero-under-the-hood.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/monero-under-the-hood.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Stealth addresses, ring signatures, key images, RingCT, network privacy, and the limits of toy cryptographic models.</description>
+    </item>
+    <item>
+      <title>Zcash from zero</title>
+      <link>https://cryptoinbrief.xyz/zcash.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/zcash.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Shielded notes, nullifiers, viewing keys, optional privacy, and the documented lineage from Israeli and American research to a coin launched by a US company.</description>
+    </item>
+    <item>
+      <title>Zero knowledge from zero</title>
+      <link>https://cryptoinbrief.xyz/zero-knowledge-from-zero.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/zero-knowledge-from-zero.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Interactive proofs, Fiat Shamir, SNARKs, STARKs, selective disclosure, and privacy preserving identity.</description>
+    </item>
+    <item>
+      <title>البيتكوين والكريبتو، ملخص مرسوم</title>
+      <link>https://cryptoinbrief.xyz/crypto-summary-ar.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/crypto-summary-ar.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>ar</dc:language>
+      <description>شرح مرسوم للهاش والتعدين والتوقيعات والخصوصية وآليات الإجماع من غير خلفية مسبقة.</description>
+    </item>
+    <item>
+      <title>البيتكوين من الصفر</title>
+      <link>https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>ar</dc:language>
+      <description>شرح الهاش والبلوكات وشجرة Merkle والتعدين والتحقق من خلال تجارب داخل المتصفح.</description>
+    </item>
+    <item>
+      <title>مونيرو من الصفر</title>
+      <link>https://cryptoinbrief.xyz/monero-from-zero-ar.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/monero-from-zero-ar.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>ar</dc:language>
+      <description>شرح إخفاء المستلم والمرسل والمبلغ بالعناوين الخفية والتوقيعات الحلقية وRingCT.</description>
+    </item>
+  </channel>
+</rss>

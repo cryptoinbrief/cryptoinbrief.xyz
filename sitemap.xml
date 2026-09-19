@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://cryptoinbrief.xyz/</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/crypto-summary.html</loc>
+    <lastmod>2026-09-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/crypto-summary.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/crypto-summary-ar.html"/>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/crypto-summary-ar.html</loc>
+    <lastmod>2026-09-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/crypto-summary.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/crypto-summary-ar.html"/>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/bitcoin-from-zero.html</loc>
+    <lastmod>2026-09-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/bitcoin-from-zero.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html"/>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html</loc>
+    <lastmod>2026-09-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/bitcoin-from-zero.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html"/>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/proof-of-stake.html</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/solana.html</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/sui.html</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/monero-under-the-hood.html</loc>
+    <lastmod>2026-09-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/monero-under-the-hood.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/monero-from-zero-ar.html"/>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/monero-from-zero-ar.html</loc>
+    <lastmod>2026-09-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/monero-under-the-hood.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/monero-from-zero-ar.html"/>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/zcash.html</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/zero-knowledge-from-zero.html</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+</urlset>

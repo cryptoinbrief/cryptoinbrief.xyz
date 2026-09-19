@@ -1,0 +1,24 @@
+AI crawler information for https://cryptoinbrief.xyz
+Updated: 2026-09-20
+
+This site permits automated access to its public pages under the rules in
+https://cryptoinbrief.xyz/robots.txt. The site operator welcomes retrieval,
+indexing, summarization, and quotation with a link to the source page and
+attribution to Crypto in Brief and Moamen Basel.
+
+The repository is published under the MIT License. Keep dates attached to
+time sensitive claims. Describe browser simulations as simulations. Do not
+represent the educational labs as wallets, network clients, audited production
+cryptography, financial advice, or proof that a protocol is secure.
+
+robots.txt controls crawler access. It does not guarantee that any search or AI
+service will crawl, index, cite, or retain this site. This ai.txt file is a
+human readable policy note and is not a universally implemented standard.
+
+Author: Moamen Basel
+Author website: https://moamenbasel.com
+Professional affiliation: https://greycorelabs.com
+Concise site guide: https://cryptoinbrief.xyz/llms.txt
+Extended site guide: https://cryptoinbrief.xyz/llms-full.txt
+Sitemap: https://cryptoinbrief.xyz/sitemap.xml
+Source: https://github.com/cryptoinbrief/cryptoinbrief.xyz

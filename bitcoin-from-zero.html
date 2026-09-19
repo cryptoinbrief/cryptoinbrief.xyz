@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-coin="bitcoin">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitcoin from zero, a lab notebook | Crypto in Brief</title>
+<meta name="description" content="Bitcoin explained with no background assumed: hashing, signatures, mining, the nonce, forks, finality and MEV, each with a lab that runs in your browser.">
+<link rel="canonical" href="https://cryptoinbrief.xyz/bitcoin-from-zero.html">
+<meta property="og:site_name" content="Crypto in Brief">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bitcoin from zero">
+<meta property="og:description" content="How Bitcoin actually works, built in front of you: hashing, the 80-byte header, mining, nodes, forks, and nine labs that run real SHA-256 in your browser.">
+<meta property="og:url" content="https://cryptoinbrief.xyz/bitcoin-from-zero.html">
+<meta property="og:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bitcoin from zero">
+<meta name="twitter:description" content="Hashing, the 80-byte header, mining, forks, and nine labs that run real SHA-256 in your browser.">
+<meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="author" content="Moamen Basel">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bitcoin from zero","description":"How Bitcoin actually works, built in front of you: hashing, the 80-byte header, mining, nodes, forks, and nine labs that run real SHA-256 in your browser.","datePublished":"2026-09-19","inLanguage":"en","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz"},"mainEntityOfPage":"https://cryptoinbrief.xyz/bitcoin-from-zero.html"}</script>
+<style>
+:root{
+  --bg:#FAFAF8; --surface:#FFFFFF; --surface2:#F4F4F1;
+  --border:#E7E6E1; --border2:#D8D7D1;
+  --ink:#16171A; --muted:#5D6270; --faint:#9B9FA8;
+  --accent:#B87400; --accent-ink:#FFFFFF; --accent-soft:rgba(184,116,0,.10);
+  --good:#0B9E6A; --bad:#D64533; --warn:#B27A22;
+  --term:#0C0E11; --term-border:#1E2229; --term-ink:#DADEE4; --term-dim:#8A909A; --term-accent:#63E2A6;
+  --serif:"Instrument Serif","Georgia",serif;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --measure:66ch; --rail:13rem; --note:13.5rem; --gutter:1.75rem;
+  --ease:cubic-bezier(.25,.8,.35,1);
+  --r-card:16px; --r-btn:10px; --r-chip:999px;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#F7A534; --accent-ink:#1A1205; --accent-soft:rgba(247,165,52,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}
+@media(prefers-color-scheme:dark){
+:root:not([data-theme="light"]){
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#F7A534; --accent-ink:#1A1205; --accent-soft:rgba(247,165,52,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}}
+*{box-sizing:border-box}
+html{font-size:106.25%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0588rem;line-height:1.72;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent-soft);color:var(--ink)}
+#readprog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+#readprog.on{visibility:visible}
+.band{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:3.25rem;padding-inline:max(1.25rem,calc(50vw - 21rem));font-family:var(--sans);font-size:.75rem;letter-spacing:.02em}
+header.band{position:sticky;top:0;z-index:50;flex-wrap:wrap;padding-block:.5rem;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--border)}
+.band a{color:var(--muted);text-decoration:none;transition:color .15s var(--ease)}
+.band a:hover{color:var(--ink)}
+.band a[aria-current="page"]{color:var(--accent)}
+.band .mark{color:var(--ink);font-weight:650;white-space:nowrap;letter-spacing:-.01em;font-size:.875rem}
+.band nav.series{display:flex;flex-wrap:wrap;gap:.3rem .95rem}
+.band .series a{white-space:nowrap}
+.band .switch{display:flex;gap:1rem;margin:0;white-space:nowrap;font-family:var(--mono);font-size:.7rem}
+.band .switch b{color:var(--ink);font-weight:600}
+.band .none{color:var(--faint)}
+.band button{background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer}
+.band button:hover{color:var(--accent)}
+main{max-width:var(--measure);margin-inline:auto;padding:3rem 1.25rem 5rem;position:relative}
+.reg,main::before,main::after{display:none}
+@media(min-width:1100px){
+main{max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note));display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter)}
+nav.toc.rail{grid-column:1;align-self:start;position:sticky;top:4.5rem}
+.col{grid-column:2;max-width:var(--measure);position:relative}
+}
+.byline{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 1rem}
+.byline,.lead{max-width:60ch}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,1.7rem + 3.2vw,3.6rem);line-height:1.04;letter-spacing:-.015em;margin:.15em 0 .5em}
+.lead{font-size:1.3rem;line-height:1.45;color:var(--muted);margin:0 0 2rem;font-weight:450}
+h2{font-size:1.65rem;line-height:1.25;font-weight:650;letter-spacing:-.015em;margin:3.4em 0 .7em}
+.col>h2:first-of-type{margin-block-start:1.8em}
+h2 .num{font-family:var(--mono);color:var(--accent);font-size:.7em;margin-inline-end:.7em;font-weight:500;letter-spacing:0}
+h3{font-size:1.18rem;line-height:1.35;font-weight:600;margin:2.1em 0 .45em;letter-spacing:-.008em}
+p{margin:0 0 1.15em}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);transition:border-color .15s var(--ease)}
+a:hover{border-bottom-color:var(--accent)}
+code,.hx,.num{font-family:var(--mono);font-size:.85em;font-variant-numeric:tabular-nums}
+code{background:var(--accent-soft);border-radius:5px;padding:.1em .35em}
+strong{font-weight:650}
+figure{margin:2.5rem auto;width:min(72rem,calc(100vw - 2rem));transform:translateX(0);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:1.5rem 1.5rem 1.1rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+[dir="rtl"] figure{margin-inline:auto}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:.9rem}
+figcaption .figno{font-family:var(--mono);color:var(--accent);margin-inline-end:.55em;font-size:.95em}
+.figbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:inherit;border-radius:var(--r-card)}
+.figbtn:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.c-time{stroke:var(--warn)} .c-nonce{stroke:var(--accent)} .c-mrk{stroke:var(--good)} .c-ver{stroke:var(--faint)}
+.f-time{fill:var(--warn)} .f-nonce{fill:var(--accent)} .f-ink{fill:var(--ink)} .f-mut{fill:var(--muted)} .f-pap{fill:var(--surface)}
+table{width:100%;border-collapse:collapse;margin:1.8em 0;font-family:var(--sans);font-size:.875rem}
+th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-bottom:1px solid var(--border)}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+tbody th{font-weight:400;color:var(--muted);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+aside.note{font-size:.875rem;line-height:1.6;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+aside.note.good{border-color:color-mix(in srgb,var(--good) 35%,var(--border))}
+aside.note.bad{border-color:color-mix(in srgb,var(--bad) 35%,var(--border))}
+aside.note p{margin:0 0 .5em}
+aside.note p:last-child{margin:0}
+@media(min-width:1152px){
+aside.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+nav.toc{font-family:var(--sans);font-size:.8125rem;line-height:1.5}
+nav.toc.rail{display:none}
+@media(min-width:1100px){nav.toc.rail{display:block}}
+nav.toc.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;transition:color .15s var(--ease)}
+nav.toc.rail a .leaders{display:none}
+nav.toc.rail a .secno{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover{color:var(--ink)}
+nav.toc.rail a:hover .secno{color:var(--accent)}
+nav.toc.rail a.act{color:var(--accent);font-weight:550}
+nav.toc.rail a.act .secno{color:var(--accent)}
+nav.toc.rail .toclab{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+details.toc{border:1px solid var(--border);border-radius:12px;margin:2rem 0;padding:.35rem 1rem;background:var(--surface)}
+details.toc summary{cursor:pointer;font-weight:600;color:var(--ink);padding:.45rem 0}
+details.toc ol{margin:.4em 0 .6em;padding-inline-start:1.3em}
+details.toc li{margin:.25em 0}
+@media(min-width:1100px){details.toc{display:none}}
+.machine{background:var(--surface2);color:var(--ink);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;width:min(72rem,calc(100vw - 2rem));margin:2.5rem auto;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.machine:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mhead{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0}
+.mtag{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em}
+.mtitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.mchip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted)}
+.mtick{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:7ch;text-align:end}
+.mtick.tk{color:var(--accent)}
+.melapsed{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:6ch;text-align:end}
+.mprog{height:2px;margin:0;background:var(--accent);transform-origin:0 0;transform:scaleX(0)}
+.machine[data-state="running"] .mprog{transform:scaleX(var(--sx,0));transition:transform 120ms linear}
+.machine[data-state="running"] .mprog.ind{transform:none;animation:indbar 900ms linear infinite}
+@keyframes indbar{from{transform:translateX(-40%) scaleX(.28)}to{transform:translateX(120%) scaleX(.28)}}
+.machine[data-state="done"] .mprog{transform:scaleX(1);height:0;transition:transform 140ms var(--ease),height 180ms var(--ease) 160ms}
+.mrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 4px}
+.machine .mrow~.mrow{padding-top:0}
+.machine button{font-family:var(--sans);font-size:.875rem;line-height:1;font-weight:550;padding:10px 18px;min-height:38px;cursor:pointer;border-radius:var(--r-btn);transition:transform .12s var(--ease),background .15s var(--ease),filter .12s var(--ease)}
+.machine .run{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine .run:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine .run:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine .ghost{background:transparent;border:1px solid var(--border2);color:var(--ink)}
+.machine .ghost:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.machine button:disabled{opacity:.4;cursor:not-allowed}
+.machine button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.machine .run.pop{animation:runpop 240ms var(--ease)}
+@keyframes runpop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.machine input,.machine select{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:9px 12px}
+.machine input:focus-visible,.machine select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{background:var(--term);border:1px solid var(--term-border);border-radius:12px;margin:10px 14px 14px;padding:12px 14px;min-height:76px;max-height:240px;overflow-y:auto;font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--term-ink);word-break:break-all;transition:border-color 180ms}
+.machine[data-state="running"] .out{border-color:var(--term-border)}
+.machine .out.flash{border-color:var(--good);transition:border-color 180ms}
+.machine[data-state="error"] .out{border-color:var(--bad)}
+.out p{margin:0 0 2px;animation:linein 120ms var(--ease)}
+@keyframes linein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.out::-webkit-scrollbar{width:6px}
+.out::-webkit-scrollbar-thumb{background:var(--term-border);border-radius:3px}
+.out .hx{font-size:.8rem}
+.out .zeros{color:var(--term-accent);font-weight:700}
+.out .ok{color:var(--good)}
+.out .no{color:var(--bad)}
+.out .dim{color:var(--term-dim);font-size:.72rem;margin-top:6px}
+.out .sA{color:var(--term-dim)}
+.out .sB{color:var(--term-accent)}
+.out .lane{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0}
+.out .lane .ln{width:6ch;color:var(--term-dim);font-size:.72rem}
+.out .blkchip{border:1px solid var(--term-border);border-radius:6px;padding:1px 7px;font-size:.72rem;color:var(--term-ink)}
+.out .blkchip.win{border-color:var(--good);color:var(--good)}
+.out .blkchip.dead{color:var(--term-dim);text-decoration:line-through}
+.mcap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:.7rem 14px 1rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+footer.band{display:block;position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:0;border-top:1px solid var(--border);padding-block:1.5rem 3rem;font-size:.8rem;color:var(--muted);letter-spacing:0}
+footer.band .pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:1.2rem}
+footer.band .pn a{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;color:var(--ink);background:var(--surface);transition:border-color .15s var(--ease)}
+footer.band .pn a:hover{border-color:var(--accent)}
+footer.band .pn a:hover .t{color:var(--accent)}
+footer.band .pn .k{font-family:var(--mono);font-size:.65rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+footer.band .pn .t{font-family:var(--sans);font-size:.95rem;font-weight:550;color:var(--ink)}
+footer.band .pn .next{text-align:end;align-items:flex-end}
+footer.band .colophon{margin:1.5rem 0 0}
+footer.band .colophon a{color:var(--muted);border-bottom:0}
+footer.band .colophon a:hover{color:var(--accent)}
+@media(prefers-contrast:more){
+.machine,.out{border-width:2px}
+.mprog{height:3px}
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.out p{animation:none}
+.machine .run.pop{animation:none}
+.machine button{transition:none}
+.machine[data-state="running"] .mprog,.machine[data-state="running"] .mprog.ind{animation:none;transition:none}
+.machine[data-state="done"] .mprog{transition:none}
+}
+
+/* compat: page-specific selectors from the original markup */
+:root{--q-ver:var(--faint);--q-prev:var(--warn);--q-mrk:var(--good);--q-time:#2A8F8F;--q-bits:var(--muted);--q-nonce:var(--accent)}
+:root[data-theme="dark"]{--q-time:#5FC6C6}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--q-time:#5FC6C6}}
+#progress{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;z-index:60;pointer-events:none}
+nav.toc.rail ol{list-style:none;margin:0;padding:0}
+nav.toc.rail li{margin:0}
+.faql .a{color:var(--muted);margin:0}
+.toc-h{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+nav.toc.rail a .n{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover .n{color:var(--accent)}
+nav.toc.rail a.on{color:var(--accent);font-weight:550}
+nav.toc.rail a.on .n{color:var(--accent)}
+.faql{list-style:none;margin:1.2em 0;padding:0;counter-reset:qq}
+.faql li{counter-increment:qq;padding:.9rem 0;border-bottom:1px solid var(--border)}
+.faql li:last-child{border-bottom:0}
+.faql .q{font-weight:600;margin:0 0 .35rem}
+.faql .q::before{content:counter(qq,decimal-leading-zero);font-family:var(--mono);color:var(--accent);font-size:.72em;margin-inline-end:.65em}
+.facts{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:3.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+.m-head{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0;position:relative}
+.m-lab{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em;flex:none}
+.m-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.m-chip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted);flex:none}
+.m-body{padding:.75rem .9rem .2rem}
+.machine label{display:block;font-family:var(--sans);font-size:.78rem;color:var(--muted);margin:8px 0 4px}
+.machine input.hx{font-family:var(--mono);font-size:.8rem}
+.machine button{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine button:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine button:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine button.secondary{background:transparent;border:1px solid var(--border2);color:var(--ink);font-weight:550}
+.machine button.secondary:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent);transform:none;filter:none}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0 10px}
+.stats{display:flex;flex-wrap:wrap;gap:1.25rem;padding:6px 0 10px}
+.stat{min-width:6.5rem}
+.stat .v{font-family:var(--mono);font-size:.95rem;display:block;min-width:7ch;font-variant-numeric:tabular-nums;color:var(--ink)}
+.stat .k{font-family:var(--sans);font-size:.75rem;color:var(--muted)}
+.fieldrow{display:flex;flex-wrap:wrap;gap:.35rem;font-family:var(--mono);font-size:.78rem;line-height:1.9;margin:.6rem 0;word-break:break-all}
+.f{border-radius:5px;padding:.05em .4em}
+.f-ver{background:color-mix(in srgb,var(--q-ver) 22%,transparent);color:color-mix(in srgb,var(--q-ver) 70%,var(--ink))}
+.f-prev{background:color-mix(in srgb,var(--q-prev) 22%,transparent);color:color-mix(in srgb,var(--q-prev) 70%,var(--ink))}
+.f-mrk{background:color-mix(in srgb,var(--q-mrk) 22%,transparent);color:color-mix(in srgb,var(--q-mrk) 70%,var(--ink))}
+.f-time{background:color-mix(in srgb,var(--q-time) 22%,transparent);color:color-mix(in srgb,var(--q-time) 70%,var(--ink))}
+.f-bits{background:color-mix(in srgb,var(--q-bits) 22%,transparent);color:color-mix(in srgb,var(--q-bits) 70%,var(--ink))}
+.f-nonce{background:color-mix(in srgb,var(--q-nonce) 22%,transparent);color:color-mix(in srgb,var(--q-nonce) 75%,var(--ink));font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem .8rem;font-family:var(--sans);font-size:.78rem;color:var(--muted);margin-top:.4rem}
+.legend span::before{content:"";display:inline-block;width:.7rem;height:.7rem;margin-right:.3rem;vertical-align:-1px;border-radius:2px}
+.lg-ver::before{background:var(--q-ver)}
+.lg-prev::before{background:var(--q-prev)}
+.lg-mrk::before{background:var(--q-mrk)}
+.lg-time::before{background:var(--q-time)}
+.lg-bits::before{background:var(--q-bits)}
+.lg-nonce::before{background:var(--q-nonce)}
+.tree{font-family:var(--mono);font-size:.78rem;text-align:center;margin-top:.8rem}
+.tier{display:flex;justify-content:center;gap:.6rem;margin:.35rem 0;flex-wrap:wrap}
+.tnode{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:.25rem .5rem;min-width:6.2rem;transition:border-color .3s var(--ease)}
+.tnode.hot{border-color:var(--accent)}
+.tnode .lbl{display:block;font-size:.68rem;color:var(--muted)}
+.tnode .hv{font-size:.72rem}
+.blocks{display:flex;flex-direction:column;gap:1rem;margin-top:.6rem}
+.blk{background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:.8rem .9rem}
+.blk .b-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--sans);font-weight:600;margin-bottom:.4rem}
+.blk .b-state{font-size:.78rem;font-weight:500}
+.blk.broken .b-state{color:var(--bad)}
+.blk:not(.broken) .b-state{color:var(--good)}
+.blk .row2{display:grid;grid-template-columns:1fr 8rem;gap:.6rem}
+.race{font-family:var(--mono);font-size:.78rem;margin-top:.6rem}
+.race .lane{display:flex;align-items:center;gap:.4rem;margin:.5rem 0;flex-wrap:wrap}
+.race .lanename{width:5.5rem;color:var(--muted);flex:none;font-size:.72rem}
+.rblk{background:var(--term);border:1px solid var(--good);border-radius:6px;padding:.15rem .5rem;color:var(--term-ink)}
+.rblk.stale{border-color:var(--term-border);color:var(--term-dim);text-decoration:line-through}
+.rblk.parent{border-color:var(--accent)}
+@keyframes mrun{from{transform:translateX(-40%) scaleX(.28)}to{transform:translateX(360%) scaleX(.28)}}
+.m-head::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:0 0}
+.machine.mining .m-head::after,.machine[data-state="running"] .m-head::after{animation:mrun 900ms linear infinite}
+@media(prefers-reduced-motion:reduce){.machine.mining .m-head::after,.machine[data-state="running"] .m-head::after{animation:none}}
+.figctl{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.figctl button{font-family:var(--mono);font-size:11px;letter-spacing:.02em;line-height:1;padding:6px 10px;min-height:26px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;transition:color .15s var(--ease),border-color .15s var(--ease)}
+.figctl button:hover{border-color:var(--accent);color:var(--ink)}
+.figctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+figure{position:relative}
+.fignote{position:absolute;top:14px;left:14px;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:var(--sans);font-size:12px;line-height:1.5;color:var(--muted);pointer-events:none;opacity:0;transform:translateY(3px);transition:opacity .12s var(--ease),transform .12s var(--ease);z-index:3;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.fignote.on{opacity:1;transform:none}
+figure svg [data-note]{cursor:help}
+figure svg :is(rect,line,path,circle,polyline,polygon)[data-note],figure svg [data-note] :is(rect,line,path,circle,polyline,polygon){transition:stroke .15s ease,fill .15s ease}
+figure svg :is(rect,line,path,circle,polyline,polygon).fg-on{stroke:var(--accent)}
+figure svg .fg-on :is(rect,line,path,circle,polyline,polygon){stroke:var(--accent)}
+figure svg .fg-on text,figure svg text.fg-on{fill:var(--accent)}
+figure svg g[data-step]{transition:opacity .3s var(--ease)}
+figure svg g.fg-dim{opacity:.28}
+@keyframes fgp{0%,100%{opacity:1}50%{opacity:.55}}
+figure svg g.fg-cur{animation:fgp 1.2s ease-in-out infinite}
+figure svg .st{transition:opacity .25s var(--ease),transform .25s var(--ease)}
+figure svg .st-b{opacity:0;transform:translateY(10px)}
+figure svg.fb .st-a{opacity:0;transform:translateY(-6px)}
+figure svg.fb .st-b{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.figctl button,.fignote,figure svg g[data-step],figure svg .st{transition:none}figure svg g.fg-cur{animation:none}figure svg .st-b,figure svg.fb .st-a{transform:none}}
+
+.coinbadge{display:inline-flex;width:54px;height:54px;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin-inline-end:.7rem;vertical-align:-14px}.coinbadge svg{width:38px;height:38px;display:block}
+.coinbadge{background:#F7931A;border-color:color-mix(in srgb,#F7931A 55%,transparent)}
+.coinbadge svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+</style>
+
+<style>
+:root{--bg:#C5CAD4;--ink:#14161C;--muted:#4A5160;--faint:#7A8294;--border:color-mix(in srgb,#14161C 18%,transparent);--border2:color-mix(in srgb,#14161C 26%,transparent);--surface:color-mix(in srgb,#14161C 4%,var(--bg));--surface2:color-mix(in srgb,#14161C 7%,var(--bg));--accent:#F7931A;--accent-ink:#1A1008;--accent-soft:rgba(247,147,26,.12);--coin:#F7931A;--serif:"Syne",sans-serif;--sans:"Schibsted Grotesk",system-ui,sans-serif;--mono:"Martian Mono",ui-monospace,monospace}
+:root[data-theme="dark"]{--bg:#171B24;--ink:#E6EAF0;--muted:#8B93A3;--faint:#5A6272;--border:color-mix(in srgb,#E6EAF0 20%,transparent);--border2:color-mix(in srgb,#E6EAF0 28%,transparent);--surface:color-mix(in srgb,#E6EAF0 4%,var(--bg));--surface2:color-mix(in srgb,#E6EAF0 7%,var(--bg));--accent:#F7931A;--accent-ink:#1A1008;--accent-soft:rgba(247,147,26,.14)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171B24;--ink:#E6EAF0;--muted:#8B93A3;--faint:#5A6272;--border:color-mix(in srgb,#E6EAF0 20%,transparent);--border2:color-mix(in srgb,#E6EAF0 28%,transparent);--surface:color-mix(in srgb,#E6EAF0 4%,var(--bg));--surface2:color-mix(in srgb,#E6EAF0 7%,var(--bg));--accent:#F7931A;--accent-ink:#1A1008;--accent-soft:rgba(247,147,26,.14)}}
+*{border-radius:0!important}
+body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.045;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")}
+:root[data-theme="dark"] body::after{opacity:.07;mix-blend-mode:overlay}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) body::after{opacity:.07;mix-blend-mode:overlay}}
+::selection{background:var(--coin);color:#1A1008}
+h1{font-family:"Syne",sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1.04}
+h2{font-family:"Syne",sans-serif;font-weight:700;letter-spacing:-.02em}
+header.band{position:static;backdrop-filter:none;-webkit-backdrop-filter:none;background:none;border-bottom:1px solid var(--border)}
+header.band .series a,header.band .mark,header.band .switch{font-family:"Martian Mono",monospace;font-size:.625rem;letter-spacing:.02em}
+.spine{position:fixed;left:0;top:0;width:6px;height:100dvh;z-index:45;background:#F7931A;opacity:.35}
+.spine i{position:absolute;inset:0;background:#F7931A;transform-origin:top;transform:scaleY(0);animation:spinefill linear;animation-timeline:scroll()}
+@keyframes spinefill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.spine i{animation:none;transform:scaleY(1)}}
+.bay{margin-inline:calc(50% - 50vw);width:100vw;background:#F7931A;color:#1A1008;padding:2.2rem max(1.25rem,3vw) 2rem;clip-path:inset(0 100% 0 0);animation:bayfill .64s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes bayfill{to{clip-path:inset(0 0 0 0)}}
+@media(prefers-reduced-motion:reduce){.bay{animation:none;clip-path:none}}
+.bay .byline,.bay .lead{color:#3A2410}
+.bay .byline a,.bay .lead a{color:#241408}
+.bay h1{color:#1A1008;max-width:22ch}
+.bay .coinbadge{background:rgba(255,255,255,.35);border-color:rgba(26,16,8,.35)}
+.bay .machine{width:100%;max-width:38rem;margin:1.4rem 0 0}
+footer.band .pn a{border:0;background:color-mix(in srgb,#F7931A 35%,var(--bg));min-height:6rem;align-items:flex-end;justify-content:flex-start;padding:1rem 1.2rem}
+footer.band .pn a .t{font-family:"Syne",sans-serif;font-weight:700;letter-spacing:-.02em}
+nav.toc.rail a.on{color:var(--accent);box-shadow:none;border-bottom:0}
+nav.toc.rail a{font-family:"Schibsted Grotesk",sans-serif}
+nav.toc .toc-h{font-family:"Martian Mono",monospace}
+.machine{background:var(--surface2);border:1px solid var(--border)}
+figure{background:var(--surface)}
+code{background:color-mix(in srgb,#F7931A 14%,transparent)}
+aside.note{background:var(--surface)}
+</style>
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml"><link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/bitcoin-from-zero.html"><link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html"><link rel="alternate" hreflang="x-default" href="https://cryptoinbrief.xyz/bitcoin-from-zero.html">
+<meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
+<link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+<link rel="stylesheet" href="assets/consensus-story.css">
+<script defer src="assets/consensus-story.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="spine" aria-hidden="true"><i></i></div>
+<div id="progress" aria-hidden="true"></div>
+<header class="site-header">
+  <a class="mark" href="index.html">crypto<span>in</span>brief.</a>
+  <nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="crypto-summary.html">Start here</a></nav>
+  <p class="switch">
+    <span class="lang"><b>EN</b> | <a id="arlink" href="bitcoin-from-zero-ar.html" lang="ar" hreflang="ar">AR</a></span>
+    <span class="theme"><span id="themenow">Light</span> | <button type="button" id="themego">Dark</button></span>
+  </p>
+</header>
+<main id="main-content">
+<nav class="rail toc" aria-label="Contents">
+<p class="toc-h">Contents</p>
+<ol>
+<li><a href="#problem"><span class="n">01</span><span class="tt">Who writes the next page</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#hash"><span class="n">02</span><span class="tt">What a hash even is</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#signatures"><span class="n">03</span><span class="tt">What a signature cannot do</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#block"><span class="n">04</span><span class="tt">Inside a block</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#merkle"><span class="n">05</span><span class="tt">A fingerprint of fingerprints</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#mining"><span class="n">06</span><span class="tt">Where the effort actually is</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#nonce"><span class="n">07</span><span class="tt">A field for free scribbling</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#time"><span class="n">08</span><span class="tt">The network's clock</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#trust"><span class="n">09</span><span class="tt">Nobody trusts anybody</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#node"><span class="n">10</span><span class="tt">What a node is, and how one joins</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#chain"><span class="n">11</span><span class="tt">Why history hardens</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#forks"><span class="n">12</span><span class="tt">When two miners win at once</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#finality"><span class="n">13</span><span class="tt">The math behind six confirmations</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#mev"><span class="n">14</span><span class="tt">The dark side of ordering</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#energy"><span class="n">15</span><span class="tt">Do we have to burn electricity</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#faq"><span class="n">16</span><span class="tt">The questions, one by one</span><span class="leaders" aria-hidden="true"></span></a></li>
+</ol>
+</nav>
+<div class="col">
+
+<section class="bay"><p class="byline">By <a href="https://moamenbasel.com">Moamen Basel</a>, September 2026, nine labs, about 35 minutes.</p>
+<span class="coinbadge"><img src="assets/coins/bitcoin.svg" alt="Bitcoin" width="34" height="34"></span><h1>Bitcoin from zero</h1>
+<p class="lead">No background assumed. The key mechanisms come with experiments you can run in this page, including SHA-256, the genesis header, a Merkle tree, mining, forks, and confirmation risk. In a hurry? The <a href="crypto-summary.html">one page summary</a> covers the whole series.</p>
+
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt1">
+<div class="m-head"><span class="m-lab">LAB 01</span><span class="m-title" id="labt1">The fingerprint machine</span><span class="m-chip">HASH</span></div>
+<div class="m-body">
+<label for="hin">Type anything and watch its fingerprint</label>
+<input type="text" id="hin" value="I sent Omar 10 bitcoin">
+<div class="btnrow">
+<button class="secondary" type="button" onclick="setH('I sent Omar 10 bitcoin')">Sent Omar 10</button>
+<button class="secondary" type="button" onclick="setH('I sent Omar 90 bitcoin')">Sent Omar 90</button>
+<button class="secondary" type="button" onclick="setH('I sent Omar 10 bitcoin.')">Same sentence + a period</button>
+</div>
+<div class="out"><span class="hx" id="hout">…</span></div>
+<div class="dim" id="hprev"></div>
+</div>
+</div></section>
+<details class="toc">
+<summary>Contents</summary>
+<ol>
+<li><a href="#problem"><span class="n">01</span><span class="tt">Who writes the next page</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#hash"><span class="n">02</span><span class="tt">What a hash even is</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#signatures"><span class="n">03</span><span class="tt">What a signature cannot do</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#block"><span class="n">04</span><span class="tt">Inside a block</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#merkle"><span class="n">05</span><span class="tt">A fingerprint of fingerprints</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#mining"><span class="n">06</span><span class="tt">Where the effort actually is</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#nonce"><span class="n">07</span><span class="tt">A field for free scribbling</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#time"><span class="n">08</span><span class="tt">The network's clock</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#trust"><span class="n">09</span><span class="tt">Nobody trusts anybody</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#node"><span class="n">10</span><span class="tt">What a node is, and how one joins</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#chain"><span class="n">11</span><span class="tt">Why history hardens</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#forks"><span class="n">12</span><span class="tt">When two miners win at once</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#finality"><span class="n">13</span><span class="tt">The math behind six confirmations</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#mev"><span class="n">14</span><span class="tt">The dark side of ordering</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#energy"><span class="n">15</span><span class="tt">Do we have to burn electricity</span><span class="leaders" aria-hidden="true"></span></a></li>
+<li><a href="#faq"><span class="n">16</span><span class="tt">The questions, one by one</span><span class="leaders" aria-hidden="true"></span></a></li>
+</ol>
+</details><h2 id="problem"><span class="num">01</span> Who writes the next page</h2>
+
+
+
+<p>Hashing and mining can wait. Here's the problem they exist to solve. Bitcoin is <strong>one ledger</strong>: who holds what, who paid whom. Millions of strangers share that ledger. Nobody is in charge of it. So who gets to write the next page?</p>
+<p>A bank puts an employee on that job. He writes, and you're forced to trust him. Remove the employee and two traps open immediately. The first is the <strong>double spend</strong>: I write one page saying I sent you my coin, and at the same moment I write another page sending the same coin to a laptop shop, and I broadcast both. Who decides which one is "real"? The second trap is voting. If you say "let the network vote", I'll spin up a million fake accounts and vote with all of them, because identities on the internet are free. That one has a name, a <strong>Sybil attack</strong>. The puzzle under it is older. Computer scientists have called it the Byzantine Generals Problem since 1982. Solutions existed, but every one of them assumed the list of participants was known and fixed. A bank.</p>
+<p>Bitcoin's answer sits here. The right to write the next page is won in <strong>a lottery whose ticket costs real electricity</strong>, which nobody can counterfeit. One vote per watt, not one vote per person. That lottery is mining. The rest of this page takes it apart.</p>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-label="Two ways to weight a vote: free identities versus paid electricity">
+<defs><marker id="mk1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="One shared ledger, millions of strangers, nobody in charge. Remove the trusted writer and two traps open: the double spend and the Sybil attack.">
+<rect x="205" y="12" width="270" height="36" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="35" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="700">One ledger. Who writes the next page?</text>
+</g>
+<g data-step="2" data-note="Sybil attack: identities on the internet are free. One person can manufacture a million voters, so one vote per person decides nothing.">
+<circle cx="95" cy="98" r="16" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="95" y="102" text-anchor="middle" fill="var(--ink)" font-size="10" font-family="var(--mono)">me</text>
+<line x1="109" y1="89" x2="160" y2="61" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="111" y1="99" x2="159" y2="95" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="108" y1="109" x2="160" y2="120" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="103" y1="112" x2="154" y2="146" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="3 3"/>
+<circle cx="170" cy="58" r="11" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<circle cx="170" cy="94" r="11" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<circle cx="170" cy="124" r="11" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<circle cx="162" cy="152" r="11" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="170" y="62" text-anchor="middle" fill="var(--muted)" font-size="8.5" font-family="var(--mono)">ID</text>
+<text x="170" y="98" text-anchor="middle" fill="var(--muted)" font-size="8.5" font-family="var(--mono)">ID</text>
+<text x="170" y="128" text-anchor="middle" fill="var(--muted)" font-size="8.5" font-family="var(--mono)">ID</text>
+<text x="162" y="156" text-anchor="middle" fill="var(--muted)" font-size="8.5" font-family="var(--mono)">ID</text>
+<text x="150" y="184" text-anchor="middle" fill="var(--bad)" font-size="11.5">identities are free: fake a million voters</text>
+</g>
+<g data-step="3" data-note="Mining: the lottery ticket is burned electricity. One vote per watt, and watts cannot be counterfeited at zero cost.">
+<rect x="430" y="62" width="70" height="26" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="465" y="79" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">1 kWh</text>
+<rect x="430" y="96" width="70" height="26" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="465" y="113" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">1 kWh</text>
+<rect x="430" y="130" width="70" height="26" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="465" y="147" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">1 kWh</text>
+<line x1="502" y1="75" x2="552" y2="98" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk1)"/>
+<line x1="502" y1="109" x2="552" y2="109" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk1)"/>
+<line x1="502" y1="143" x2="552" y2="120" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk1)"/>
+<rect x="556" y="80" width="94" height="58" rx="0" fill="none" stroke="var(--accent)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="603" y="104" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="700">one vote</text>
+<text x="603" y="122" text-anchor="middle" fill="var(--accent)" font-size="11" font-family="var(--mono)">per watt</text>
+<text x="520" y="184" text-anchor="middle" fill="var(--good)" font-size="11.5">every vote costs real electricity</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 1.1</span> Two ways to weight a vote. Identity is free, so it proves nothing. Electricity is not, so one vote per watt is the answer that survives a stranger filled network.</figcaption>
+</figure>
+<p>A cost worth naming now. This design makes every payment public, readable by anyone, forever. The chains that treat privacy as a requirement rather than an afterthought are covered in <a href="monero-under-the-hood.html">Monero under the hood</a>.</p><h2 id="hash"><span class="num">02</span> What a hash even is</h2>
+
+
+
+<p>People mix this up constantly. <strong>a hash is not encryption</strong>. Encryption is a lock with a key, whoever holds the key can unlock and recover the message. A hash has no key and no way back at all. It's a machine that takes any input, of any length, and produces a <strong>fixed size fingerprint</strong>, for SHA-256, always 64 hex characters (256 bits).</p>
+<p>The machine's properties carry everything that follows.</p>
+<p><strong>Deterministic</strong> means the same input produces the same fingerprint every time, on every device, forever. <strong>One way</strong> means from the fingerprint you cannot recover the input, like a blender: fruit to smoothie is easy, smoothie back to fruit is impossible. <strong>Avalanche</strong> means change one character of the input and the entire fingerprint flips into something with no relationship to the old one. Not one digit changes. All 64 do.</p>
+<p>Right under the title, that first machine is the real SHA-256 running inside your browser.</p>
+
+<p>Scroll back up. Click the first two preset buttons back and forth. One digit of difference in the amount, and the two fingerprints share nothing. Even a period at the end of the sentence flips everything. This property is what will make the "lock" ahead work.</p>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-label="The avalanche: one character of input changes every character of output" data-fa="The plain sentence" data-fb="Add one period">
+<defs><marker id="mk2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<text x="150" y="24" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="var(--mono)">the sentence</text>
+<rect x="40" y="32" width="220" height="36" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<line x1="264" y1="50" x2="304" y2="50" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk2)"/>
+<rect data-note="Deterministic: same input, same 64 hex digits on every device, forever. One-way: there is no path from the fingerprint back to the input. Avalanche: change one character and every digit flips." x="310" y="24" width="110" height="52" rx="10" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="365" y="48" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="700" font-family="var(--mono)">SHA-256</text>
+<text x="365" y="66" text-anchor="middle" fill="var(--muted)" font-size="9.5">the fingerprint machine</text>
+<line x1="424" y1="50" x2="448" y2="50" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk2)"/>
+<rect x="454" y="26" width="206" height="66" rx="0" fill="none" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="160" text-anchor="middle" fill="var(--muted)" font-size="11">No key, no way back, and no relationship between neighboring fingerprints.</text>
+<g class="st st-a">
+<text x="150" y="55" text-anchor="middle" fill="var(--ink)" font-size="12">I sent Omar 10 bitcoin</text>
+<text x="557" y="50" text-anchor="middle" fill="var(--ink)" font-size="10" font-family="var(--mono)">d7a1c4bf4d9120f70d2084eacdebc45f</text>
+<text x="557" y="68" text-anchor="middle" fill="var(--ink)" font-size="10" font-family="var(--mono)">42da44e1044c723eeaf9a953f8c0ebe9</text>
+<text x="557" y="112" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="var(--mono)">the fingerprint of that sentence</text>
+</g>
+<g class="st st-b">
+<text x="150" y="55" text-anchor="middle" fill="var(--ink)" font-size="12">I sent Omar 10 bitcoin<tspan fill="var(--accent)" font-weight="700">.</tspan></text>
+<text x="557" y="50" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="var(--mono)">a26600853a53bc86120e90d8224755b6</text>
+<text x="557" y="68" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="var(--mono)">3d396dff6531492bf961bafa549f36f</text>
+<text x="557" y="112" text-anchor="middle" fill="var(--accent)" font-size="10.5" font-family="var(--mono)">one period in, all 64 digits flip</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 2.1</span> The avalanche, with real fingerprints. Two sentences differing by a single period; their outputs share nothing at all.</figcaption>
+</figure>
+<aside class="note">A single fingerprint is <strong>cheap</strong>. The machine responds instantly as you type. File that away, because "then where's the effort?" is coming in section 6, and its answer is a surprise.</aside><h2 id="signatures"><span class="num">03</span> What a signature cannot do</h2>
+
+<p>This objection sounds like it kills mining. <em>why not have everyone sign their payment with a digital signature and gossip it around the network? A signature proves the money is theirs.</em></p>
+<p>That proposal is already 90% of Bitcoin. Every Bitcoin transaction carries a digital signature proving the owner authorized it. Everyone does broadcast. The network does gossip. Verifying a signature is nearly free. A Raspberry Pi does it. Mining doesn't exist to verify transactions at all. It exists for the one thing a signature is <strong>helpless</strong> against.</p>
+<p>I own coin #42. I sign a payment of it to Alice, and in the same second I sign a second payment of the same coin to a laptop shop. Both signatures are 100% valid: I really am the owner, and both prove exactly that, exactly as the proposal demands. Half the network receives Alice's version first. The other half receives the shop's version first, because messages travel at different speeds. Now "the network talks it out". Talks out what? Which was "first"? There is no universal clock on the internet, and the timestamp is written by me, so I'll lie in it freely. Deeper hole. "The money is his" is not a property of a transaction. It's a <strong>consequence of ordering history</strong>. After my double spend, do I still own the coin? The answer depends on which payment "happened first", so the proposal assumes the very thing it's trying to build.</p>
+<p>The lab below generates a real P-256 ECDSA keypair in your browser and signs two conflicting messages. Bitcoin uses secp256k1 rather than P-256, but the experiment isolates the same point: valid authorization does not choose between two conflicting spends.</p>
+
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-label="One coin, two perfectly valid signatures, and no witness to which payment came first" data-fa="Alice’s half first" data-fb="The shop’s half first">
+<defs><marker id="mk3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<rect x="300" y="12" width="80" height="30" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="31" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="700">coin #42</text>
+<line x1="322" y1="44" x2="195" y2="64" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk3)"/>
+<line x1="358" y1="44" x2="485" y2="64" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk3)"/>
+<rect x="60" y="68" width="250" height="46" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="185" y="88" text-anchor="middle" fill="var(--ink)" font-size="12">Pay coin #42 to Alice</text>
+<text x="185" y="106" text-anchor="middle" fill="var(--good)" font-size="10.5" font-family="var(--mono)">signature: valid ✓</text>
+<rect x="370" y="68" width="250" height="46" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="495" y="88" text-anchor="middle" fill="var(--ink)" font-size="12">Pay coin #42 to the laptop shop</text>
+<text x="495" y="106" text-anchor="middle" fill="var(--good)" font-size="10.5" font-family="var(--mono)">signature: valid ✓</text>
+<text x="340" y="190" text-anchor="middle" fill="var(--muted)" font-size="11.5">Both signatures verify everywhere they are checked. “Which came first” has no cryptographic witness.</text>
+<g class="st st-a">
+<rect x="45" y="128" width="280" height="42" rx="0" fill="none" stroke="var(--accent)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="185" y="153" text-anchor="middle" fill="var(--muted)" font-size="11">half the network saw Alice’s payment arrive first</text>
+</g>
+<g class="st st-b">
+<rect x="355" y="128" width="280" height="42" rx="0" fill="none" stroke="var(--accent)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="495" y="153" text-anchor="middle" fill="var(--muted)" font-size="11">the other half saw the shop’s payment first</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 3.1</span> The double spend, honestly signed. Whichever half of the network you ask, both signatures pass; “first” has no referee.</figcaption>
+</figure>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt2">
+<div class="m-head"><span class="m-lab">LAB 02</span><span class="m-title" id="labt2">The double spend, honestly signed</span><span class="m-chip">SIG</span></div>
+<div class="m-body">
+<div class="btnrow"><button type="button" onclick="runSigDemo()" id="sigbtn">Generate a keypair and sign both payments</button></div>
+<div class="out" id="sigout"><span class="dim">Your browser will create a private/public keypair (ECDSA), sign two conflicting messages with the private key, then verify both against the public key.</span></div>
+<div class="dim">This browser lab uses P-256 ECDSA. Bitcoin uses secp256k1, so this demonstrates the authorization property rather than reproducing a Bitcoin transaction signature.</div>
+</div>
+</div>
+
+<aside class="note bad">Two green checkmarks. Two recipients, one coin. The signature did its job perfectly, it answered "who". It can't answer "which first", and "which first" is the entire game. Everything from here on exists to answer that one question.</aside>
+<h2 id="block"><span class="num">04</span> Inside a block</h2>
+
+<p>A block is a "page" of the ledger, a bag holding thousands of payments that were waiting in a queue called the <strong>mempool</strong>. The miner gathers them and adds, at the top, a special transaction called the <strong>coinbase</strong>, paying himself the reward. So couldn't he just write himself any amount?</p>
+<p>No. The protocol rulebook, which every device on the network runs a copy of, caps the coinbase at <strong>the current subsidy (3.125 BTC, halving roughly every four years) plus the fees</strong> of the transactions he included. One satoshi over the cap and the whole block is invalid. Nobody has to get upset. Every device will drop the block automatically, as section 9 shows.</p>
+<p><strong>The bag itself is not what goes into the fingerprint machine</strong>. The thing that gets ground trillions of times is a small summary card called the <strong>block header</strong>, exactly 80 bytes, smaller than an SMS. Six things are written on it.</p>
+<table>
+<tr><th>Field</th><th>Size</th><th>What it means</th></tr>
+<tr><td><code>version</code></td><td>4 bytes</td><td>Which ruleset the block follows</td></tr>
+<tr><td><code>prev block hash</code></td><td>32 bytes</td><td>The fingerprint of the previous block's card. That's what makes the "chain"</td></tr>
+<tr><td><code>merkle root</code></td><td>32 bytes</td><td>One fingerprint summarizing every transaction (next section)</td></tr>
+<tr><td><code>timestamp</code></td><td>4 bytes</td><td>Seconds since January 1, 1970 (section 8)</td></tr>
+<tr><td><code>bits</code></td><td>4 bytes</td><td>The required difficulty. The fingerprint must land below this target</td></tr>
+<tr><td><code>nonce</code></td><td>4 bytes</td><td>The counter that changes every attempt (section 7)</td></tr>
+</table>
+
+<figure>
+<svg viewBox="0 0 680 330" role="img" aria-labelledby="figBlk-t">
+<title id="figBlk-t">Anatomy of a block: the 80-byte header card summarizing the transactions beneath it</title>
+<defs><marker id="arB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<rect x="30" y="20" width="620" height="290" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="44" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="700">The block</text>
+<rect data-note="The 80-byte header: version, prev hash, merkle root, timestamp, bits, nonce. Only this card is hashed, over and over." x="60" y="58" width="560" height="100" rx="0" fill="none" stroke="var(--q-mrk)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="340" y="82" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="700">Block header, the 80-byte card</text>
+<rect data-note="32 bytes: the fingerprint of the previous block's card. This one field is the chain." x="75" y="102" width="125" height="38" rx="0" fill="none" stroke="var(--q-prev)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="137" y="125" text-anchor="middle" fill="var(--ink)" font-size="12">Prev hash</text>
+<rect data-note="32 bytes: one fingerprint standing in for every transaction in the bag below." x="215" y="102" width="125" height="38" rx="0" fill="none" stroke="var(--q-mrk)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="277" y="125" text-anchor="middle" fill="var(--ink)" font-size="12">Merkle root</text>
+<rect data-note="4 bytes: the free-scribble counter, the only field that changes between attempts." x="355" y="102" width="125" height="38" rx="0" fill="none" stroke="var(--q-nonce)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="417" y="125" text-anchor="middle" fill="var(--ink)" font-size="12">Nonce</text>
+<rect data-note="4 bytes: difficulty calibration only. Ordering never comes from the timestamp." x="495" y="102" width="125" height="38" rx="0" fill="none" stroke="var(--q-time)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="557" y="125" text-anchor="middle" fill="var(--ink)" font-size="12">Timestamp</text>
+<rect data-note="The bag: payments pulled from the mempool, plus the coinbase paying the miner." x="60" y="185" width="300" height="105" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="210" y="207" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="700">Transactions</text>
+<rect data-note="Capped at 3.125 BTC plus fees. One satoshi over and every node drops the block." x="75" y="216" width="270" height="26" rx="0" fill="none" stroke="var(--q-mrk)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="210" y="233" text-anchor="middle" fill="var(--ink)" font-size="11.5">Coinbase, miner pays himself (capped)</text>
+<rect x="75" y="250" width="270" height="26" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="210" y="267" text-anchor="middle" fill="var(--muted)" font-size="11.5">TX 1 · TX 2 · TX 3 …</text>
+<line x1="277" y1="181" x2="277" y2="148" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arB)"/>
+<rect data-note="Any edit below climbs to the root, changes the card, and kills the winning hash." x="395" y="188" width="255" height="102" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="522" y="212" text-anchor="middle" fill="var(--bad)" font-size="12" font-weight="700">Edit any transaction?</text>
+<text x="522" y="234" text-anchor="middle" fill="var(--bad)" font-size="11.5">the root changes → the header changes</text>
+<text x="522" y="252" text-anchor="middle" fill="var(--bad)" font-size="11.5">→ the found hash is dead</text>
+<text x="522" y="270" text-anchor="middle" fill="var(--bad)" font-size="11.5">→ mine again from zero</text>
+<line x1="393" y1="215" x2="290" y2="168" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="0.8" stroke-dasharray="4 3"/>
+</svg>
+<figcaption><span class="figno">Fig. 4.1</span> The transactions get summarized once into the Merkle root; only the little card gets hashed, and the card is welded to every byte below it.</figcaption>
+</figure>
+<p>Below are the <strong>actual 80 bytes, verbatim</strong>, of the first block in history, the one Satoshi mined on January 3, 2009. Click the button and your browser will run SHA-256 over them twice (exactly as Bitcoin does) and produce the fingerprint that has sat in the chain for seventeen years.</p>
+
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt3">
+<div class="m-head"><span class="m-lab">LAB 03</span><span class="m-title" id="labt3">The genesis block</span><span class="m-chip">HASH</span></div>
+<div class="m-body">
+<div class="fieldrow" id="genrow"></div>
+<div class="legend"><span class="lg-ver">version</span><span class="lg-prev">prev hash (all zeros, nothing came before it)</span><span class="lg-mrk">merkle root</span><span class="lg-time">timestamp</span><span class="lg-bits">bits</span><span class="lg-nonce">nonce</span></div>
+<div class="btnrow"><button type="button" id="genbtn" onclick="hashGenesis()">Double SHA-256 these 80 bytes</button></div>
+<div class="out"><span class="hx" id="genout">The fingerprint will appear here</span></div>
+<div class="dim" id="geninfo"></div>
+</div>
+</div>
+
+<aside class="note good">If a fingerprint starting with ten zeros just appeared, your browser has verified the first Bitcoin block itself, without asking anyone. That's exactly the move every device on the network performs on every new block.</aside>
+<h2 id="merkle"><span class="num">05</span> A fingerprint of fingerprints</h2>
+
+<p>How can 32 bytes on the card represent thousands of transactions? You fingerprint fingerprints. Hash each transaction alone, then take each pair of hashes side by side and hash them into one. Repeat layer after layer until a single hash remains at the top, the <strong>Merkle root</strong>.</p>
+<p>The machine grinds 80 bytes per attempt, not megabytes of transactions. That's the speed. The lock is separate. Any edit to any transaction below <strong>climbs the tree</strong>. The transaction's hash changes, the pair's hash follows, the root moves with them, and the card is now a different card. Any winning hash the miner found on the old card is worthless. Edit and watch.</p>
+
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-label="A merkle tree: four transaction fingerprints folded upward into one root">
+<defs><marker id="mk5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="Hash each transaction alone. One free fingerprint per payment.">
+<rect x="45" y="150" width="110" height="30" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="215" y="150" width="110" height="30" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="385" y="150" width="110" height="30" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="555" y="150" width="110" height="30" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="100" y="169" text-anchor="middle" fill="var(--ink)" font-size="11" font-family="var(--mono)">h(tx1)</text>
+<text x="270" y="169" text-anchor="middle" fill="var(--ink)" font-size="11" font-family="var(--mono)">h(tx2)</text>
+<text x="440" y="169" text-anchor="middle" fill="var(--ink)" font-size="11" font-family="var(--mono)">h(tx3)</text>
+<text x="610" y="169" text-anchor="middle" fill="var(--ink)" font-size="11" font-family="var(--mono)">h(tx4)</text>
+</g>
+<g data-step="2" data-note="Pair the hashes side by side and hash each pair. The layer above summarizes the layer below.">
+<line x1="100" y1="148" x2="178" y2="127" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk5)"/>
+<line x1="270" y1="148" x2="192" y2="127" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk5)"/>
+<line x1="440" y1="148" x2="518" y2="127" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk5)"/>
+<line x1="610" y1="148" x2="532" y2="127" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk5)"/>
+<rect x="130" y="95" width="110" height="30" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="470" y="95" width="110" height="30" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="185" y="114" text-anchor="middle" fill="var(--ink)" font-size="11" font-family="var(--mono)">h(h1+h2)</text>
+<text x="525" y="114" text-anchor="middle" fill="var(--ink)" font-size="11" font-family="var(--mono)">h(h3+h4)</text>
+</g>
+<g data-step="3" data-note="Repeat until one hash remains: the Merkle root. Thousands of transactions, 32 bytes.">
+<line x1="185" y1="93" x2="333" y2="72" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk5)"/>
+<line x1="525" y1="93" x2="347" y2="72" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk5)"/>
+<rect x="285" y="40" width="110" height="30" rx="0" fill="none" stroke="var(--q-mrk)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="340" y="59" text-anchor="middle" fill="var(--ink)" font-size="11" font-weight="700" font-family="var(--mono)">Merkle root</text>
+</g>
+<g data-step="4" data-note="The root sits in the 80-byte header. Any edit to any leaf climbs the tree and changes the card.">
+<line x1="397" y1="55" x2="551" y2="42" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk5)"/>
+<rect x="555" y="14" width="110" height="52" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="610" y="36" text-anchor="middle" fill="var(--ink)" font-size="11" font-weight="700" font-family="var(--mono)">80-byte</text>
+<text x="610" y="52" text-anchor="middle" fill="var(--ink)" font-size="11" font-family="var(--mono)">header</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 5.1</span> The tree in miniature. Leaves are transaction fingerprints; the root is the single hash that reaches the header.</figcaption>
+</figure>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt4">
+<div class="m-head"><span class="m-lab">LAB 04</span><span class="m-title" id="labt4">The hash tree</span><span class="m-chip">HASH</span></div>
+<div class="m-body">
+<label for="tx0">Four transactions, change any character in any of them</label>
+<input type="text" id="tx0" value="coinbase → miner: 3.125">
+<input type="text" id="tx1" value="Omar → Ahmed: 5">
+<input type="text" id="tx2" value="Sara → Ali: 2">
+<input type="text" id="tx3" value="Mostafa → Mona: 1.5">
+<div class="tree" id="tree"></div>
+<div class="btnrow"><button type="button" class="secondary" onclick="sealRoot()">Seal the block on the current root</button></div>
+<div class="dim" id="sealmsg">Not sealed yet. Seal it, then edit any transaction and watch.</div>
+<div class="dim">This lab applies Bitcoin's double SHA-256 pairing rule to four illustrative text transactions. A real node starts from serialized transactions and handles byte order for the displayed transaction IDs.</div>
+</div>
+</div><h2 id="mining"><span class="num">06</span> Where the effort actually is</h2>
+
+<p>The sharpest question in the whole conversation is this. If a fingerprint is free, and the content is known, where is the effort in any of this?</p>
+<p>Computing the fingerprint isn't the work. The demand runs <strong>backwards</strong>. The assignment isn't "hash this card". It's "bring me a version of the card whose fingerprint starts with this many zeros" (technically: lands below a number called the target, leading zeros are what that looks like). Section 2 already named the machine's properties: one way and chaotic. There's no formula saying "to get zeros, set these bits". The machine doesn't take requests. There isn't even a "getting warmer". A fingerprint with 4 zeros teaches you nothing about reaching 5. Every attempt is a fresh lottery draw.</p>
+<p>Only move in the universe: change the counter, try, change, try. <strong>One attempt is free, the winning attempt is astronomically rare.</strong> The effort is the number of attempts, not the difficulty of any one of them. Loop's below.</p>
+
+<figure>
+<svg viewBox="0 0 680 420" role="img" aria-labelledby="figLoop-t">
+<title id="figLoop-t">The mining loop: build the block once, then hash the header over and over</title>
+<defs><marker id="arL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="The miner gathers payments waiting in the mempool. The block content locks first.">
+<rect x="120" y="20" width="300" height="36" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="270" y="43" text-anchor="middle" fill="var(--ink)" font-size="12.5">Collect transactions from the mempool</text>
+<line x1="270" y1="56" x2="270" y2="74" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arL)"/>
+</g><g data-step="2" data-note="He adds the coinbase paying himself, capped at 3.125 BTC plus fees. Over the cap: every node drops the block."><rect x="120" y="78" width="300" height="44" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="270" y="97" text-anchor="middle" fill="var(--ink)" font-size="12.5">Add the coinbase paying yourself</text>
+<text x="270" y="114" text-anchor="middle" fill="var(--muted)" font-size="11">cap: 3.125 BTC + the fees you included</text>
+<line x1="270" y1="122" x2="270" y2="140" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arL)"/>
+</g><g data-step="3" data-note="One fingerprint of the whole bag is computed once: the Merkle root, written into the 80-byte card."><rect x="120" y="144" width="300" height="44" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="270" y="163" text-anchor="middle" fill="var(--ink)" font-size="12.5">Compute the Merkle root</text>
+<text x="270" y="180" text-anchor="middle" fill="var(--muted)" font-size="11">it goes into the 80-byte header</text>
+<line x1="270" y1="188" x2="270" y2="206" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arL)"/>
+</g><g data-step="4" data-note="The card, not the bag, is ground: SHA-256 twice per attempt, with the nonce inside."><rect data-note="Only these 80 bytes are hashed, trillions of times. The transactions are never ground again." x="120" y="210" width="300" height="44" rx="0" fill="none" stroke="var(--q-mrk)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="270" y="229" text-anchor="middle" fill="var(--ink)" font-size="12.5">Hash the header</text>
+<text x="270" y="246" text-anchor="middle" fill="var(--muted)" font-size="11">SHA-256(SHA-256(header)), nonce inside</text>
+<line x1="270" y1="254" x2="270" y2="272" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arL)"/>
+</g><g data-step="5" data-note="Below the target, broadcast. Otherwise twiddle the nonce and try again. There is no getting warmer."><rect x="120" y="276" width="300" height="40" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="270" y="300" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="500">Below the target?</text>
+<line x1="420" y1="296" x2="466" y2="296" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arL)"/>
+<rect data-note="The only move in the universe: change the counter, hash again." x="470" y="274" width="180" height="44" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="560" y="293" text-anchor="middle" fill="var(--ink)" font-size="12">No, change the nonce</text>
+<text x="560" y="310" text-anchor="middle" fill="var(--muted)" font-size="11">a fresh lottery ticket</text>
+<path d="M560 272 L560 232 L426 232" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arL)"/>
+<line x1="270" y1="316" x2="270" y2="334" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arL)"/>
+<rect x="120" y="338" width="300" height="44" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="270" y="357" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="500">Yes, broadcast the block</text>
+<text x="270" y="374" text-anchor="middle" fill="var(--muted)" font-size="11">now every node gets its turn (section 9)</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 6.1</span> The content locks first; the guessing only ever touches the nonce. Change anything above the hash step and you restart the loop from the Merkle root.</figcaption>
+</figure>
+
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt5" id="minerbox">
+<div class="m-head"><span class="m-lab">LAB 05</span><span class="m-title" id="labt5">The pocket mine</span><span class="m-chip">MINE</span></div>
+<div class="m-body">
+<label for="zsel">How many leading zeros? (each extra zero multiplies the work by 16 on average)</label>
+<select id="zsel">
+<option value="1">1 zero, averages 16 attempts</option>
+<option value="2">2 zeros, averages 256</option>
+<option value="3" selected>3 zeros, averages 4,096</option>
+<option value="4">4 zeros, averages 65,536</option>
+<option value="5">5 zeros, averages 1,048,576 (be patient)</option>
+</select>
+<div class="btnrow">
+<button type="button" id="minebtn" onclick="startMine()">Start the mine</button>
+<button type="button" class="secondary" id="stopbtn" data-stop onclick="stopMine()" disabled>Stop</button>
+</div>
+<div class="stats">
+<div class="stat"><span class="v" id="s-att">0</span><span class="k">attempts</span></div>
+<div class="stat"><span class="v" id="s-rate">0</span><span class="k">attempts/sec</span></div>
+<div class="stat"><span class="v" id="s-time">0.0s</span><span class="k">elapsed</span></div>
+<div class="stat"><span class="v" id="s-nonce">,</span><span class="k">last nonce</span></div>
+</div>
+<div class="out"><span class="hx" id="s-hash">…</span></div>
+<div class="dim" id="s-msg"></div>
+</div>
+</div>
+
+<p>Hit the same zero count a few times and the attempt count swings wildly. Sometimes an early lucky strike. Sometimes a long dry spell. Pure lottery. In this toy rule, each extra hex zero multiplies the expected work by 16. Bitcoin uses a numeric target rather than a fixed count of visible zeros, and that target adjusts every 2,016 blocks to keep the long run average near ten minutes.</p>
+<aside class="note">Why is the puzzle this "dumb" in the first place? On purpose. A valid header has no useful shortcut. Miners must try candidates, while anyone can check its proof of work with one double SHA-256. Full block validation still checks every transaction and consensus rule.</aside>
+<h2 id="nonce"><span class="num">07</span> A field for free scribbling</h2>
+
+
+<p>If you come from security, the name misleads you. Borrowed from your world, different job. In the protocols you know, a nonce prevents replay. In Bitcoin it's <strong>an empty field with no meaning at all</strong>. Four bytes at the end of the card holding a number that represents nothing.</p>
+<p>Why does it exist? The miner must change the card's content between attempts because the hash is deterministic. The nonce is the fastest field to vary. Miners can also change the timestamp, version bits, transaction selection, or an extraNonce inside the coinbase, which changes the Merkle root. Trying nonce = 500 twice on the same header wastes work because it produces the same hash.</p>
+<p>4 bytes means only 4,294,967,296 values. A modern mining rig performs hundreds of trillions of attempts per second, so it exhausts the entire nonce space in a fraction of a second, usually with no winner. Then what? Change something else to produce a fresh card with a clean nonce space. Bump the timestamp by a second, or, the standard move, twiddle a number inside a free slot in the coinbase transaction itself, called the <strong>extraNonce</strong>. Section 5's tree still applies: any change to the coinbase climbs up and changes the root, so the card is a new card, with 4.3 billion fresh tickets attached.</p>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-label="The same header with two nonce values: an ordinary failed attempt and the genesis winning ticket" data-fa="An ordinary attempt" data-fb="The winning ticket">
+<defs><marker id="mk7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<rect x="120" y="14" width="340" height="88" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="134" y="24" width="312" height="15" rx="0" fill="none" stroke="var(--q-prev)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="142" y="35" fill="var(--ink)" font-size="10.5">prev block hash · locked</text>
+<rect x="134" y="43" width="312" height="15" rx="0" fill="none" stroke="var(--q-mrk)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="142" y="54" fill="var(--ink)" font-size="10.5">merkle root · locked</text>
+<rect x="134" y="62" width="312" height="15" rx="0" fill="none" stroke="var(--q-time)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="142" y="73" fill="var(--ink)" font-size="10.5">timestamp · nearly fixed</text>
+<rect x="134" y="81" width="312" height="15" rx="0" fill="none" stroke="var(--q-nonce)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="142" y="92" fill="var(--ink)" font-size="10.5">nonce · the 4-byte scratchpad</text>
+<line x1="462" y1="55" x2="496" y2="55" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk7)"/>
+<rect data-note="The machine takes the whole 80-byte card and returns 64 hex digits. It does not take requests: no input hints at how to reach zeros." x="500" y="30" width="86" height="50" rx="10" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="543" y="52" text-anchor="middle" fill="var(--ink)" font-size="12" font-weight="700" font-family="var(--mono)">SHA-256</text>
+<text x="543" y="68" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">twice</text>
+<text x="340" y="122" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="var(--mono)">the fingerprint</text>
+<g class="st st-a">
+<text x="543" y="98" text-anchor="middle" fill="var(--accent)" font-size="10.5" font-family="var(--mono)">nonce = 0</text>
+<text x="340" y="138" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">1824ca5e4ad18ef6ad3b9c486ba8c8f1</text>
+<text x="340" y="154" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">c43af273cc1b063a28aa5c0c6e4ffb34</text>
+<rect x="150" y="166" width="380" height="30" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="185" text-anchor="middle" fill="var(--bad)" font-size="11.5">no leading zeros → above target → scratch the next ticket</text>
+</g>
+<g class="st st-b">
+<text x="543" y="98" text-anchor="middle" fill="var(--accent)" font-size="10.5" font-family="var(--mono)">nonce = 2,083,236,893</text>
+<text x="340" y="138" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)"><tspan fill="var(--accent)" font-weight="700">0000000000</tspan>19d6689c085ae165831e93</text>
+<text x="340" y="154" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">4ff763ae46a2a6c172b3f1b60a8ce26f</text>
+<rect x="150" y="166" width="380" height="30" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="185" text-anchor="middle" fill="var(--good)" font-size="11.5">below target → the block is won. Genesis block, 3 Jan 2009</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 7.1</span> Same card, two nonce values. Trillions of tickets look like the left one; exactly the rare right one pays. The right hash is the real genesis fingerprint.</figcaption>
+</figure>
+<aside class="note">That free slot in the genesis block's coinbase is where Satoshi wrote that day's newspaper headline: <span class="hx"><span class="hx">"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"</span></span>, proof the block wasn't mined before that date, and a message about why the project exists. Winning lottery number for that block, by the way, was nonce = 2,083,236,893.</aside>
+<h2 id="time"><span class="num">08</span> The network's clock</h2>
+
+
+<p>The timestamp is a number saying "this card was built at this moment", stored as seconds since January 1, 1970. In the genesis experiment above, the yellow field decodes to January 3, 2009, 18:15 UTC.</p>
+<p>It exists because <strong>the network needs a clock to calibrate difficulty against</strong>. The protocol wants a block every ten minutes on average. Hardware improves, miners multiply, how would it know blocks started arriving faster? From the stamps. Every 2,016 blocks (about two weeks), it computes the actual elapsed time from the stamp differences. Less than two weeks? Difficulty rises. More? It falls. Without a stamp inside each block, there's no agreed time reference at all.</p>
+<p>The miner writes this stamp himself. Why trust it? Don't. The rules fence it from both sides: it must be <strong>greater than the median of the last 11 blocks</strong>, and <strong>less than the verifying node's clock plus two hours</strong>. Approximate clock, not a precise one. You can find a block whose stamp is a minute older than the block before it, and that's accepted. Manipulation large enough to distort the difficulty calculation is fenced out.</p>
+
+<figure>
+<svg viewBox="0 0 680 210" role="img" aria-label="Ordering three blocks by their own timestamps fails; ordering by parent-hash pointers always works" data-fa="Read the timestamps" data-fb="Follow the pointers">
+<defs><marker id="mk8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<text x="340" y="26" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="700">Where does “after this one” come from?</text>
+<g class="st st-a">
+<rect x="45" y="52" width="170" height="56" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="255" y="52" width="170" height="56" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="465" y="52" width="170" height="56" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="130" y="72" text-anchor="middle" fill="var(--ink)" font-size="11.5" font-family="var(--mono)">Block 104</text>
+<text x="340" y="72" text-anchor="middle" fill="var(--ink)" font-size="11.5" font-family="var(--mono)">Block 105</text>
+<text x="550" y="72" text-anchor="middle" fill="var(--ink)" font-size="11.5" font-family="var(--mono)">Block 106</text>
+<text x="130" y="92" text-anchor="middle" fill="var(--q-time)" font-size="10.5" font-family="var(--mono)">stamp 11:58</text>
+<text x="340" y="92" text-anchor="middle" fill="var(--q-time)" font-size="10.5" font-family="var(--mono)">stamp 12:04</text>
+<text x="550" y="92" text-anchor="middle" fill="var(--q-time)" font-size="10.5" font-family="var(--mono)">stamp 11:59</text>
+<line x1="217" y1="80" x2="251" y2="80" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="4 3" marker-start="url(#mk8)" marker-end="url(#mk8)"/>
+<line x1="427" y1="80" x2="461" y2="80" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="4 3" marker-start="url(#mk8)" marker-end="url(#mk8)"/>
+<text x="234" y="70" text-anchor="middle" fill="var(--bad)" font-size="13" font-weight="700">?</text>
+<text x="444" y="70" text-anchor="middle" fill="var(--bad)" font-size="13" font-weight="700">?</text>
+<text x="340" y="140" text-anchor="middle" fill="var(--bad)" font-size="11.5">Read the stamps: 105 claims 12:04, 106 claims 11:59. Which is after?</text>
+<text x="340" y="160" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">the timestamp is written by the miner; there is no shared clock</text>
+</g>
+<g class="st st-b">
+<rect x="45" y="52" width="170" height="56" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<rect x="255" y="52" width="170" height="56" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<rect data-note="Block 106 contains hash(block 105) baked into its own bytes. It is after 105 because its structure says so." x="465" y="52" width="170" height="56" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="130" y="72" text-anchor="middle" fill="var(--ink)" font-size="11.5" font-family="var(--mono)">Block 104</text>
+<text x="340" y="72" text-anchor="middle" fill="var(--ink)" font-size="11.5" font-family="var(--mono)">Block 105</text>
+<text x="550" y="72" text-anchor="middle" fill="var(--ink)" font-size="11.5" font-family="var(--mono)">Block 106</text>
+<text x="130" y="92" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">prev = hash(103)</text>
+<text x="340" y="92" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">prev = hash(104)</text>
+<text x="550" y="92" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">prev = hash(105)</text>
+<line x1="217" y1="80" x2="251" y2="80" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5" marker-end="url(#mk8)"/>
+<line x1="427" y1="80" x2="461" y2="80" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5" marker-end="url(#mk8)"/>
+<text x="340" y="140" text-anchor="middle" fill="var(--good)" font-size="11.5">Follow the pointers: a total order, independent of every date field.</text>
+<text x="340" y="160" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">order lives in the pointers, not in any date inside the node</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 8.1</span> Two ways to order three blocks. Dates are claims made by interested parties; parent pointers are structure.</figcaption>
+</figure>
+<aside class="note">Most people get this backwards. <strong>Ordering does not come from the timestamp</strong>. If it did, out of order stamps would be a catastrophe. Ordering comes from something far harder: each card carries its parent's fingerprint. Block 106 contains the hash of block 105 baked into its own bytes. It comes "after" because its structure says so, exactly like a linked list. Order lives in the pointers, not in any date field inside the node. Bitcoin didn't measure time more precisely. Ancestry replaced the clock. "Whose child" instead of "when".</aside><h2 id="trust"><span class="num">09</span> Nobody trusts anybody</h2>
+<p>Back to the very first question of the conversation: fine, the winner writes the page, why would anyone believe him? Answer: <strong>nobody believes anybody, and nobody needs to</strong>. When a miner announces his block, every device (node) on the network takes a copy and re checks everything itself, locally, without asking anyone:</p>
+
+<figure>
+<svg viewBox="0 0 680 300" role="img" aria-labelledby="figVal-t">
+<title id="figVal-t">A broadcast block fans out to independent nodes; each re-checks every rule and accepts or drops it</title>
+<defs><marker id="arV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="The lottery winner announces his block to peers. Nobody is asked to believe him.">
+<rect x="250" y="15" width="180" height="40" rx="0" fill="none" stroke="var(--q-mrk)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="340" y="40" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="500">Miner broadcasts the block</text>
+</g><g data-step="2" data-note="The block fans out to independent nodes. Each holds a full copy of the rulebook."><line x1="300" y1="55" x2="150" y2="91" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arV)"/>
+<line x1="340" y1="55" x2="340" y2="91" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arV)"/>
+<line x1="380" y1="55" x2="530" y2="91" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arV)"/>
+<rect x="60" y="95" width="170" height="38" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="145" y="119" text-anchor="middle" fill="var(--ink)" font-size="12.5">Node A</text>
+<rect x="255" y="95" width="170" height="38" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="119" text-anchor="middle" fill="var(--ink)" font-size="12.5">Node B</text>
+<rect x="450" y="95" width="170" height="38" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="535" y="119" text-anchor="middle" fill="var(--ink)" font-size="12.5">Node C</text>
+</g><g data-step="3" data-note="Every node re-checks alone: hash below target, signatures valid, no double spends, coinbase within cap, timestamp in bounds."><line x1="145" y1="133" x2="180" y2="158" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arV)"/>
+<line x1="340" y1="133" x2="340" y2="158" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arV)"/>
+<line x1="535" y1="133" x2="500" y2="158" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arV)"/>
+<rect data-note="Validation is local and unconditional. A node never asks anyone whether a block is good." x="60" y="162" width="560" height="62" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="340" y="185" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="500">Every node re-checks, alone, no one is asked, no one is believed</text>
+<text x="340" y="207" text-anchor="middle" fill="var(--muted)" font-size="11">hash ≤ target · every signature valid · no double spends · coinbase ≤ cap · timestamp in bounds</text>
+<line x1="200" y1="224" x2="197" y2="246" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arV)"/>
+<line x1="480" y1="224" x2="483" y2="246" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arV)"/>
+</g><g data-step="4" data-note="All rules pass: accept and relay. Any rule broken: drop it silently. Cheating is economically losing."><rect x="60" y="250" width="270" height="38" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="195" y="274" text-anchor="middle" fill="var(--ink)" font-size="12">All rules pass → accept and relay</text>
+<rect x="350" y="250" width="270" height="38" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="485" y="274" text-anchor="middle" fill="var(--ink)" font-size="12">Any rule broken → drop it, silently</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 9.1</span> The lottery picks the writer; the rules judge the writing, at every node, independently.</figcaption>
+</figure>
+<p>Is the card's fingerprint really below the target? (One fingerprint, under a second, exactly what you did with the genesis block above.) Does every transaction carry a valid digital signature from the money's owner? Was no coin spent twice? Is the coinbase within the cap (3.125 + fees)? Is the timestamp within bounds? Are the size and format right?</p>
+<p>One broken rule, and the node <strong>drops the block and relays it to no one</strong>, no reporting, no negotiating, just dropped. And the miner has burned months of electricity for nothing. So cheating isn't "forbidden", cheating is <strong>economically losing</strong>: the most expensive way in existence to set your own money on fire.</p>
+<p>That also answers the empty block question: can a miner publish a block with no transactions at all? Yes, and the rules accept it. It actually happens, in the seconds after a new block arrives, when miners start work on the new tip before assembling a template with transactions. The only loser is the miner himself: he left the transaction fees, the tips, on the table, and the waiting payments confirm in the next block.</p>
+<aside class="note good">In security language: proof of work is not authorization over content. It's costly rate limiting that solves Sybil and picks whose "turn" it is to propose the block. Validity itself is enforced by independent validation at every node. The lottery picks the writer; the rules judge the writing.</aside>
+
+<h2 id="node"><span class="num">10</span> What a node is, and how one joins</h2>
+<p>The last section kept saying "every device re checks", time to name the device. Bitcoin is not a service with servers; it's a program. The reference one is <strong>Bitcoin Core</strong> (open source, the direct descendant of the code Satoshi shipped in January 2009), and it runs fine on an ordinary laptop. Worth separating three roles people constantly blur: a <strong>full node</strong> runs the program and enforces every rule, it needs no permission, no stake, and no mining hardware; a <strong>miner</strong> plays the lottery of section 6 and proposes blocks (and typically runs a node too); a <strong>wallet</strong> just holds keys and signs. Light wallets on phones skip validation and ask someone else's node, convenient, but that's borrowed trust. Tens of thousands of reachable full nodes run today, and nothing stops yours from being one of them tonight.</p>
+<p>So how does a machine that has never heard of the network become one of its enforcers? It ships knowing exactly <strong>one block</strong>: genesis, hardcoded into the source, the same 80 bytes you hashed in section 4. Everything else it earns. First it needs peers: it queries a handful of <strong>DNS seeds</strong>, volunteer run hostnames baked into the code that answer with IP addresses of reachable nodes (with a compiled in fallback list if DNS fails), opens about ten outbound connections on port 8333, and thereafter learns of more peers through <code>addr</code> gossip, the network's own address book. Each connection starts with a two message handshake, <code>version</code>, answered by <code>verack</code>, where the peers state their protocol version and how tall their chain is.</p>
+<p>Then comes the elegant part, and it reuses the hero of this whole page. The node does <strong>headers first sync</strong>: before touching any transaction, it asks peers for headers only, the 80-byte cards. From those headers it verifies proof of work and computes which candidate chain carries the most accumulated work. Then <strong>Initial Block Download</strong> fetches full blocks and validates their consensus rules locally. Pruned mode can discard old block files after validation, and the documented assume valid optimization can skip old script checks while preserving the other consensus checks.</p>
+
+<figure>
+<svg viewBox="0 0 680 370" role="img" aria-labelledby="figJoin-t">
+<title id="figJoin-t">How a fresh node joins: genesis only, find peers, handshake, headers first, then full validation</title>
+<defs><marker id="arJ" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="A fresh install knows exactly one block: genesis, 80 bytes hardcoded into the source it runs.">
+<rect x="110" y="18" width="460" height="40" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="43" text-anchor="middle" fill="var(--ink)" font-size="12.5">Install Bitcoin Core, it knows one block: genesis, hardcoded</text>
+<line x1="340" y1="58" x2="340" y2="76" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arJ)"/>
+</g><g data-step="2" data-note="Find peers: DNS seeds hand out IP addresses, about ten outbound connections on port 8333, then addr gossip."><rect x="110" y="80" width="460" height="40" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="105" text-anchor="middle" fill="var(--ink)" font-size="12.5">Find peers: DNS seeds → IP list → ~10 outbound connections, port 8333</text>
+<line x1="340" y1="120" x2="340" y2="138" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arJ)"/>
+</g><g data-step="3" data-note="Handshake with each peer: version, answered by verack."><rect x="110" y="142" width="460" height="40" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="340" y="167" text-anchor="middle" fill="var(--ink)" font-size="12.5">Handshake with each peer: version ⇄ verack, then addr gossip for more peers</text>
+<line x1="340" y1="182" x2="340" y2="200" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arJ)"/>
+</g><g data-step="4" data-note="Headers first: the 80-byte skeleton, about 80 MB, verified for proof-of-work linkage before any transaction is fetched."><rect x="110" y="204" width="460" height="56" rx="0" fill="none" stroke="var(--q-mrk)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="340" y="226" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="500">Headers-first: fetch every 80-byte card (~80 MB total)</text>
+<text x="340" y="246" text-anchor="middle" fill="var(--muted)" font-size="11">verify the proof-of-work skeleton, pick the heaviest chain</text>
+<line x1="340" y1="260" x2="340" y2="278" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#arJ)"/>
+</g><g data-step="5" data-note="Full blocks fetched in parallel and re-validated locally against every rule, all the way back to 2009."><rect x="110" y="282" width="460" height="56" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="340" y="304" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="500">Initial Block Download: full blocks from many peers in parallel</text>
+<text x="340" y="324" text-anchor="middle" fill="var(--muted)" font-size="11">re-validate every rule since 2009, then live at the tip: gossip inv / tx / block, enforce forever</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 10.1</span> Trust bootstrapped from 80 hardcoded bytes plus source code you can read, everything else is recomputed locally.</figcaption>
+</figure>
+
+<p>Once caught up, the node lives at the tip: peers announce new items with <code>inv</code> messages, it fetches transactions into its mempool and blocks into its chain, relays what passes validation, and drops what doesn't, the fan out drawing in section 9, running forever. Notice this is also the concrete answer to the "everyone announces and the network talks it out" proposal from section 3: the network really does talk, in exactly these messages, and the reason the talking works is that every listener independently recomputes everything, starting from nothing but genesis.</p><h2 id="chain"><span class="num">11</span> Why history hardens</h2>
+
+
+
+<p>Every block grips the one before it by its hash. That is the "chain" in blockchain. Change a payment in an old block and its Merkle root changes, which changes the header hash. The <code>prev</code> field of the next block no longer matches. Rewriting from there requires rebuilding the proof of work while the honest chain continues growing. The required work grows with the depth of the edit and the competing hash power.</p>
+<p>The miniature chain below uses 3 zeros so your device can mine it in seconds. Green means the hash meets the toy target and its <code>prev</code> field matches. Change any character in block 1, then re mine the blocks in order. You will redo every block after the edit.</p>
+
+
+<figure>
+<svg viewBox="0 0 680 210" role="img" aria-label="A consistent three-block chain versus the same chain after an edit to the oldest block" data-fa="The chain at rest" data-fb="Tamper with block 103">
+<defs><marker id="mk11" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<g class="st st-a">
+<rect x="40" y="64" width="150" height="60" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<rect x="230" y="64" width="150" height="60" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<rect x="420" y="64" width="150" height="60" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="115" y="88" text-anchor="middle" fill="var(--ink)" font-size="12">Block 103</text>
+<text x="305" y="88" text-anchor="middle" fill="var(--ink)" font-size="12">Block 104</text>
+<text x="495" y="88" text-anchor="middle" fill="var(--ink)" font-size="12">Block 105</text>
+<text x="115" y="108" text-anchor="middle" fill="var(--good)" font-size="10.5" font-family="var(--mono)">prev ✓ matches</text>
+<text x="305" y="108" text-anchor="middle" fill="var(--good)" font-size="10.5" font-family="var(--mono)">prev ✓ matches</text>
+<text x="495" y="108" text-anchor="middle" fill="var(--good)" font-size="10.5" font-family="var(--mono)">prev ✓ matches</text>
+<line x1="192" y1="94" x2="226" y2="94" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5" marker-end="url(#mk11)"/>
+<line x1="402" y1="94" x2="436" y2="94" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5" marker-end="url(#mk11)"/>
+<line x1="578" y1="94" x2="642" y2="94" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#mk11)"/>
+<text x="610" y="82" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">+ blocks</text>
+<text x="610" y="118" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">the honest tip</text>
+<text x="340" y="178" text-anchor="middle" fill="var(--muted)" font-size="11.5">The chain at rest: every card welded to the one before it.</text>
+</g>
+<g class="st st-b">
+<rect x="40" y="64" width="150" height="60" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<rect x="55" y="70" width="120" height="18" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="115" y="83" text-anchor="middle" fill="var(--bad)" font-size="9.5" font-family="var(--mono)">edited payment</text>
+<text x="115" y="110" text-anchor="middle" fill="var(--ink)" font-size="11">Block 103</text>
+<line x1="192" y1="94" x2="226" y2="94" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1.5" marker-end="url(#mk11)"/>
+<text x="209" y="132" text-anchor="middle" fill="var(--bad)" font-size="9.5" font-family="var(--mono)">hash mismatch</text>
+<rect x="230" y="64" width="150" height="60" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="305" y="88" text-anchor="middle" fill="var(--ink)" font-size="12">Block 104</text>
+<text x="305" y="108" text-anchor="middle" fill="var(--bad)" font-size="10" font-family="var(--mono)">re-mine</text>
+<rect x="420" y="64" width="150" height="60" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="495" y="88" text-anchor="middle" fill="var(--ink)" font-size="12">Block 105</text>
+<text x="495" y="108" text-anchor="middle" fill="var(--bad)" font-size="10" font-family="var(--mono)">re-mine</text>
+<rect x="560" y="64" width="95" height="60" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="607" y="88" text-anchor="middle" fill="var(--ink)" font-size="11">Block 106</text>
+<text x="607" y="106" text-anchor="middle" fill="var(--good)" font-size="9.5" font-family="var(--mono)">honest tip</text>
+<text x="607" y="140" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">you chase it</text>
+<text x="340" y="178" text-anchor="middle" fill="var(--bad)" font-size="11.5">Rewrite the middle and you must outrun the entire world on every block after it.</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 11.1</span> Why history hardens: the edit poisons every card downstream, and repair means racing everyone else, forever.</figcaption>
+</figure>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt6">
+<div class="m-head"><span class="m-lab">LAB 06</span><span class="m-title" id="labt6">A three block chain, try to forge it</span><span class="m-chip">MINE</span></div>
+<div class="m-body">
+<div class="blocks" id="blocks"></div>
+<div class="dim">On the real network, while you re mined all that, the rest of the world added new blocks on top of the honest version, you're chasing a train you can't catch unless you control more hash power than everyone else combined.</div>
+</div>
+</div><h2 id="forks"><span class="num">12</span> When two miners win at once</h2>
+
+
+
+<p>The lottery pays out roughly every ten minutes. Block propagation takes seconds. Collisions are rare, under 1% of blocks, but they happen: two miners find <strong>two different valid solutions to the same round</strong> within moments of each other. (Never the same hash. Each miner's coinbase pays his own address, so his merkle root differs, so his card differs, so his hash differs. Two winning tickets, one round.) That's a <strong>fork</strong>.</p>
+<p>This runs opposite to intuition. <strong>the system doesn't know which block is better, and doesn't try</strong>. There's no jury and no quality score. Both are equally legal. Each node keeps whichever arrived first and sets the other aside, so the world temporarily splits into two camps, each camp's miners digging on their own tip. Resolution comes from <strong>the next lottery draw</strong>. The moment anyone finds the next block, necessarily built on one of the two, that branch now carries more accumulated work, and the losing camp's miners jump over instantly. They're not being sportsmanlike. Digging on a losing branch burns electricity toward a reward that will never be spendable. The losing block is called <strong>stale</strong>. Its miner forfeits the reward (which is why miners compete ferociously on propagation speed). Its transactions, mostly already present in the winning block anyway, return to the mempool and ride the next one.</p>
+<p>If the tie repeats, both camps finding their next block simultaneously again? <strong>Then the tie continues, and nothing breaks.</strong> Bitcoin doesn't need instant resolution. It tolerates temporary ambiguity and promises eventual convergence. The lottery is memoryless, so the collision probability multiplies itself each round, 1%, then one in ten thousand, then one in a million. A tie surviving three rounds is practically unheard of. The intuition of "longest chain" is slightly off. The rule is <strong>the chain with the most accumulated work</strong> (the heaviest, by summed difficulty), identical to longest when difficulty is constant, different when it isn't.</p>
+<p>Each click is one lottery draw across the whole planet. The slider sets how the hash power is split between the camps:</p>
+
+
+<figure>
+<svg viewBox="0 0 680 215" role="img" aria-label="A fork tie between two valid blocks, then resolution when the next block lands on one branch" data-fa="A tie, both legal" data-fb="The next lottery draw">
+<defs><marker id="mk12" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<rect x="30" y="75" width="110" height="60" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="85" y="99" text-anchor="middle" fill="var(--ink)" font-size="12">Block N</text>
+<text x="85" y="118" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">two winners</text>
+<g class="st st-a">
+<rect x="215" y="22" width="130" height="54" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="280" y="44" text-anchor="middle" fill="var(--ink)" font-size="11.5">Block A</text>
+<text x="280" y="62" text-anchor="middle" fill="var(--good)" font-size="9.5" font-family="var(--mono)">valid</text>
+<rect x="215" y="134" width="130" height="54" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="280" y="156" text-anchor="middle" fill="var(--ink)" font-size="11.5">Block B</text>
+<text x="280" y="174" text-anchor="middle" fill="var(--good)" font-size="9.5" font-family="var(--mono)">valid</text>
+<line x1="142" y1="90" x2="211" y2="48" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk12)"/>
+<line x1="142" y1="120" x2="211" y2="160" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk12)"/>
+<rect x="375" y="22" width="275" height="68" rx="0" fill="none" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="4 3"/>
+<rect x="375" y="120" width="275" height="68" rx="0" fill="none" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="512" y="60" text-anchor="middle" fill="var(--muted)" font-size="11">camp A digs on A</text>
+<text x="512" y="158" text-anchor="middle" fill="var(--muted)" font-size="11">camp B digs on B</text>
+<line x1="347" y1="49" x2="371" y2="49" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk12)"/>
+<line x1="347" y1="161" x2="371" y2="161" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk12)"/>
+<text x="340" y="207" text-anchor="middle" fill="var(--muted)" font-size="11.5">Same accumulated work on both sides. The tie is real; the system just waits.</text>
+</g>
+<g class="st st-b">
+<rect x="215" y="22" width="130" height="54" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="280" y="44" text-anchor="middle" fill="var(--ink)" font-size="11.5">Block A</text>
+<text x="280" y="62" text-anchor="middle" fill="var(--good)" font-size="9.5" font-family="var(--mono)">valid</text>
+<rect x="375" y="22" width="130" height="54" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5"/>
+<text x="440" y="44" text-anchor="middle" fill="var(--ink)" font-size="11.5">Block A2</text>
+<text x="440" y="62" text-anchor="middle" fill="var(--good)" font-size="9.5" font-family="var(--mono)">new tip</text>
+<line x1="347" y1="49" x2="371" y2="49" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.5" marker-end="url(#mk12)"/>
+<rect x="215" y="134" width="130" height="54" rx="0" fill="none" stroke="var(--faint)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="280" y="156" text-anchor="middle" fill="var(--ink)" font-size="11.5">Block B</text>
+<text x="280" y="174" text-anchor="middle" fill="var(--bad)" font-size="9.5" font-family="var(--mono)">stale, reward lost</text>
+<path d="M510 152 C570 140 560 92 510 80" fill="none" stroke="var(--accent)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#mk12)"/>
+<text x="575" y="120" text-anchor="middle" fill="var(--accent)" font-size="9.5" font-family="var(--mono)">miners jump</text>
+<text x="512" y="178" text-anchor="middle" fill="var(--good)" font-size="11">heaviest chain wins</text>
+<text x="340" y="207" text-anchor="middle" fill="var(--good)" font-size="11.5">Digging on a loser burns watts toward a reward that will never spend.</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 12.1</span> Fork choice: no jury, no quality score. The next block breaks the tie, and the losing ticket is forfeit.</figcaption>
+</figure>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt7">
+<div class="m-head"><span class="m-lab">LAB 07</span><span class="m-title" id="labt7">The fork race</span><span class="m-chip">FORK</span></div>
+<div class="m-body">
+<label for="fshare">Hash power on branch A: <span id="fsharev">50</span>%</label>
+<input type="range" id="fshare" min="5" max="95" value="50" oninput="document.getElementById('fsharev').textContent=this.value">
+<div class="btnrow">
+<button type="button" onclick="forkStep()">Next lottery draw</button>
+<button type="button" class="secondary" onclick="forkAuto()">Draw until resolved</button>
+<button type="button" class="secondary" data-reset onclick="forkReset()">Reset the tie</button>
+</div>
+<div class="race" id="racebox"></div>
+<div class="dim" id="racemsg"></div>
+</div>
+</div><h2 id="finality"><span class="num">13</span> The math behind six confirmations</h2>
+
+
+
+<p>Truth in Bitcoin isn't a moment. It <strong>hardens by accumulation</strong>. A payment in the very latest block is still "soft": if its branch loses a race, it can vanish back into the mempool. Every block built on top of yours makes reversing it exponentially harder, which is why the convention for large amounts is to wait <strong>6 confirmations</strong>, about an hour.</p>
+<p>Satoshi did the math in section 11 of the whitepaper. An attacker who secretly mines a rival branch (to reverse his own payment) is running a race where each block is a coin flip weighted by his share of hash power. The probability he ever catches up from <em>z</em> blocks behind follows a closed formula, a Poisson weighted gambler's ruin, and it collapses fast. The calculator below implements that exact formula. At 10% attacker hash power and 6 confirmations it prints 0.0002428, 0.02%, the very number in the whitepaper's table. Your browser is re deriving the paper.</p>
+
+
+<figure>
+<svg viewBox="0 0 680 210" role="img" aria-label="Bar chart: the probability that a 10 percent attacker catches up collapses as confirmations increase">
+<defs><marker id="mk13" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<text x="340" y="18" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="700">Chance a 10%-hash-power attacker ever catches up</text>
+<text x="340" y="34" text-anchor="middle" fill="var(--muted)" font-size="11">by confirmations waited (z) · Satoshi’s gambler’s-ruin table, whitepaper section 11</text>
+<line x1="52" y1="170" x2="664" y2="170" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect data-note="z=0: probability 1.0. Zero confirmations means zero protection." x="60" y="50" width="52" height="120" rx="0" fill="var(--accent-soft)" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/><rect data-note="z=1: 0.2046. One block deep, a 10% attacker still catches up about one time in five." x="129" y="101" width="52" height="69" rx="0" fill="var(--accent-soft)" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/><rect data-note="z=2: 0.0510, one in twenty." x="198" y="128" width="52" height="42" rx="0" fill="var(--accent-soft)" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/><rect data-note="z=3: 0.0132." x="267" y="144" width="52" height="26" rx="0" fill="var(--accent-soft)" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/><rect data-note="z=4: 0.0035." x="336" y="153" width="52" height="17" rx="0" fill="var(--accent-soft)" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/><rect data-note="z=5: 0.0009, about one in a thousand." x="405" y="160" width="52" height="10" rx="0" fill="var(--accent-soft)" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/><rect data-note="z=6: 0.0002428, the whitepaper’s own table value. The convention of waiting six confirmations comes from this number." x="474" y="163" width="52" height="7" rx="0" fill="var(--accent-soft)" stroke="var(--accent)" vector-effect="non-scaling-stroke" stroke-width="1.5"/><rect data-note="z=7: 0.000065." x="543" y="166" width="52" height="4" rx="0" fill="var(--accent-soft)" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/><rect data-note="z=8: 0.000017, about one in 58,000." x="612" y="167" width="52" height="3" rx="0" fill="var(--accent-soft)" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/><text x="86" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">0</text><text x="155" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">1</text><text x="224" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">2</text><text x="293" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">3</text><text x="362" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">4</text><text x="431" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">5</text><text x="500" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">6</text><text x="569" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">7</text><text x="638" y="186" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">8</text>
+<text x="86" y="42" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">100%</text>
+<text x="155" y="95" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">20.5%</text>
+<text x="500" y="156" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="var(--mono)">0.024%</text>
+<text x="638" y="161" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">1 in 58k</text>
+<text x="650" y="58" text-anchor="end" fill="var(--muted)" font-size="10" font-family="var(--mono)">past 50% the formula returns certainty</text>
+<text x="650" y="72" text-anchor="end" fill="var(--bad)" font-size="10" font-family="var(--mono)">the 51% attack</text>
+<text x="340" y="203" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="var(--mono)">confirmations waited →</text>
+</svg>
+<figcaption><span class="figno">Fig. 13.1</span> Catch up probability collapses with depth. At six confirmations a 10% attacker sits at 0.024%, the whitepaper’s own number.</figcaption>
+</figure>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt8">
+<div class="m-head"><span class="m-lab">LAB 08</span><span class="m-title" id="labt8">The attacker's race, Satoshi's formula live</span><span class="m-chip">MINE</span></div>
+<div class="m-body">
+<label for="qsl">Attacker's share of total hash power: <span id="qv">10</span>%</label>
+<input type="range" id="qsl" min="1" max="49" value="10" oninput="calcAtk()">
+<label for="zsl">Confirmations you wait for (z): <span id="zv">6</span></label>
+<input type="range" id="zsl" min="0" max="12" value="6" oninput="calcAtk()">
+<div class="out"><span class="hx" id="atkout"></span></div>
+<div id="atktbl"></div>
+<div class="dim">Drag the attacker past 50% and the formula returns certainty, with the majority of hash power, catching up is guaranteed eventually. That's the famous "51% attack": even then the attacker can only reorder recent history and double spend his own coins; signatures still make stealing yours or minting extra coins impossible.</div>
+</div>
+</div><h2 id="mev"><span class="num">14</span> The dark side of ordering</h2>
+
+<p>Strongest objection against everything above, and the one an offensive security brain hits first. The block writer holds ordering power. Can't he skim only the high fee transactions? Worse, he sees a fat trade in the mempool. Can he slot his own transaction in front of it?</p>
+<p>Those are not the same complaint. High fee picking is intended. Reordering for profit is the live hole. Mining gets blamed for a chain that isn't even mining. <strong>picking high fee transactions is not a bug, it's the design</strong>. Block space is scarce (a few thousand transactions per block regardless of demand), and fees are the auction for it. Nobody promised FIFO. The writer doesn't ask who you are or what your government thinks. Only what you paid.</p>
+<p>The real problem begins when money can be made from <strong>the ordering itself</strong>, past the fees. I see a large buy about to move a token's price, so I place my buy before it and my sell after it (a <strong>sandwich</strong>). I see a hot mint and shove myself to the front. Neutrality dies there. The writer became player and referee in the same block. This is <strong>MEV, Maximal Extractable Value</strong>. Real money. Billions extracted to date.</p>
+<p>The correction makes the objection heavier, not lighter. The chain where this is most visible, Solana, <strong>doesn't mine at all</strong>. Proof of stake, leader schedule known in advance. Frontrunning there is not evidence against mining. The sharper irony: <strong>Bitcoin, the original mining network, has the least MEV of any major chain</strong>. Not saintly miners. Bitcoin transactions are plain transfers whose outcome doesn't depend on what executed before them. There's nothing to sandwich. MEV is born from two ingredients together: ordering power <em>plus</em> a live financial market on chain (DEXes, prices that move per transaction). Ethereum and Solana have the second in abundance. Bitcoin doesn't. The right defendant isn't the writer selection mechanism. It's embedding trading into a layer that has a single ordering writer.</p>
+<p>Your turn as block builder. This simplified constant product pool uses <code>x·y=k</code> without trading fees or execution uncertainty. A victim's 10 SOL buy sits in the queue. Order it fairly, or sandwich it:</p>
+
+
+<figure>
+<svg viewBox="0 0 680 210" role="img" aria-label="The same mempool trade ordered fairly versus sandwiched by the block builder" data-fa="Fair order" data-fb="Sandwich order">
+<defs><marker id="mk14" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<text x="135" y="34" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="var(--mono)">mempool, visible to all</text>
+<rect x="55" y="44" width="160" height="36" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="135" y="66" text-anchor="middle" fill="var(--ink)" font-size="11">victim buys 10 SOL</text>
+<line x1="219" y1="62" x2="276" y2="62" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk14)"/>
+<text x="367" y="34" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="var(--mono)">the block, assembled by the builder</text>
+<rect x="282" y="44" width="170" height="30" rx="0" fill="none" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="282" y="80" width="170" height="30" rx="0" fill="none" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="282" y="116" width="170" height="30" rx="0" fill="none" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect data-note="Constant-product pool (x·y=k): any buy placed before the victim moves the price against them." x="495" y="44" width="155" height="102" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1.2"/>
+<text x="572" y="66" text-anchor="middle" fill="var(--ink)" font-size="11.5" font-weight="700">AMM pool</text>
+<text x="572" y="86" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="var(--mono)">100 SOL</text>
+<text x="572" y="102" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="var(--mono)">1,000,000 MEME</text>
+<g class="st st-a">
+<text x="367" y="63" text-anchor="middle" fill="var(--ink)" font-size="10.5">1. victim buys 10 SOL</text>
+<text x="572" y="126" text-anchor="middle" fill="var(--good)" font-size="10.5" font-family="var(--mono)">victim pays the pool price</text>
+<text x="572" y="140" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">builder earns fees only</text>
+<text x="340" y="190" text-anchor="middle" fill="var(--good)" font-size="11.5">Neutral order: fees only. The writer was referee, not player.</text>
+</g>
+<g class="st st-b">
+<text x="367" y="63" text-anchor="middle" fill="var(--accent)" font-size="10.5" font-weight="700">1. builder buys 15 SOL</text>
+<text x="367" y="99" text-anchor="middle" fill="var(--ink)" font-size="10.5">2. victim buys 10 SOL</text>
+<text x="367" y="135" text-anchor="middle" fill="var(--accent)" font-size="10.5" font-weight="700">3. builder sells 15 SOL</text>
+<text x="572" y="126" text-anchor="middle" fill="var(--bad)" font-size="10.5" font-family="var(--mono)">price pushed up first</text>
+<text x="572" y="140" text-anchor="middle" fill="var(--bad)" font-size="9.5" font-family="var(--mono)">profit exits the victim’s fill</text>
+<text x="340" y="190" text-anchor="middle" fill="var(--bad)" font-size="11.5">The ordering itself extracted the spread. That is MEV.</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 14.1</span> The sandwich in one picture. Ordering power plus a live on chain market lets the builder play referee and player; Bitcoin has the first, never the second.</figcaption>
+</figure>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="labt9">
+<div class="m-head"><span class="m-lab">LAB 09</span><span class="m-title" id="labt9">The sandwich, you are the block builder</span><span class="m-chip">POS</span></div>
+<div class="m-body">
+<div class="dim">Pool: 100 SOL / 1,000,000 MEME (constant product). Pending in mempool: victim buys with 10 SOL.</div>
+<label for="frsl">Your frontrun size: <span id="frv">15</span> SOL</label>
+<input type="range" id="frsl" min="0" max="60" value="15" oninput="calcSandwich()">
+<div class="btnrow">
+<button type="button" class="secondary" onclick="setFair()">Order fairly (victim first)</button>
+<button type="button" onclick="setSandwich()">Sandwich it (buy → victim → sell)</button>
+</div>
+<div id="sandout"></div>
+<div class="dim">Real pools charge a ~0.3% fee per swap, which trims but doesn't erase this. Slide your frontrun size around and find the profit peak, then notice every SOL of your profit came out of the victim's fill.</div>
+</div>
+</div>
+
+<p>Call the mechanism "bad" after you've looked at the other shop. Frontrunning in traditional finance predates blockchains by decades. HFT firms spent fortunes on straighter cables to beat orders by microseconds (read <em>Flash Boys</em>). Brokers sell order flow. You see none of it. On chain, for the first time, ordering power became <strong>visible and measurable</strong>, and a whole field grew to fence it. Ethereum separated block building from proposing (PBS / MEV Boost) and researches encrypted mempools where the writer orders transactions he cannot read. On Solana, Jito shut down its public mempool in 2024 specifically to break sandwiching, and the Solana Foundation removed validators caught sandwiching from its stake delegation program. Application layer next. Slippage limits and batch auctions (CoW Swap) erase ordering advantage by settling a whole batch at one price.</p>
+<aside class="note">Mining (and PoS too) does one job extremely well. Strangers agree on one history without trust, and that history resists forgery and Sybil. It never promised <strong>fairness of ordering inside the block</strong>. That second problem remains open in every system that has a "writer", from Solana to Nasdaq.</aside>
+<h2 id="energy"><span class="num">15</span> Do we have to burn electricity</h2>
+
+<p>Honest objection, then. Fine, it works. It burns electricity "for nothing". Couldn't everyone just announce, sign, gossip, done? Section 3 showed why announcing and signing alone collapses at the first double spend and the first million fake identities: some scarce resource must weight the votes. The electricity isn't burned to compute anything useful. It's burned to make <strong>lying more expensive than honesty</strong>. Like a bank vault's door. The thick steel does no useful work. Its entire job is being expensive to get through.</p>
+<p>Your instinct that this is overpriced was shared by half the industry. They built the alternative: <strong><a href="proof-of-stake.html">Proof of Stake</a></strong>. Ethereum switched to it entirely in September 2022, cutting its energy use by roughly 99.95%. Instead of the lottery ticket being burned electricity, the ticket is <strong>locked money</strong>. You deposit 32 ETH as collateral, get randomly selected to write blocks, and if you're caught cheating, signing two conflicting versions, say, the protocol <strong>burns your deposit</strong> (slashing). The "burn" moved from electricity paid upfront to capital held hostage. Solana, the chain from section 14, is from this family. Even PoS is not "everyone just announces". There's still a selected writer and consensus rounds. They changed the ticket's price, because the ordering problem itself never disappears under any technology.</p>
+<p>The switch isn't free either. The trade offs cut in directions you've already complained about. In PoS the voting resource is the coin itself. The system derives its security from the thing it secures. Whoever holds more earns more and concentrates further. Amassing a large stake happens quietly with a buy order. Building mining farms shows up on satellite imagery and takes years, steel, and power contracts. And there's a subtle technical cost called <strong>weak subjectivity</strong>. A brand new device on PoW can verify the entire chain from genesis by pure computation, the work is carved into the fingerprints, as you saw yourself. On PoS, a device that was offline for a year needs a recent checkpoint from a source it trusts, because old signing keys can be reused for free to construct an alternate history (the deposit that once threatened them was withdrawn long ago). Straight: <strong>PoW pays a continuous power bill so its security is external and physical; PoS saves the power at the cost of security that is internal and circular.</strong></p>
+
+<figure>
+<svg viewBox="0 0 680 210" role="img" aria-label="Proof of work pays watts per ticket; proof of stake locks capital per ticket">
+<defs><marker id="mk15" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<text x="340" y="24" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="700">Same job, two tickets: what weights the vote?</text>
+<rect data-note="The ticket is electricity. Security is external and physical: a brand-new device verifies the whole chain from genesis by pure computation." x="30" y="42" width="292" height="132" rx="0" fill="none" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="176" y="62" text-anchor="middle" fill="var(--ink)" font-size="12" font-weight="700">Proof of work</text>
+<rect x="48" y="76" width="70" height="26" rx="0" fill="none" stroke="var(--accent)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="83" y="93" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">watts</text>
+<line x1="120" y1="89" x2="134" y2="89" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk15)"/>
+<rect x="138" y="76" width="76" height="26" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="176" y="93" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">lottery</text>
+<line x1="216" y1="89" x2="230" y2="89" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk15)"/>
+<rect x="234" y="76" width="76" height="26" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="272" y="93" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">block</text>
+<text x="176" y="120" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">electricity paid upfront, forever</text>
+<text x="176" y="136" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">a new device verifies all history alone</text>
+<text x="176" y="152" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">farms show up on satellites</text>
+<rect data-note="The ticket is locked capital, burned if the signer is caught on two histories. Security is internal: the coin secures the coin, and a long-offline device needs a recent trusted checkpoint (weak subjectivity)." x="358" y="42" width="292" height="132" rx="0" fill="none" stroke="var(--border2)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="504" y="62" text-anchor="middle" fill="var(--ink)" font-size="12" font-weight="700">Proof of stake</text>
+<rect x="368" y="76" width="88" height="26" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="412" y="93" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">32 ETH</text>
+<line x1="458" y1="89" x2="470" y2="89" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk15)"/>
+<rect x="474" y="76" width="68" height="26" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="508" y="93" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">lottery</text>
+<line x1="544" y1="89" x2="556" y2="89" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk15)"/>
+<rect x="560" y="76" width="76" height="26" rx="0" fill="none" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="598" y="93" text-anchor="middle" fill="var(--ink)" font-size="10.5" font-family="var(--mono)">block</text>
+<text x="504" y="120" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">capital hostage, burned if caught</text>
+<text x="504" y="136" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">99.95% less energy</text>
+<text x="504" y="152" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-family="var(--mono)">long-offline needs a trusted checkpoint</text>
+<text x="340" y="198" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="var(--mono)">either way, one selected writer per round. Only the ticket’s price differs.</text>
+</svg>
+<figcaption><span class="figno">Fig. 15.1</span> The disagreement is the ticket. Watts paid continuously, or capital held hostage and slashed on cheating.</figcaption>
+</figure>
+<aside class="note good">A permissionless consensus system needs a scarce resource or another Sybil resistant admission rule. Bitcoin uses proof of work. Ethereum and Solana use pledged capital. These choices trade energy use, concentration pressures, recovery assumptions, and attack costs differently. The stake side gets <a href="proof-of-stake.html">the full essay</a> on its own page.</aside><h2 id="faq"><span class="num">16</span> The questions, one by one</h2>
+
+<p>This page started as a real conversation. Questions in the order they were asked, each answered in two lines with a pointer to its section.</p>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-label="A coinbase within the cap is accepted by every node; a coinbase over the cap is dropped by every node" data-fa="Within the cap" data-fb="Write himself 1,000">
+<defs><marker id="mk16" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" vector-effect="non-scaling-stroke" stroke-width="1.5"/></marker></defs>
+<text x="340" y="28" text-anchor="middle" fill="var(--ink)" font-size="12.5" font-weight="700">Can the miner just write himself any amount?</text>
+<rect x="40" y="52" width="180" height="64" rx="0" fill="none" stroke="var(--ink)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="130" y="74" text-anchor="middle" fill="var(--ink)" font-size="11.5">miner’s coinbase</text>
+<line x1="224" y1="84" x2="256" y2="84" stroke="var(--muted)" vector-effect="non-scaling-stroke" stroke-width="1" marker-end="url(#mk16)"/>
+<text x="320" y="84" text-anchor="middle" fill="var(--ink)" font-size="11">node 1</text>
+<text x="440" y="84" text-anchor="middle" fill="var(--ink)" font-size="11">node 2</text>
+<text x="560" y="84" text-anchor="middle" fill="var(--ink)" font-size="11">node 3</text>
+<g class="st st-a">
+<text x="130" y="96" text-anchor="middle" fill="var(--good)" font-size="11" font-family="var(--mono)">3.125 + fees</text>
+<rect x="270" y="64" width="100" height="44" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="390" y="64" width="100" height="44" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<rect x="510" y="64" width="100" height="44" rx="0" fill="none" stroke="var(--good)" vector-effect="non-scaling-stroke" stroke-width="1"/>
+<text x="320" y="102" text-anchor="middle" fill="var(--good)" font-size="10" font-family="var(--mono)">accept</text>
+<text x="440" y="102" text-anchor="middle" fill="var(--good)" font-size="10" font-family="var(--mono)">accept</text>
+<text x="560" y="102" text-anchor="middle" fill="var(--good)" font-size="10" font-family="var(--mono)">accept</text>
+<text x="340" y="158" text-anchor="middle" fill="var(--good)" font-size="11.5">Within the cap: every node relays it. The rules are the only judge.</text>
+</g>
+<g class="st st-b">
+<text x="130" y="96" text-anchor="middle" fill="var(--bad)" font-size="11" font-family="var(--mono)">1,000 BTC</text>
+<rect x="270" y="64" width="100" height="44" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="5 4"/>
+<rect x="390" y="64" width="100" height="44" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="5 4"/>
+<rect x="510" y="64" width="100" height="44" rx="0" fill="none" stroke="var(--bad)" vector-effect="non-scaling-stroke" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="320" y="102" text-anchor="middle" fill="var(--bad)" font-size="10" font-family="var(--mono)">drop</text>
+<text x="440" y="102" text-anchor="middle" fill="var(--bad)" font-size="10" font-family="var(--mono)">drop</text>
+<text x="560" y="102" text-anchor="middle" fill="var(--bad)" font-size="10" font-family="var(--mono)">drop</text>
+<text x="340" y="158" text-anchor="middle" fill="var(--bad)" font-size="11.5">One satoshi over: dropped everywhere in under a second. The lottery’s electricity is already burned.</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 16.1</span> The rule in one move: the violation gets written, and the network refuses it. Nobody gets upset; everybody drops.</figcaption>
+</figure>
+<ol class="faql">
+<li><p class="q">Couldn't the miner include no transactions at all, and people would just accept it?</p>
+<p class="a">An empty block (coinbase only) is legal. The network accepts it. That miner forfeited the transaction fees, so he only hurt himself. "People accepting it" isn't a thing. Every device re checks every rule itself (section 9).</p></li>
+<li><p class="q">Why can't he just write himself whatever amount he wants?</p>
+<p class="a">He can write it. Every device on the network will drop the block in under a second because the coinbase exceeds the cap (3.125 + fees). He's wasted the entire lottery's electricity (sections 4 and 9).</p></li>
+<li><p class="q">What is mining even for?</p>
+<p class="a">The guesses carry no application meaning. Proof of work makes proposing blocks costly and weights the race by performed work rather than cheap identities. Mining can still concentrate in pools, so "unmonopolizable" would be too strong. The reward pays miners to supply that work.</p></li>
+<li><p class="q">If the input is known, where's the effort in hashing it?</p>
+<p class="a">One fingerprint really is free. The expensive bit is the inverted demand: find a version of the card whose fingerprint has the zeros. The machine is one way and chaotic, so there's no path but trial, and winning is astronomically rare. Effort = number of attempts, not the cost of one (section 6; run the pocket mine).</p></li>
+<li><p class="q">What exactly gets hashed?</p>
+<p class="a">The block header card. 80 bytes holding the previous block's hash, one summarizing hash of all transactions (the Merkle root), the timestamp, the difficulty, and the nonce. Transactions get summarized once into the root. The little card is what gets ground (sections 4 and 5, you ran Satoshi's actual 80 bytes yourself).</p></li>
+<li><p class="q">What is the timestamp for?</p>
+<p class="a">It gives the network a shared clock to recalibrate difficulty against every 2,016 blocks, keeping blocks near ten minutes. It isn't trusted blindly. It's fenced between the median of the last 11 blocks and the verifier's clock plus two hours (section 8).</p></li>
+<li><p class="q">Isn't a nonce a 'number used once'?</p>
+<p class="a">The name is borrowed. The job is different. Not an anti replay device, a 4-byte free scribble field the miner twiddles to change the card between attempts. "Once" survives only as this: repeating a value on the same card wastes electricity, since the machine is deterministic. When the counter runs out, the extraNonce inside the coinbase refreshes the space by changing the root (section 7).</p></li>
+<li><p class="q">But the writer can cherry pick high fees and frontrun, like on Solana. Doesn't that make mining a bad solution?</p>
+<p class="a">Fee picking is the intended auction for scarce block space. Profiting from the ordering itself is real, that's MEV. Solana doesn't mine (it's <a href="proof-of-stake.html">proof of stake</a> with a known leader schedule). Bitcoin, the mining chain, has the least MEV because plain transfers offer nothing to sandwich. The culprit is on chain trading under a single orderer, not the writer selection mechanism (section 14; run the sandwich lab).</p></li>
+<li><p class="q">Why not just have everyone sign and announce, and the network talks it out? Why burn electricity?</p>
+<p class="a">A signature answers "who", never "which first". I can validly sign two conflicting payments of the same coin (section 3 proves it with real signatures in your browser). Ordering needs votes. Votes need weighting by something unfakeable. Identities are free. The electricity is the unfakeable thing (sections 1 and 15).</p></li>
+<li><p class="q">So the real problem behind double spending is latency, time itself?</p>
+<p class="a">Yes. There's no shared "now" on a distributed planet, so "which came first" has no objective answer at millisecond scale. The blockchain answers a weaker but sufficient question, "which entered the ledger first", settling races in a new time unit: the block (sections 3 and 8).</p></li>
+<li><p class="q">But isn't the ordering done by the timestamp?</p>
+<p class="a">No. Stamps can be out of order between consecutive blocks and still be valid. Ordering comes from each block carrying its parent's hash and from accumulated proof of work. Timestamps help enforce time bounds, difficulty adjustment, and time based consensus rules. They do not decide block order.</p></li>
+<li><p class="q">Can two miners really win at the same moment? And how does the system pick the better block, what if both branches are the same length?</p>
+<p class="a">Yes (different blocks, never the same hash, each coinbase differs, so each header differs). The system doesn't pick. Both are equally legal, the world splits briefly, and the next lottery draw breaks the tie via the most accumulated work rule. Equal length ties simply persist and decay geometrically. Memoryless lottery, so a repeated collision multiplies its own improbability each round (section 12; run the fork race). This soft window is exactly why large payments wait 6 confirmations (section 13).</p></li>
+<li><p class="q">What actually runs all of this, and how does a brand new machine join the network?</p>
+<p class="a">A program, not a service: Bitcoin Core, runnable on a laptop. A fresh node knows only the hardcoded genesis block. It finds peers through DNS seeds, handshakes with version/verack, pulls the 80-byte headers first to verify the proof of work skeleton, then downloads and re validates every block since 2009 itself. After that it's a full enforcer of section 9's rules, trusting nothing it didn't recompute (section 10).</p></li>
+</ol>
+
+<p class="facts">The SHA-256 lab uses the browser's real implementation, and the genesis lab hashes Bitcoin's recorded 80-byte genesis header. The signature lab uses browser supported P-256 ECDSA to demonstrate conflicting authorization; Bitcoin signatures use secp256k1. The attacker calculator implements the formula from section 11 of the whitepaper. The current subsidy is 3.125 BTC, and difficulty retargets every 2,016 blocks.</p>
+</div>
+</main>
+<footer class="band foot">
+  <nav class="pn" aria-label="Guide navigation"><a href="crypto-summary.html" rel="prev"><small>Previous</small><strong>The big picture</strong></a><a href="proof-of-stake.html" rel="next"><small>Next</small><strong>Proof of stake</strong></a></nav>
+  <p class="colophon">Written by <a href="https://moamenbasel.com">Moamen Basel</a>, security engineer at <a href="https://greycorelabs.com">Grey Core Labs</a>. Moamen Basel, 2026, facts current September 2026. <a href="index.html">Index</a></p>
+</footer>
+<script>
+const enc = new TextEncoder();
+async function sha256hex(str){
+  const d = await crypto.subtle.digest('SHA-256', enc.encode(str));
+  return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function hexToBytes(h){const a=new Uint8Array(h.length/2);for(let i=0;i<a.length;i++)a[i]=parseInt(h.substr(i*2,2),16);return a;}
+function bytesToHex(b){return [...b].map(x=>x.toString(16).padStart(2,'0')).join('');}
+function markZeros(h){const m=h.match(/^0*/)[0];return '<span class="zeros">'+m+'</span>'+h.slice(m.length);}
+function fmt(n){return n.toLocaleString('en-US');}
+
+/* ---- Lab 1: hasher ---- */
+let lastHash = null;
+const hin=document.getElementById('hin'), hout=document.getElementById('hout'), hprev=document.getElementById('hprev');
+async function updateHash(){
+  const h = await sha256hex(hin.value);
+  if(lastHash && lastHash!==h){ hprev.textContent = 'Previous fingerprint: ' + lastHash.slice(0,24) + '… Compare for yourself: no visible relationship.'; }
+  lastHash = h; hout.textContent = h;
+}
+function setH(v){ hin.value=v; updateHash(); }
+hin.addEventListener('input', updateHash);
+updateHash();
+
+/* ---- Lab 2: two valid signatures, one coin ---- */
+async function runSigDemo(){
+  const btn=document.getElementById('sigbtn'); btn.disabled=true;
+  const out=document.getElementById('sigout');
+  const kp = await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
+  const pub = new Uint8Array(await crypto.subtle.exportKey('raw', kp.publicKey));
+  const m1 = 'Pay coin #42 to Alice';
+  const m2 = 'Pay coin #42 to the laptop shop';
+  const s1 = new Uint8Array(await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},kp.privateKey,enc.encode(m1)));
+  const s2 = new Uint8Array(await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},kp.privateKey,enc.encode(m2)));
+  const v1 = await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},kp.publicKey,s1,enc.encode(m1));
+  const v2 = await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},kp.publicKey,s2,enc.encode(m2));
+  out.innerHTML =
+    '<div class="dim">Owner\'s public key (freshly generated):</div><div class="hx">'+bytesToHex(pub).slice(0,48)+'…</div>'+
+    '<div style="margin-top:.6rem">"'+m1+'"</div><div class="hx dim">sig: '+bytesToHex(s1).slice(0,40)+'…</div>'+
+    '<div>Signature valid: <span class="'+(v1?'ok':'no')+'">'+(v1?'✓ yes':'✗ no')+'</span></div>'+
+    '<div style="margin-top:.6rem">"'+m2+'"</div><div class="hx dim">sig: '+bytesToHex(s2).slice(0,40)+'…</div>'+
+    '<div>Signature valid: <span class="'+(v2?'ok':'no')+'">'+(v2?'✓ yes':'✗ no')+'</span></div>'+
+    '<div style="margin-top:.6rem">Same coin, two recipients, two valid P-256 signatures. Authorization proved <strong>who</strong>. It cannot say <strong>which first</strong>. Bitcoin uses secp256k1 for this job.</div>';
+  btn.disabled=false; btn.textContent='Run it again (new keypair)';
+}
+
+/* ---- Lab 3: genesis ---- */
+const GEN = {
+  ver:'01000000',
+  prev:'0000000000000000000000000000000000000000000000000000000000000000',
+  mrk:'3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a',
+  time:'29ab5f49', bits:'ffff001d', nonce:'1dac2b7c'
+};
+document.getElementById('genrow').innerHTML =
+  '<span class="f f-ver">'+GEN.ver+'</span><span class="f f-prev">'+GEN.prev+'</span><span class="f f-mrk">'+GEN.mrk+'</span><span class="f f-time">'+GEN.time+'</span><span class="f f-bits">'+GEN.bits+'</span><span class="f f-nonce">'+GEN.nonce+'</span>';
+async function hashGenesis(){
+  const bytes = hexToBytes(GEN.ver+GEN.prev+GEN.mrk+GEN.time+GEN.bits+GEN.nonce);
+  const d1 = await crypto.subtle.digest('SHA-256', bytes);
+  const d2 = new Uint8Array(await crypto.subtle.digest('SHA-256', d1));
+  const hash = [...d2].reverse().map(b=>b.toString(16).padStart(2,'0')).join('');
+  document.getElementById('genout').innerHTML = markZeros(hash);
+  const ts = new DataView(hexToBytes(GEN.time).buffer).getUint32(0, true);
+  const nv = new DataView(hexToBytes(GEN.nonce).buffer).getUint32(0, true);
+  document.getElementById('geninfo').textContent =
+    'The timestamp decodes to ' + new Date(ts*1000).toUTCString() + '. Winning nonce: ' + fmt(nv);
+}
+
+/* ---- Lab 4: merkle ---- */
+const txEls=[0,1,2,3].map(i=>document.getElementById('tx'+i));
+let sealed=null;
+function tn(id,lbl){return '<div class="tnode" id="'+id+'"><span class="lbl">'+lbl+'</span><span class="hv">…</span></div>';}
+document.getElementById('tree').innerHTML =
+  '<div class="tier">'+tn('nroot','Merkle root')+'</div>'+
+  '<div class="tier">'+tn('n01','h(1+2)')+tn('n23','h(3+4)')+'</div>'+
+  '<div class="tier">'+tn('n0','h(tx1)')+tn('n1','h(tx2)')+tn('n2','h(tx3)')+tn('n3','h(tx4)')+'</div>';
+let prevVals={};
+async function merkleHash(bytes){
+  const first=await crypto.subtle.digest('SHA-256',bytes);
+  const second=await crypto.subtle.digest('SHA-256',first);
+  return bytesToHex(new Uint8Array(second));
+}
+async function merklePair(left,right){
+  const bytes=new Uint8Array(64);
+  bytes.set(hexToBytes(left));bytes.set(hexToBytes(right),32);
+  return merkleHash(bytes);
+}
+async function updateTree(){
+  const l=[]; for(const el of txEls) l.push(await merkleHash(enc.encode(el.value)));
+  const p01=await merklePair(l[0],l[1]), p23=await merklePair(l[2],l[3]);
+  const root=await merklePair(p01,p23);
+  const vals={n0:l[0],n1:l[1],n2:l[2],n3:l[3],n01:p01,n23:p23,nroot:root};
+  for(const k in vals){
+    const el=document.getElementById(k), short=vals[k].slice(0,10)+'…';
+    const hv=el.querySelector('.hv');
+    if(prevVals[k] && prevVals[k]!==vals[k]){el.classList.add('hot');setTimeout(()=>el.classList.remove('hot'),900);}
+    hv.textContent=short;
+  }
+  prevVals=vals;
+  const msg=document.getElementById('sealmsg');
+  if(sealed){
+    if(root===sealed){msg.textContent='Block sealed and the root matches. The hash mined on it is still valid.';msg.style.color='var(--good)';}
+    else{msg.textContent='The root changed → the card is now a different card → the old hash is dead, and you mine again from zero.';msg.style.color='var(--bad)';}
+  }
+}
+function sealRoot(){ sealed=prevVals.nroot; updateTree(); }
+txEls.forEach(el=>el.addEventListener('input',updateTree));
+updateTree();
+
+/* ---- Lab 5: pocket miner ---- */
+let mining=false;
+const BATCH=384;
+async function startMine(){
+  if(mining) return;
+  mining=true;
+  document.getElementById('minebtn').disabled=true;
+  document.getElementById('stopbtn').disabled=false;
+  document.getElementById('minerbox').classList.add('mining');
+  const z=+document.getElementById('zsel').value, target='0'.repeat(z);
+  const data='block: Omar→Ahmed 5, Sara→Ali 2, coinbase 3.125 | nonce=';
+  const salt=Math.floor(Math.random()*1e9)+':';
+  let n=0, t0=performance.now(), found=null, lastUi=0;
+  document.getElementById('s-msg').textContent='';
+  while(mining && !found){
+    const ps=[], ns=[];
+    for(let i=0;i<BATCH;i++){ns.push(n);ps.push(sha256hex(data+salt+n));n++;}
+    const hs=await Promise.all(ps);
+    for(let i=0;i<hs.length;i++){ if(hs[i].startsWith(target)){found={n:ns[i],h:hs[i]};break;} }
+    const now=performance.now();
+    if(now-lastUi>90 || found){
+      lastUi=now;
+      const sec=(now-t0)/1000;
+      document.getElementById('s-att').textContent=fmt(n);
+      document.getElementById('s-rate').textContent=fmt(Math.round(n/Math.max(sec,.01)));
+      document.getElementById('s-time').textContent=sec.toFixed(1)+'s';
+      document.getElementById('s-nonce').textContent=fmt(found?found.n:n-1);
+      document.getElementById('s-hash').innerHTML=found?markZeros(found.h):hs[hs.length-1];
+      await new Promise(r=>setTimeout(r,0));
+    }
+  }
+  if(found){
+    document.getElementById('s-msg').textContent='Found it! Winning nonce: '+fmt(found.n)+'. Anyone can now check this toy proof with one hash.';
+  } else {
+    document.getElementById('s-msg').textContent='Mine stopped before a win.';
+  }
+  mining=false;
+  document.getElementById('minebtn').disabled=false;
+  document.getElementById('stopbtn').disabled=true;
+  document.getElementById('minerbox').classList.remove('mining');
+}
+function stopMine(){mining=false;}
+
+/* ---- Lab 6: tamper chain ---- */
+const DIFF='000';
+const chain=[
+  {data:'Omar → Ahmed: 5 BTC', nonce:0, hash:''},
+  {data:'Sara → Ali: 2 BTC', nonce:0, hash:''},
+  {data:'Mostafa → Mona: 1.5 BTC', nonce:0, hash:''}
+];
+function blkHtml(i){
+  return '<div class="blk" id="blk'+i+'">'+
+    '<div class="b-head"><span>Block '+(i+1)+'</span><span class="b-state" id="bs'+i+'"></span></div>'+
+    '<label for="bd'+i+'">Payments</label>'+
+    '<div class="row2"><textarea id="bd'+i+'" rows="1"></textarea>'+
+    '<div><label for="bn'+i+'">nonce</label><input type="number" id="bn'+i+'" min="0"></div></div>'+
+    '<label>Previous block\'s fingerprint (prev)</label><div class="out"><span class="hx" id="bp'+i+'"></span></div>'+
+    '<label>This block\'s fingerprint</label><div class="out"><span class="hx" id="bh'+i+'"></span></div>'+
+    '<button type="button" class="secondary" onclick="mineBlk('+i+')" id="bm'+i+'">Re-mine this block</button>'+
+  '</div>';
+}
+document.getElementById('blocks').innerHTML = chain.map((_,i)=>blkHtml(i)).join('');
+chain.forEach((b,i)=>{
+  const d=document.getElementById('bd'+i), nn=document.getElementById('bn'+i);
+  d.value=b.data; nn.value=b.nonce;
+  d.addEventListener('input',()=>{b.data=d.value;recompute();});
+  nn.addEventListener('input',()=>{b.nonce=+nn.value||0;recompute();});
+});
+function prevOf(i){return i===0 ? '0'.repeat(64) : chain[i-1].hash;}
+async function recompute(){
+  for(let i=0;i<chain.length;i++){
+    chain[i].hash = await sha256hex(i + prevOf(i) + chain[i].data + chain[i].nonce);
+  }
+  for(let i=0;i<chain.length;i++){
+    const ok = chain[i].hash.startsWith(DIFF);
+    document.getElementById('bp'+i).textContent=prevOf(i).slice(0,24)+'…';
+    document.getElementById('bh'+i).innerHTML=markZeros(chain[i].hash);
+    document.getElementById('blk'+i).classList.toggle('broken',!ok);
+    document.getElementById('bs'+i).textContent = ok ? 'valid' : 'broken: fingerprint has no zeros';
+  }
+}
+async function mineBlk(i){
+  const btn=document.getElementById('bm'+i); btn.disabled=true; btn.textContent='Mining…';
+  const prev=prevOf(i); let n=0;
+  while(true){
+    const batch=[]; const ns=[];
+    for(let k=0;k<256;k++){ns.push(n);batch.push(sha256hex(i+prev+chain[i].data+n));n++;}
+    const hs=await Promise.all(batch);
+    let hit=-1;
+    for(let k=0;k<hs.length;k++) if(hs[k].startsWith(DIFF)){hit=k;break;}
+    if(hit>=0){chain[i].nonce=ns[hit];break;}
+    await new Promise(r=>setTimeout(r,0));
+  }
+  document.getElementById('bn'+i).value=chain[i].nonce;
+  await recompute();
+  btn.disabled=false; btn.textContent='Re-mine this block';
+}
+(async()=>{ for(let i=0;i<chain.length;i++) await mineBlk(i); })();
+
+/* ---- Lab 7: fork race ---- */
+let race={a:1,b:1,done:false,rounds:0};
+function forkReset(){ race={a:1,b:1,done:false,rounds:0}; renderRace('Two valid blocks found in the same moment. The world is split. Draw the next lottery.'); }
+function renderRace(msg){
+  const mk=(n,stale)=>{let s='';for(let i=0;i<n;i++)s+='<span class="rblk'+(stale?' stale':'')+'">'+(105+i)+'</span>';return s;};
+  const aWins = race.done && race.a>race.b, bWins = race.done && race.b>race.a;
+  document.getElementById('racebox').innerHTML =
+    '<div class="lane"><span class="lanename">parent</span><span class="rblk parent">104</span></div>'+
+    '<div class="lane"><span class="lanename">branch A</span>'+mk(race.a, bWins)+'</div>'+
+    '<div class="lane"><span class="lanename">branch B</span>'+mk(race.b, aWins)+'</div>';
+  document.getElementById('racemsg').textContent = msg;
+}
+function forkStep(){
+  if(race.done){ // keep burying
+    const p=+document.getElementById('fshare').value/100;
+    if(race.a>race.b) race.a++; else race.b++;
+    const lead=Math.abs(race.a-race.b);
+    renderRace('The winning branch keeps growing. Reversing the stale branch now means out-mining '+lead+' blocks against the whole network.');
+    return;
+  }
+  const p=+document.getElementById('fshare').value/100;
+  race.rounds++;
+  if(Math.random()<p) race.a++; else race.b++;
+  if(race.a!==race.b){
+    race.done=true;
+    const w=race.a>race.b?'A':'B', l=w==='A'?'B':'A';
+    renderRace('Draw #'+race.rounds+': branch '+w+' found the next block and now carries more accumulated work. Branch '+l+'\'s miners jump over instantly; its block goes stale, its transactions return to the mempool.');
+  } else {
+    renderRace('Draw #'+race.rounds+': the tie survived another propagation race. Draw again.');
+  }
+}
+async function forkAuto(){
+  if(race.done) forkReset();
+  while(!race.done){ forkStep(); await new Promise(r=>setTimeout(r,450)); }
+}
+forkReset();
+
+/* ---- Lab 8: Satoshi's attacker formula ---- */
+function attackerSuccess(q, z){
+  const p = 1 - q;
+  if (q >= p) return 1;
+  const lam = z * q / p;
+  let sum = 0, poi = Math.exp(-lam);
+  for (let k = 0; k <= z; k++){
+    if (k > 0) poi *= lam / k;
+    sum += poi * (1 - Math.pow(q / p, z - k));
+  }
+  return 1 - sum;
+}
+function fmtP(x){
+  if(x>=1) return '100% under the model';
+  if(x>=0.0001) return (x*100).toFixed(4).replace(/0+$/,'').replace(/\.$/,'')+'%';
+  return x.toExponential(2);
+}
+function calcAtk(){
+  const q=+document.getElementById('qsl').value/100;
+  const z=+document.getElementById('zsl').value;
+  document.getElementById('qv').textContent=Math.round(q*100);
+  document.getElementById('zv').textContent=z;
+  document.getElementById('atkout').textContent='P(attacker ever catches up from '+z+' blocks behind) = '+fmtP(attackerSuccess(q,z));
+  let rows='';
+  for(let k=0;k<=8;k++){ rows+='<tr><td>'+k+'</td><td>'+fmtP(attackerSuccess(q,k))+'</td></tr>'; }
+  document.getElementById('atktbl').innerHTML='<table><tr><th>Confirmations (z)</th><th>Attacker success odds at '+Math.round(q*100)+'%</th></tr>'+rows+'</table>';
+}
+calcAtk();
+
+/* ---- Lab 9: sandwich ---- */
+const POOL={sol:100, meme:1000000};
+const VICTIM=10;
+let mode='sandwich';
+function buy(r, solIn){ const k=r.sol*r.meme; const ns=r.sol+solIn; const nm=k/ns; return {out:r.meme-nm, r:{sol:ns, meme:nm}}; }
+function sellMeme(r, memeIn){ const k=r.sol*r.meme; const nm=r.meme+memeIn; const ns=k/nm; return {out:r.sol-ns, r:{sol:ns, meme:nm}}; }
+function setFair(){ mode='fair'; calcSandwich(); }
+function setSandwich(){ mode='sandwich'; calcSandwich(); }
+function calcSandwich(){
+  const F=+document.getElementById('frsl').value;
+  document.getElementById('frv').textContent=F;
+  const fair = buy(POOL, VICTIM);
+  let html='';
+  if(mode==='fair'){
+    html='<table><tr><th>Order</th><th>Result</th></tr>'+
+    '<tr><td>1. Victim buys with '+VICTIM+' SOL</td><td>receives '+fmt(Math.round(fair.out))+' MEME</td></tr>'+
+    '</table><div class="dim">Fair ordering: the victim gets the price they saw. Your profit as builder: the fees only.</div>';
+  } else {
+    const b = buy(POOL, F);
+    const v = buy(b.r, VICTIM);
+    const s = sellMeme(v.r, b.out);
+    const profit = s.out - F;
+    const loss = fair.out - v.out;
+    html='<table><tr><th>Order you chose</th><th>Result</th></tr>'+
+    '<tr><td>1. You buy with '+F+' SOL</td><td>you receive '+fmt(Math.round(b.out))+' MEME</td></tr>'+
+    '<tr><td>2. Victim buys with '+VICTIM+' SOL</td><td>receives '+fmt(Math.round(v.out))+' MEME <span class="no">(fair fill was '+fmt(Math.round(fair.out))+')</span></td></tr>'+
+    '<tr><td>3. You sell your MEME back</td><td>you receive '+s.out.toFixed(3)+' SOL</td></tr>'+
+    '</table>'+
+    '<div>Simulated gross profit before fees and execution risk: <span class="'+(profit>0?'ok':'no')+'">'+profit.toFixed(3)+' SOL</span>. The victim\'s fill dropped by '+fmt(Math.round(loss))+' MEME ('+((loss/fair.out)*100).toFixed(1)+'% worse).</div>';
+  }
+  document.getElementById('sandout').innerHTML=html;
+}
+calcSandwich();
+</script>
+<script>
+(function(){
+var root=document.documentElement;
+var tog=document.getElementById('themego'),now=document.getElementById('themenow');
+var saved=null;try{saved=localStorage.getItem('cln-theme')}catch(e){}
+var dark=saved==='dark'||(saved===null&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+function apply(){
+  if(dark){root.setAttribute('data-theme','dark');now.textContent='Dark';tog.textContent='Light'}
+  else{root.setAttribute('data-theme','light');now.textContent='Light';tog.textContent='Dark'}
+}
+apply();
+tog.addEventListener('click',function(){dark=!dark;apply();try{localStorage.setItem('cln-theme',dark?'dark':'light')}catch(e){}});
+var bar=document.getElementById('progress');
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function upd(){
+  var d=document.documentElement,p=d.scrollHeight-window.innerHeight,y=window.pageYOffset||d.scrollTop;
+  bar.style.transform='scaleX('+(p>0?y/p:0)+')';
+  bar.style.opacity=y>8?1:0;
+}
+if(reduce&&'onscrollend' in window){addEventListener('scrollend',upd)}
+else{addEventListener('scroll',upd,{passive:true})}
+addEventListener('resize',upd);upd();
+var heads=document.querySelectorAll('main h2[id]');
+var links=document.querySelectorAll('.toc a[href^="#"]');
+if('IntersectionObserver' in window&&heads.length){
+  var io=new IntersectionObserver(function(es){
+    for(var i=0;i<es.length;i++){
+      if(es[i].isIntersecting){
+        var id=es[i].target.id;
+        for(var j=0;j<links.length;j++){
+          links[j].classList.toggle('on',links[j].getAttribute('href')==='#'+id);
+        }
+      }
+    }
+  },{rootMargin:'0px 0px -72% 0px'});
+  for(var k=0;k<heads.length;k++){io.observe(heads[k])}
+}
+var ar=document.getElementById('arlink');
+function syncAr(){if(ar){ar.setAttribute('href','bitcoin-from-zero-ar.html'+(location.hash||''))}}
+addEventListener('hashchange',syncAr);syncAr();
+function runPrimary(m){var b=m.querySelector('button:not(.secondary)');if(b&&!b.disabled){b.click()}}
+var ms=document.querySelectorAll('.machine');
+for(var n=0;n<ms.length;n++){
+  ms[n].addEventListener('keydown',function(e){
+    var m=e.currentTarget,tag=(e.target.tagName||'').toLowerCase();
+    if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runPrimary(m);return}
+    if(tag==='input'||tag==='textarea'||tag==='select'||tag==='button'){return}
+    if(e.key==='Enter'){e.preventDefault();runPrimary(m)}
+    else if(e.key==='Escape'){var s=m.querySelector('button[data-stop]');if(s&&!s.disabled){s.click()}else{m.blur()}}
+    else if(e.key==='R'&&e.shiftKey){var r=m.querySelector('button[data-reset]');if(r&&!r.disabled){r.click()}}
+  });
+}
+})();
+
+</script>
+<script>
+(function(){
+var motion=!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+function all(sel,ctx){return [].slice.call((ctx||document).querySelectorAll(sel))}
+function txtOf(e){var t=e.getAttribute('data-note');if(t)return t;var c=e.querySelector('title');return c?c.textContent.replace(/\s+/g,' ').trim():''}
+function clean(svg){all('path,line,rect,circle,polyline,polygon,text',svg).forEach(function(e){['transition','strokeDasharray','strokeDashoffset','opacity','transform'].forEach(function(p){e.style.removeProperty(p)})})}
+function drawIn(svg){
+if(!motion)return;
+var st=all('path,line,rect,circle,polyline,polygon',svg).filter(function(e){return!e.closest('defs')});
+var tx=all('text',svg).filter(function(e){return!e.closest('defs')});
+st.forEach(function(e){var L=0;try{L=e.getTotalLength()}catch(x){}e.__L=L;e.style.transition='none';if(L>1){e.style.strokeDasharray=L+' '+L;e.style.strokeDashoffset=L}else{e.style.opacity='0'}});
+tx.forEach(function(e){e.style.transition='none';e.style.opacity='0';e.style.transform='translateY(5px)'});
+requestAnimationFrame(function(){requestAnimationFrame(function(){
+st.forEach(function(e,i){var d=Math.min(i*38,470);e.style.transition='stroke-dashoffset 420ms cubic-bezier(.25,.8,.35,1) '+d+'ms,opacity 380ms ease-out '+d+'ms';if(e.__L>1){e.style.strokeDashoffset='0'}else{e.style.opacity='1'}});
+tx.forEach(function(e,i){var d=Math.min(i*60,580);e.style.transition='opacity 420ms ease-out '+d+'ms,transform 420ms cubic-bezier(.25,.8,.35,1) '+d+'ms';e.style.opacity='1';e.style.transform='none'});
+setTimeout(function(){clean(svg)},1320);
+})});
+}
+function noteBox(fig){var n=fig.querySelector('.fignote');if(!n){n=document.createElement('div');n.className='fignote';fig.appendChild(n)}return n}
+function showNote(fig,t){var n=noteBox(fig);n.textContent=t;n.classList.add('on')}
+function hideNote(fig){var n=fig.querySelector('.fignote');if(n)n.classList.remove('on')}
+function wireNotes(fig,svg){
+all('[data-note]',svg).forEach(function(e){
+e.addEventListener('pointerenter',function(ev){if(ev.pointerType==='touch')return;if(fig.__noteEl&&fig.__noteEl!==e)fig.__noteEl.classList.remove('fg-on');fig.__noteEl=e;e.classList.add('fg-on');showNote(fig,txtOf(e))});
+e.addEventListener('pointerleave',function(){e.classList.remove('fg-on');if(fig.__noteEl===e){fig.__noteEl=null;hideNote(fig)}});
+e.addEventListener('click',function(){if(fig.__noteEl===e){e.classList.remove('fg-on');fig.__noteEl=null;hideNote(fig)}else{if(fig.__noteEl)fig.__noteEl.classList.remove('fg-on');fig.__noteEl=e;e.classList.add('fg-on');showNote(fig,txtOf(e))}});
+});
+}
+function wireSteps(fig,svg,bar){
+var gs=all('g[data-step]',svg);if(!gs.length)return;
+gs.sort(function(a,b){return(+a.getAttribute('data-step'))-(+b.getAttribute('data-step'))});
+var idx=0,timer=null;
+function stop(){if(timer){clearInterval(timer);timer=null}}
+function show(i){idx=(i%(gs.length+1)+gs.length+1)%(gs.length+1);gs.forEach(function(g,j){g.classList.toggle('fg-dim',idx>0&&j+1<idx);g.classList.toggle('fg-cur',j+1===idx)});if(idx>0){showNote(fig,txtOf(gs[idx-1]))}else{hideNote(fig)}}
+var b=document.createElement('button');b.type='button';b.textContent='Step';b.addEventListener('click',function(){stop();show(idx+1)});bar.appendChild(b);
+fig.__resetSteps=function(){stop();show(0)};
+fig.__auto=function(){stop();var n=gs.length+1,k=0;timer=setInterval(function(){show(idx+1);k++;if(k>=n){stop();show(0)}},900)};
+show(0);
+}
+function wireToggle(fig,svg,bar){
+if(!svg.querySelector('.st-a')||!svg.querySelector('.st-b'))return;
+var la=svg.getAttribute('data-fa')||'Before',lb=svg.getAttribute('data-fb')||'After';
+var b=document.createElement('button');b.type='button';b.textContent=lb;
+b.addEventListener('click',function(){var toB=svg.classList.contains('fa');svg.classList.toggle('fa',!toB);svg.classList.toggle('fb',toB);b.textContent=toB?la:lb});
+bar.appendChild(b);
+fig.__resetToggle=function(){svg.classList.add('fa');svg.classList.remove('fb');b.textContent=lb};
+}
+var figs=all('figure');
+figs.forEach(function(fig){
+var svg=fig.querySelector('svg');if(!svg)return;
+fig.__svg=svg;
+svg.classList.add('fa');
+wireNotes(fig,svg);
+var bar=document.createElement('div');bar.className='figctl';
+var rep=document.createElement('button');rep.type='button';rep.textContent='Replay';
+rep.addEventListener('click',function(){if(fig.__resetSteps)fig.__resetSteps();if(fig.__resetToggle)fig.__resetToggle();if(fig.__noteEl){fig.__noteEl.classList.remove('fg-on');fig.__noteEl=null}hideNote(fig);clean(svg);drawIn(svg)});
+bar.appendChild(rep);
+wireSteps(fig,svg,bar);
+wireToggle(fig,svg,bar);
+fig.insertBefore(bar,fig.querySelector('figcaption')||null);
+});
+function seen(fig){
+if(fig.__seen)return;fig.__seen=true;
+drawIn(fig.__svg);
+if(motion&&fig.__auto)setTimeout(function(){if(fig.__auto)fig.__auto()},1150);
+}
+if('IntersectionObserver' in window){
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){io.unobserve(en.target);seen(en.target)}})},{threshold:.18});
+figs.forEach(function(f){if(f.__svg)io.observe(f)});
+}else{figs.forEach(seen)}
+})();
+</script>
+
+</body>
+</html>

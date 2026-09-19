@@ -1,0 +1,22 @@
+{
+  "name": "cryptoinbrief",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser checks for the Crypto in Brief static learning site",
+  "scripts": {
+    "test": "python3 qa/site_audit.py && node qa/bitcoin-interactions.test.js && node qa/chains.mjs",
+    "test:ui": "python3 qa/ui.py",
+    "test:labs": "python3 qa/monero_interactions.py && python3 qa/zk_interactions.py",
+    "test:stories": "python3 qa/consensus_story.py && python3 qa/execution_story.py && python3 qa/privacy_story.py",
+    "test:webkit": "python3 qa/webkit_smoke.py",
+    "test:figures": "python3 qa/figure_playback.py",
+    "serve": "python3 -m http.server 8934 --bind 127.0.0.1"
+  },
+  "devDependencies": {
+    "puppeteer": "24.43.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.30.3"
+}

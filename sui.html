@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-coin="sui">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sui from zero | Crypto in Brief</title>
+<meta name="description" content="How Sui works for a reader with zero crypto background: objects with owners, concurrent finalization, Mysticeti v2, Move type safety, zkLogin, and four labs that run in your browser.">
+<link rel="canonical" href="https://cryptoinbrief.xyz/sui.html">
+<meta property="og:site_name" content="Crypto in Brief">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sui from zero">
+<meta property="og:description" content="How Sui works for a reader with zero crypto background: objects with owners, concurrent finalization, Mysticeti v2, Move type safety, zkLogin, and four labs that run in your browser.">
+<meta property="og:url" content="https://cryptoinbrief.xyz/sui.html">
+<meta property="og:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sui from zero">
+<meta name="twitter:description" content="Objects instead of account rows, Mysticeti v2, and why independent state can finalize concurrently. Four browser labs included.">
+<meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="author" content="Moamen Basel">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sui from zero","description":"Sui explained from zero with four runnable browser labs.","datePublished":"2026-09-19","inLanguage":"en","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz"},"mainEntityOfPage":"https://cryptoinbrief.xyz/sui.html"}</script>
+<style>
+:root{
+  --bg:#FAFAF8; --surface:#FFFFFF; --surface2:#F4F4F1;
+  --border:#E7E6E1; --border2:#D8D7D1;
+  --ink:#16171A; --muted:#5D6270; --faint:#9B9FA8;
+  --accent:#2563EB; --accent-ink:#FFFFFF; --accent-soft:rgba(37,99,235,.10);
+  --good:#0B9E6A; --bad:#D64533; --warn:#B27A22;
+  --term:#0C0E11; --term-border:#1E2229; --term-ink:#DADEE4; --term-dim:#8A909A; --term-accent:#63E2A6;
+  --serif:"Instrument Serif","Georgia",serif;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --measure:66ch; --rail:13rem; --note:13.5rem; --gutter:1.75rem;
+  --ease:cubic-bezier(.25,.8,.35,1);
+  --r-card:16px; --r-btn:10px; --r-chip:999px;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#4DA2FF; --accent-ink:#04182E; --accent-soft:rgba(77,162,255,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}
+@media(prefers-color-scheme:dark){
+:root:not([data-theme="light"]){
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#4DA2FF; --accent-ink:#04182E; --accent-soft:rgba(77,162,255,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}}
+*{box-sizing:border-box}
+html{overflow-x:clip;font-size:106.25%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0588rem;line-height:1.72;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent-soft);color:var(--ink)}
+#readprog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+#readprog.on{visibility:visible}
+.band{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:3.25rem;padding-inline:max(1.25rem,calc(50vw - 21rem));font-family:var(--sans);font-size:.75rem;letter-spacing:.02em}
+header.band{position:sticky;top:0;z-index:50;flex-wrap:wrap;padding-block:.5rem;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--border)}
+.band a{color:var(--muted);text-decoration:none;transition:color .15s var(--ease)}
+.band a:hover{color:var(--ink)}
+.band a[aria-current="page"]{color:var(--accent)}
+.band .mark{color:var(--ink);font-weight:650;white-space:nowrap;letter-spacing:-.01em;font-size:.875rem}
+.band nav.series{display:flex;flex-wrap:wrap;gap:.3rem .95rem}
+.band .series a{white-space:nowrap}
+.band .switch{display:flex;gap:1rem;margin:0;white-space:nowrap;font-family:var(--mono);font-size:.7rem}
+.band .switch b{color:var(--ink);font-weight:600}
+.band .none{color:var(--faint)}
+.band button{background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer}
+.band button:hover{color:var(--accent)}
+main{max-width:var(--measure);margin-inline:auto;padding:3rem 1.25rem 5rem;position:relative}
+.reg,main::before,main::after{display:none}
+@media(min-width:1100px){
+main{max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note));display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter)}
+nav.toc.rail{grid-column:1;align-self:start;position:sticky;top:4.5rem}
+.col{grid-column:2;max-width:var(--measure);position:relative}
+}
+.byline{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 1rem}
+.byline,.lead{max-width:60ch}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,1.7rem + 3.2vw,3.6rem);line-height:1.04;letter-spacing:-.015em;margin:.15em 0 .5em}
+.lead{font-size:1.3rem;line-height:1.45;color:var(--muted);margin:0 0 2rem;font-weight:450}
+h2{font-size:1.65rem;line-height:1.25;font-weight:650;letter-spacing:-.015em;margin:3.4em 0 .7em}
+.col>h2:first-of-type{margin-block-start:1.8em}
+h2 .num{font-family:var(--mono);color:var(--accent);font-size:.7em;margin-inline-end:.7em;font-weight:500;letter-spacing:0}
+h3{font-size:1.18rem;line-height:1.35;font-weight:600;margin:2.1em 0 .45em;letter-spacing:-.008em}
+p{margin:0 0 1.15em}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);transition:border-color .15s var(--ease)}
+a:hover{border-bottom-color:var(--accent)}
+code,.hx,.num{font-family:var(--mono);font-size:.85em;font-variant-numeric:tabular-nums}
+code{background:var(--accent-soft);border-radius:5px;padding:.1em .35em}
+strong{font-weight:650}
+figure{margin:2.5rem auto;width:min(72rem,calc(100vw - 2rem));transform:translateX(0);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:1.5rem 1.5rem 1.1rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+[dir="rtl"] figure{margin-inline:auto}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:.9rem}
+figcaption .figno{font-family:var(--mono);color:var(--accent);margin-inline-end:.55em;font-size:.95em}
+.figbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:inherit;border-radius:var(--r-card)}
+.figbtn:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.c-time{stroke:var(--warn)} .c-nonce{stroke:var(--accent)} .c-mrk{stroke:var(--good)} .c-ver{stroke:var(--faint)}
+.f-time{fill:var(--warn)} .f-nonce{fill:var(--accent)} .f-ink{fill:var(--ink)} .f-mut{fill:var(--muted)} .f-pap{fill:var(--surface)}
+table{width:100%;border-collapse:collapse;margin:1.8em 0;font-family:var(--sans);font-size:.875rem}
+th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-bottom:1px solid var(--border)}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+tbody th{font-weight:400;color:var(--muted);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+aside.note{font-size:.875rem;line-height:1.6;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+aside.note.good{border-color:color-mix(in srgb,var(--good) 35%,var(--border))}
+aside.note.bad{border-color:color-mix(in srgb,var(--bad) 35%,var(--border))}
+aside.note p{margin:0 0 .5em}
+aside.note p:last-child{margin:0}
+@media(min-width:1152px){
+aside.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+nav.toc{font-family:var(--sans);font-size:.8125rem;line-height:1.5}
+nav.toc.rail{display:none}
+@media(min-width:1100px){nav.toc.rail{display:block}}
+nav.toc.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;transition:color .15s var(--ease)}
+nav.toc.rail a .leaders{display:none}
+nav.toc.rail a .secno{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover{color:var(--ink)}
+nav.toc.rail a:hover .secno{color:var(--accent)}
+nav.toc.rail a.act{color:var(--accent);font-weight:550}
+nav.toc.rail a.act .secno{color:var(--accent)}
+nav.toc.rail .toclab{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+details.toc{border:1px solid var(--border);border-radius:12px;margin:2rem 0;padding:.35rem 1rem;background:var(--surface)}
+details.toc summary{cursor:pointer;font-weight:600;color:var(--ink);padding:.45rem 0}
+details.toc ol{margin:.4em 0 .6em;padding-inline-start:1.3em}
+details.toc li{margin:.25em 0}
+@media(min-width:1100px){details.toc{display:none}}
+.machine{background:var(--surface2);color:var(--ink);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;width:min(72rem,calc(100vw - 2rem));margin:2.5rem auto;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.machine:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mhead{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0}
+.mtag{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em}
+.mtitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.mchip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted)}
+.mtick{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:7ch;text-align:end}
+.mtick.tk{color:var(--accent)}
+.melapsed{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:6ch;text-align:end}
+.mprog{height:2px;margin:0;background:var(--accent);transform-origin:0 0;transform:scaleX(0)}
+.machine[data-state="running"] .mprog{transform:scaleX(var(--sx,0));transition:transform 120ms linear}
+.machine[data-state="running"] .mprog.ind{transform:none;animation:indbar 900ms linear infinite}
+@keyframes indbar{from{transform:translateX(-40%) scaleX(.28)}to{transform:translateX(120%) scaleX(.28)}}
+.machine[data-state="done"] .mprog{transform:scaleX(1);height:0;transition:transform 140ms var(--ease),height 180ms var(--ease) 160ms}
+.mrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 4px}
+.machine .mrow~.mrow{padding-top:0}
+.machine button{font-family:var(--sans);font-size:.875rem;line-height:1;font-weight:550;padding:10px 18px;min-height:38px;cursor:pointer;border-radius:var(--r-btn);transition:transform .12s var(--ease),background .15s var(--ease),filter .12s var(--ease)}
+.machine .run{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine .run:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine .run:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine .ghost{background:transparent;border:1px solid var(--border2);color:var(--ink)}
+.machine .ghost:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.machine button:disabled{opacity:.4;cursor:not-allowed}
+.machine button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.machine .run.pop{animation:runpop 240ms var(--ease)}
+@keyframes runpop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.machine input,.machine select{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:9px 12px}
+.machine input:focus-visible,.machine select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{background:var(--term);border:1px solid var(--term-border);border-radius:12px;margin:10px 14px 14px;padding:12px 14px;min-height:76px;max-height:240px;overflow-y:auto;font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--term-ink);word-break:break-all;transition:border-color 180ms}
+.machine[data-state="running"] .out{border-color:var(--term-border)}
+.machine .out.flash{border-color:var(--good);transition:border-color 180ms}
+.machine[data-state="error"] .out{border-color:var(--bad)}
+.out p{margin:0 0 2px;animation:linein 120ms var(--ease)}
+@keyframes linein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.out::-webkit-scrollbar{width:6px}
+.out::-webkit-scrollbar-thumb{background:var(--term-border);border-radius:3px}
+.out .hx{font-size:.8rem}
+.out .zeros{color:var(--term-accent);font-weight:700}
+.out .ok{color:var(--good)}
+.out .no{color:var(--bad)}
+.out .dim{color:var(--term-dim);font-size:.72rem;margin-top:6px}
+.out .sA{color:var(--term-dim)}
+.out .sB{color:var(--term-accent)}
+.out .lane{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0}
+.out .lane .ln{width:6ch;color:var(--term-dim);font-size:.72rem}
+.out .blkchip{border:1px solid var(--term-border);border-radius:6px;padding:1px 7px;font-size:.72rem;color:var(--term-ink)}
+.out .blkchip.win{border-color:var(--good);color:var(--good)}
+.out .blkchip.dead{color:var(--term-dim);text-decoration:line-through}
+.mcap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:.7rem 14px 1rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+footer.band{display:block;position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:0;border-top:1px solid var(--border);padding-block:1.5rem 3rem;font-size:.8rem;color:var(--muted);letter-spacing:0}
+footer.band .pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:1.2rem}
+footer.band .pn a{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;color:var(--ink);background:var(--surface);transition:border-color .15s var(--ease)}
+footer.band .pn a:hover{border-color:var(--accent)}
+footer.band .pn a:hover .t{color:var(--accent)}
+footer.band .pn .k{font-family:var(--mono);font-size:.65rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+footer.band .pn .t{font-family:var(--sans);font-size:.95rem;font-weight:550;color:var(--ink)}
+footer.band .pn .next{text-align:end;align-items:flex-end}
+footer.band .colophon{margin:1.5rem 0 0}
+footer.band .colophon a{color:var(--muted);border-bottom:0}
+footer.band .colophon a:hover{color:var(--accent)}
+@media(prefers-contrast:more){
+.machine,.out{border-width:2px}
+.mprog{height:3px}
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.out p{animation:none}
+.machine .run.pop{animation:none}
+.machine button{transition:none}
+.machine[data-state="running"] .mprog,.machine[data-state="running"] .mprog.ind{animation:none;transition:none}
+.machine[data-state="done"] .mprog{transition:none}
+}
+
+:root{--q-time:var(--warn);--q-nonce:var(--accent);--q-ver:var(--faint);--q-prev:var(--muted);--q-mrk:var(--good)}
+#prog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+#prog.on{visibility:visible}
+.by{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 1rem;max-width:60ch}
+.rail{display:none}
+@media(min-width:1100px){
+.sheet{display:grid;grid-template-columns:var(--rail) minmax(0,var(--measure)) var(--note);column-gap:var(--gutter);max-width:calc(var(--rail) + var(--measure) + var(--note) + 2*var(--gutter));margin-inline:auto}
+main{grid-column:2;padding-inline:0}
+.rail{display:block;grid-column:1;align-self:start;position:sticky;top:4.5rem}
+}
+.rail .rt{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;font-family:var(--sans);font-size:.8125rem}
+.rail a .no{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+.rail a .leaders{flex:1;border-bottom:1px dotted var(--border2);transform:translateY(-.28em)}
+.rail a:hover{color:var(--ink)}
+.rail a:hover .no{color:var(--accent)}
+.rail a.cur,.rail a.cur .no{color:var(--accent);font-weight:550}
+details.toc.mob a{display:flex;gap:.4em;align-items:baseline;color:var(--muted);text-decoration:none;border:0;padding:.14rem 0}
+details.toc.mob a .no{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+details.toc.mob .leaders{flex:1;border-bottom:1px dotted var(--border2);transform:translateY(-.28em)}
+details.toc.mob a:hover{color:var(--ink)}
+.mlab{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em;flex:none}
+.mhead .chip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted);flex:none}
+.mhead .mtitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.mhead .mela{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:6ch;text-align:end;flex:none}
+.mline{height:2px;margin:0;background:var(--accent);transform-origin:0 0;transform:scaleX(0)}
+.machine[data-state="running"] .mline.indet{transform:none;animation:indbar 900ms linear infinite}
+.machine[data-state="done"] .mline{transform:scaleX(1);height:0;transition:transform 140ms var(--ease),height 180ms var(--ease) 160ms}
+.machine[data-state="error"] .mline{background:var(--bad)}
+.mlab2{display:block;font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:.6rem 14px .35rem}
+.machine input[type=text],.machine input[type=range]{width:calc(100% - 28px);margin:0 14px 12px;background:var(--bg);color:var(--ink);border:1px solid var(--border2);border-radius:var(--r-btn);padding:9px 12px;font-family:var(--mono);font-size:.8rem}
+.machine input[type=range]{accent-color:var(--accent);padding:0;height:24px}
+.out div{margin:0 0 2px;animation:linein 120ms var(--ease)}
+.out .flip{color:var(--term-accent);font-weight:700}
+.cap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:-2rem auto 2rem;max-width:min(72rem,calc(100vw - 2rem))}
+figure svg text{font-family:var(--sans);font-size:12px;fill:var(--ink)}
+figure svg .fb{font-size:13px;font-weight:600}
+figure svg .fm{font-family:var(--mono);font-size:11px}
+figure svg .mut{fill:var(--muted)}
+figure svg .st{fill:var(--accent)}
+ul.dated{list-style:none;padding:0;margin:1.2em 0;font-size:.925rem}
+ul.dated li{margin:0 0 1em;padding-inline-start:6.5ch;text-indent:-6.5ch}
+ul.dated .num{color:var(--accent)}
+@media(prefers-reduced-motion:reduce){
+.out div{animation:none}
+.machine[data-state="running"] .mline.indet{animation:none}
+.machine[data-state="done"] .mline{transition:none}
+}
+
+.coinbadge{display:inline-flex;width:54px;height:54px;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin-inline-end:.7rem;vertical-align:-14px}.coinbadge svg{width:38px;height:38px;display:block}
+.coinbadge{background:#4DA2FF;border-color:color-mix(in srgb,#4DA2FF 55%,transparent)}
+.coinbadge svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+</style>
+<style>
+:root{--bg:#C5CAD4;--ink:#14161C;--muted:#4A5160;--faint:#7A8294;--border:color-mix(in srgb,#14161C 18%,transparent);--border2:color-mix(in srgb,#14161C 26%,transparent);--surface:color-mix(in srgb,#14161C 4%,var(--bg));--surface2:color-mix(in srgb,#14161C 7%,var(--bg));--accent:#4DA2FF;--accent-ink:#071018;--accent-soft:rgba(77,162,255,.14);--coin:#4DA2FF;--coin2:#4DA2FF;--serif:"Syne",sans-serif;--sans:"Schibsted Grotesk",system-ui,sans-serif;--mono:"Martian Mono",ui-monospace,monospace}
+:root[data-theme="dark"]{--bg:#171B24;--ink:#E6EAF0;--muted:#8B93A3;--faint:#5A6272;--border:color-mix(in srgb,#E6EAF0 20%,transparent);--border2:color-mix(in srgb,#E6EAF0 28%,transparent);--surface:color-mix(in srgb,#E6EAF0 4%,var(--bg));--surface2:color-mix(in srgb,#E6EAF0 7%,var(--bg));--accent:#4DA2FF;--accent-ink:#071018;--accent-soft:rgba(77,162,255,.14)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171B24;--ink:#E6EAF0;--muted:#8B93A3;--faint:#5A6272;--border:color-mix(in srgb,#E6EAF0 20%,transparent);--border2:color-mix(in srgb,#E6EAF0 28%,transparent);--surface:color-mix(in srgb,#E6EAF0 4%,var(--bg));--surface2:color-mix(in srgb,#E6EAF0 7%,var(--bg));--accent:#4DA2FF;--accent-ink:#071018;--accent-soft:rgba(77,162,255,.14)}}
+*{border-radius:0!important}
+body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.045;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")}
+:root[data-theme="dark"] body::after{opacity:.07;mix-blend-mode:overlay}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) body::after{opacity:.07;mix-blend-mode:overlay}}
+::selection{background:var(--coin);color:#071018}
+h1{font-family:"Syne",sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1.04}
+h2{font-family:"Syne",sans-serif;font-weight:700;letter-spacing:-.02em}
+header.band{position:static;backdrop-filter:none;-webkit-backdrop-filter:none;background:none;border-bottom:1px solid var(--border)}
+header.band .series a,header.band .mark,header.band .switch{font-family:"Martian Mono",monospace;font-size:.625rem;letter-spacing:.02em}
+.spine{position:fixed;left:0;top:0;width:6px;height:100dvh;z-index:45;background:#4DA2FF;opacity:.35}
+.spine i{position:absolute;inset:0;background:#4DA2FF;transform-origin:top;transform:scaleY(0);animation:spinefill linear;animation-timeline:scroll()}
+@keyframes spinefill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.spine i{animation:none;transform:scaleY(1)}}
+.bay{margin-inline:calc(50% - 50vw);width:100vw;background:#4DA2FF;color:#071018;padding:2.2rem max(1.25rem,3vw) 2rem;clip-path:inset(0 100% 0 0);animation:bayfill .64s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes bayfill{to{clip-path:inset(0 0 0 0)}}
+@media(prefers-reduced-motion:reduce){.bay{animation:none;clip-path:none}}
+.bay .by,.bay .byline,.bay .lead{color:#0E2340}
+.bay .by a,.bay .byline a{color:#0A1B36}
+.bay h1{color:#071018;max-width:22ch}
+.bay .coinbadge{background:rgba(255,255,255,.35);border-color:rgba(7,16,24,.35)}
+.bay .machine{width:100%;max-width:38rem;margin:1.4rem 0 0}
+.bay+.cap{margin-top:1.2rem}
+footer.band .pn a{border:0;background:color-mix(in srgb,#4DA2FF 35%,var(--bg));min-height:6rem;align-items:flex-end;justify-content:flex-start;padding:1rem 1.2rem}
+footer.band .pn a .t{font-family:"Syne",sans-serif;font-weight:700;letter-spacing:-.02em}
+nav.rail a.cur{color:var(--accent)}
+nav.rail a{font-family:"Schibsted Grotesk",sans-serif}
+nav.rail .rt{font-family:"Martian Mono",monospace}
+.machine{background:var(--surface2);border:1px solid var(--border)}
+figure{background:var(--surface)}
+code{background:color-mix(in srgb,#4DA2FF 14%,transparent)}
+aside.note{background:var(--surface)}
+</style>
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml">
+<meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
+<link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+<link rel="stylesheet" href="assets/execution-story.css">
+<script defer src="assets/execution-story.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="spine" aria-hidden="true"><i></i></div>
+<div id="prog" aria-hidden="true"></div>
+<header class="site-header">
+<a class="mark" href="index.html">crypto<span>in</span>brief.</a>
+<nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="crypto-summary.html">Start here</a></nav>
+<p class="switch">
+<span class="lang"><b>EN</b> | <span class="none" title="لم تُكتب بعد">AR</span></span>
+<span class="theme"><span id="themenow">Light</span> | <button type="button" id="themego">Dark</button></span>
+</p>
+</header>
+
+<div class="sheet">
+<nav class="rail" aria-label="Contents">
+<p class="rt">Contents</p>
+<a href="#origins"><span class="no">01</span><span class="t">Where Sui comes from</span><span class="leaders"></span></a>
+<a href="#objects"><span class="no">02</span><span class="t">A ledger of objects</span><span class="leaders"></span></a>
+<a href="#ownership"><span class="no">03</span><span class="t">Owned and shared</span><span class="leaders"></span></a>
+<a href="#fastpath"><span class="no">04</span><span class="t">The fast path, then and now</span><span class="leaders"></span></a>
+<a href="#consensus"><span class="no">05</span><span class="t">One DAG, ordering where needed</span><span class="leaders"></span></a>
+<a href="#counter"><span class="no">06</span><span class="t">Six writers and one counter</span><span class="leaders"></span></a>
+<a href="#move"><span class="no">07</span><span class="t">Move safety in one screen</span><span class="leaders"></span></a>
+<a href="#types"><span class="no">08</span><span class="t">The type wall</span><span class="leaders"></span></a>
+<a href="#zklogin"><span class="no">09</span><span class="t">Sign in with Google, pay with a proof</span><span class="leaders"></span></a>
+<a href="#shipped"><span class="no">10</span><span class="t">What landed in 2025 and 2026</span><span class="leaders"></span></a>
+<a href="#compare"><span class="no">11</span><span class="t">Sui, Solana, Ethereum</span><span class="leaders"></span></a>
+</nav>
+
+<main id="main-content">
+<section class="bay">
+<p class="by">By <a href="https://moamenbasel.com">Moamen Basel</a>, September 2026, 4 labs, about 24 minutes</p>
+<span class="coinbadge"><img src="assets/coins/sui.svg" alt="Sui" width="34" height="34"></span><h1>Sui from zero</h1>
+<p class="lead">Objects instead of account rows, and why independent state can finalize without one global order.</p>
+<p>Sui went live in May 2023. One disagreement sits at its center. It refuses to treat ordering as something every transaction needs. This page explains the bet from nothing. Every machine on it runs real SHA-256 work in your browser, so you can check the structure instead of trusting my summary of it.</p>
+
+<div class="machine" id="m-live" data-state="idle" tabindex="0" aria-labelledby="m-live-t">
+<div class="mhead"><span class="mlab">LIVE 00</span><span class="mtitle" id="m-live-t">The mint</span><span class="chip">HASH</span><span class="mtick" hidden>0</span><span class="mela">0.0s</span></div>
+<div class="mline" aria-hidden="true"></div>
+<div class="mrow">
+<button type="button" class="run" id="b-live-run">Run</button>
+<button type="button" class="ghost reset" id="b-live-reset">Reset</button>
+<button type="button" class="ghost copy" id="b-live-copy" disabled>Copy</button>
+</div>
+<label class="mlab2" for="i-live">Name your object</label>
+<input type="text" id="i-live" value="first-coin" autocomplete="off" spellcheck="false">
+<div class="out" role="log" aria-live="polite"><div class="dim">Type a name. This toy hashes it into a repeatable ID, version, and owner so you can inspect the object fields.</div></div>
+</div>
+</section>
+<p class="cap">Toy object generator, not a Sui mint. It uses real SHA-256 to turn your name into repeatable sample fields. Sui object IDs come from transaction context, not from a user chosen name. The useful part is the shape: identity, version, type, contents, and ownership.</p>
+
+<h2 id="origins"><span class="num">01</span>Where Sui comes from</h2>
+<p>Move, the programming language Sui runs on, was born inside Meta. Sam Blackshear wrote it for Diem, Meta's attempt at a payments blockchain. The idea that defined it was already set on day one. Money should be a value in the language that you cannot copy and cannot accidentally throw away. When that project's road ran out, the engineers scattered. In September 2021 a group of them from Novi, Meta's crypto unit, founded Mysten Labs, with Evan Cheng as CEO, Sam Blackshear as CTO, Adeniyi Abiodun as chief product officer, George Danezis as chief scientist. The venture firm a16z invested that December and led a $300 million Series B in 2022.</p>
+<p>Sui mainnet launched on May 3, 2023. The split of work since then is simple. Mysten Labs builds the core protocol. The Sui Foundation, seated in Zug, Switzerland, funds and stewards the ecosystem around it. The language came along for the ride, though not unchanged. Sui runs a heavily modified dialect of Move, reshaped around the object model this page is about. If you have never read a blockchain teardown before, the <a href="bitcoin-from-zero.html">Bitcoin page</a> in this series builds the base layer of intuition. Everything below stands on it.</p>
+<aside class="note">Kostas Chalkias, Mysten's cryptographer, shows up as a co founder in many profiles of the company. I couldn't confirm that against primary sources while writing this page, so he stays here in the margin and out of the main text.</aside>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="fgn1-t">
+<title id="fgn1-t">Lineage: Move written at Meta for Diem, Mysten Labs founded September 2021 by ex-Novi engineers, funded by a16z, Sui mainnet May 3 2023, then split between Mysten Labs building the protocol and the Sui Foundation stewarding the ecosystem</title>
+<defs><marker id="fgm1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="Move was written inside Meta for Diem, a payments blockchain. One rule was set on day one: money is a value you cannot copy and cannot accidentally drop.">
+<rect x="16" y="52" width="136" height="58" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="84" y="74" text-anchor="middle" class="fb">Move at Meta</text>
+<text x="84" y="92" text-anchor="middle" class="fm">written for Diem</text>
+<text x="84" y="106" text-anchor="middle" class="mut">2020, payments chain</text>
+<line x1="152" y1="81" x2="182" y2="81" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm1)"/>
+</g>
+<g data-step="2" data-note="Diem's road ran out and the Novi engineers scattered. Four of them founded Mysten Labs in September 2021: Cheng, Blackshear, Abiodun, Danezis.">
+<rect x="186" y="52" width="136" height="58" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="254" y="74" text-anchor="middle" class="fb">Mysten Labs</text>
+<text x="254" y="92" text-anchor="middle" class="fm">founded 2021-09</text>
+<text x="254" y="106" text-anchor="middle" class="mut">ex-Novi engineers</text>
+<line x1="322" y1="81" x2="352" y2="81" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm1)"/>
+</g>
+<g data-step="3" data-note="a16z invested in December 2021 and led a $300 million Series B in 2022.">
+<rect x="356" y="52" width="136" height="58" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="424" y="74" text-anchor="middle" class="fb">Funded</text>
+<text x="424" y="92" text-anchor="middle" class="fm">a16z, 2021-12</text>
+<text x="424" y="106" text-anchor="middle" class="mut">$300M Series B, 2022</text>
+<line x1="492" y1="81" x2="522" y2="81" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm1)"/>
+</g>
+<g data-step="4" data-note="Sui mainnet went live May 3, 2023, running a heavily modified Move dialect reshaped around the object model.">
+<rect x="526" y="52" width="138" height="58" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+<text x="595" y="74" text-anchor="middle" class="fb" style="fill:var(--accent)">Sui mainnet</text>
+<text x="595" y="92" text-anchor="middle" class="fm">live 2023-05-03</text>
+<text x="595" y="106" text-anchor="middle" class="mut">objects, not accounts</text>
+</g>
+<g data-step="5" data-note="Since launch the work splits: Mysten Labs builds the core protocol, the Sui Foundation in Zug funds and stewards the ecosystem around it.">
+<line x1="560" y1="110" x2="470" y2="144" stroke="currentColor" stroke-width="1.5"/>
+<line x1="620" y1="110" x2="606" y2="144" stroke="currentColor" stroke-width="1.5"/>
+<rect x="404" y="146" width="130" height="44" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="469" y="164" text-anchor="middle" class="fm">Mysten Labs</text>
+<text x="469" y="180" text-anchor="middle" class="mut">core protocol</text>
+<rect x="548" y="146" width="116" height="44" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="606" y="164" text-anchor="middle" class="fm">Sui Foundation</text>
+<text x="606" y="180" text-anchor="middle" class="mut">Zug, ecosystem</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 1.1</span> The line from a payments project inside Meta to a live chain: the language survived, the company around it was rebuilt.</figcaption>
+</figure>
+
+<h2 id="objects"><span class="num">02</span>A ledger of objects</h2>
+<p>Most persistent state on Sui is represented as objects.</p>
+<p>Ethereum organizes state under accounts in one authenticated state structure. Sui exposes application state as individually versioned objects. An object has a unique ID, a version, a type, contents, and ownership metadata. Look back at the LIVE box you just ran. It prints a reduced teaching view of those fields.</p>
+<p>Your wallet's coin holdings can be represented by coin objects, each owned by an address and carrying its own version trail. A collectible is an object. Published packages and Move modules are immutable onchain code, while application state such as a liquidity position, domain name, or in game sword can live in objects. The opening toy prints only a few fields for clarity; real objects also carry a type and contents.</p>
+
+<figure>
+<svg viewBox="0 0 720 310" role="img" aria-labelledby="fg1-t">
+<title id="fg1-t">An account ledger holds one global spreadsheet of balances; an object ledger holds independent objects with IDs, versions, and owners</title>
+<rect x="24" y="44" width="316" height="222" fill="none" stroke="currentColor" stroke-width="1.5" data-note="One master spreadsheet: every account is a row in it, every writer queues behind every other writer."/>
+<text x="182" y="30" text-anchor="middle" class="fb">Account ledger</text>
+<rect x="52" y="62" width="120" height="30" fill="none" stroke="currentColor" stroke-width="1" data-note="The single state root every transaction must read from and write back into."/>
+<text x="112" y="81" text-anchor="middle">state root</text>
+<line x1="112" y1="92" x2="112" y2="112" stroke="currentColor" stroke-width="1"/>
+<rect x="52" y="112" width="260" height="126" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="182" y="104" text-anchor="middle" class="mut">one shared trie, every writer queues</text>
+<rect x="64" y="124" width="236" height="26" fill="none" stroke="currentColor" stroke-width="1" data-note="A balance is a number in someone else's cell, not a thing you hold."/>
+<text x="76" y="141" class="fm">0xa1…  balance 4.2 ETH</text>
+<rect x="64" y="154" width="236" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="76" y="171" class="fm">0xb7…  balance 19 ETH</text>
+<rect x="64" y="184" width="236" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="76" y="201" class="fm">0xc2…  balance 0.5 ETH</text>
+<text x="182" y="236" text-anchor="middle" class="mut">a balance is a number in someone else's cell</text>
+<rect x="392" y="44" width="304" height="222" fill="none" stroke="currentColor" stroke-width="1.5" data-note="No root, no trie: millions of independent records that never have to meet."/>
+<text x="544" y="30" text-anchor="middle" class="fb">Object ledger</text>
+<rect x="410" y="60" width="130" height="64" fill="none" stroke="currentColor" stroke-width="1" data-note="Three fields, nothing else: an ID, a version, an owner."/>
+<text x="420" y="78" class="fm">id 0x9f2c…</text>
+<text x="420" y="93" class="fm">version 3</text>
+<text x="420" y="108" class="fm">owner 0xa1…</text>
+<rect x="556" y="60" width="130" height="64" fill="none" stroke="currentColor" stroke-width="1" data-note="Same three fields, different owner: a fully independent history."/>
+<text x="566" y="78" class="fm">id 0x31de…</text>
+<text x="566" y="93" class="fm">version 1</text>
+<text x="566" y="108" class="fm">owner 0xb7…</text>
+<rect x="410" y="140" width="130" height="64" fill="none" stroke="currentColor" stroke-width="1" data-note="Shared: anyone may write, so writes need ordering."/>
+<text x="420" y="158" class="fm">id 0x88b0…</text>
+<text x="420" y="173" class="fm">version 12</text>
+<text x="420" y="188" class="fm">shared</text>
+<rect x="556" y="140" width="130" height="64" fill="none" stroke="currentColor" stroke-width="1" data-note="Immutable: frozen forever, writable by none. Published code lives here."/>
+<text x="566" y="158" class="fm">id 0x04aa…</text>
+<text x="566" y="173" class="fm">version 7</text>
+<text x="566" y="188" class="fm">immutable</text>
+<text x="544" y="236" text-anchor="middle" class="mut">four records, four independent histories</text>
+</svg>
+<figcaption><span class="figno">Fig. 2.1</span> The account model funnels every write into one shared structure. The object model keeps millions of small records that never have to meet.</figcaption>
+</figure>
+
+<p>The version number is the quiet field that makes the rest of this page work. When an object changes, its version increments. The transaction that changed it names the version it acted on. Two transactions both claiming to move version 3 of the same object are in conflict. Two transactions touching different objects cannot conflict at all, ever. Hold onto that, because the entire architecture of Sui falls out of it.</p>
+
+<h2 id="ownership"><span class="num">03</span>Owned and shared</h2>
+
+<figure>
+<svg viewBox="0 0 720 280" role="img" aria-labelledby="fg2-t" data-la="Show shared" data-lb="Show owned">
+<title id="fg2-t">An owner authorizes its object while competing writes to a shared object require an agreed order</title>
+<defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<g class="sa" data-note="Owned: one signature authorizes the move. Mysticeti v2 validates it through the DAG without imposing a total order against unrelated owned-object transactions.">
+<text x="182" y="30" text-anchor="middle" class="fb">Owned object</text>
+<rect x="24" y="48" width="104" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="76" y="69" text-anchor="middle">alice's key</text>
+<line x1="128" y1="65" x2="196" y2="65" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)"/>
+<rect x="200" y="48" width="130" height="56" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="265" y="70" text-anchor="middle" class="fm">coin-111</text>
+<text x="265" y="86" text-anchor="middle" class="fm">version 4, owner</text>
+<line x1="330" y1="65" x2="398" y2="65" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)"/>
+<text x="364" y="52" text-anchor="middle" class="mut">one signature</text>
+<rect x="402" y="48" width="96" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="450" y="69" text-anchor="middle">bob</text>
+<text x="182" y="132" text-anchor="middle" class="mut">DAG validation, no total order with unrelated state</text>
+</g>
+<g class="sb" data-note="Shared: nobody's key alone can move it and writes can collide. Mysticeti must order those competing writes even though all transaction validation now shares its DAG.">
+<text x="544" y="30" text-anchor="middle" class="fb">Shared object</text>
+<rect x="412" y="170" width="120" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="472" y="191" text-anchor="middle">p1</text>
+<rect x="556" y="170" width="120" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="616" y="191" text-anchor="middle">p2</text>
+<rect x="412" y="236" width="120" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="472" y="257" text-anchor="middle">p3</text>
+<rect x="556" y="236" width="120" height="34" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="616" y="257" text-anchor="middle">p4</text>
+<line x1="472" y1="170" x2="472" y2="152" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)"/>
+<line x1="616" y1="170" x2="616" y2="152" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)"/>
+<line x1="472" y1="236" x2="472" y2="218" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)"/>
+<line x1="616" y1="236" x2="616" y2="218" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)"/>
+<rect x="402" y="96" width="284" height="56" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="544" y="118" text-anchor="middle" class="fm">pool-999, shared</text>
+<text x="544" y="136" text-anchor="middle" class="mut">writes collide, order decides who wins</text>
+<line x1="544" y1="152" x2="544" y2="168" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)"/>
+<text x="544" y="60" text-anchor="middle" class="mut">consensus sequences the writes</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 3.1</span> The split that defines the chain: one writer means a signature suffices, many writers mean an arbiter is required.</figcaption>
+</figure>
+
+<p>Sui sorts every object into one of four ownership kinds. <strong>Address owned</strong>. One address holds the key that can move it, like the coins in your wallet. <strong>Shared</strong>. Nobody's key alone can move it, and the object accepts writes from anyone, like a marketplace pool. <strong>Immutable</strong> is frozen forever, readable by all, writable by none, which is where published code usually lives. <strong>Object owned</strong> is an object belonging to another object, like a sword that belongs to a character.</p>
+<p>Here's the move that makes Sui different. If transactions touch disjoint owned objects, their relative order cannot change either result. Shared objects are the mirror case. Writes can collide, so the network must serialize them. The original Sui Lutris design used a separate consensusless quorum path for owned objects. Since Mysticeti v2 became the default in node v1.60, transaction validation is integrated into the consensus DAG and transactions are finalized or rejected concurrently. The fast path remains, but it no longer uses the old separate certificate ceremony shown in early Sui diagrams.</p>
+
+<h2 id="fastpath"><span class="num">04</span>The fast path, then and now</h2>
+
+<div class="machine" id="m-fast" data-state="idle" tabindex="0" aria-labelledby="m-fast-t">
+<div class="mhead"><span class="mlab">LAB 01</span><span class="mtitle" id="m-fast-t">Two lanes, one operation</span><span class="chip">SIG</span><span class="mtick" hidden>0</span><span class="mela">0.0s</span></div>
+<div class="mline" aria-hidden="true"></div>
+<div class="mrow">
+<button type="button" class="run" id="b-fast-run">Run</button>
+<button type="button" class="ghost reset" id="b-fast-reset">Reset</button>
+<button type="button" class="ghost copy" id="b-fast-copy" disabled>Copy</button>
+</div>
+<div class="out" role="log" aria-live="polite"><div class="dim">Runs two owned transfers in both orders, then the same operation against a shared object.</div></div>
+</div>
+<p class="cap">Historical protocol toy. It models the original Sui Lutris split between a quorum certificate for owned objects and consensus ordering for shared objects. Current Mysticeti v2 integrates validation into its DAG. The lab uses real SHA-256, synthetic validator hashes, and a visible 450 ms pause; it is not an Ed25519 implementation, a network trace, or a latency benchmark.</p>
+
+<p>The lab takes two payments that touch two different owned coins and executes them twice, once in each order. Both runs hash the same toy transaction records, then compare final ledger hashes. They match because the two transactions never meet. The second half aims an operation at one shared pool object, where sequence changes state. This isolates the data dependency lesson. It does not reproduce the current wire protocol.</p>
+<p>In the historical Sui Lutris framing, broadcast bought safety while consensus bought order. <a href="https://www.sui.io/blog/mysticeti-v2-sui-consensus">Mysticeti v2</a> folded transaction validation into the same DAG used for consensus and made Transaction Driver the default submission path. The object model still lets independent transactions finalize concurrently. The implementation no longer sends each owned transaction through a separate consensusless quorum ceremony.</p>
+<aside class="note good">Zero dependency edges between the two owned transfers. The final toy state hashes match in either order. That demonstrates commutativity, not Sui's production consensus code.</aside>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="fgn4-t">
+<title id="fgn4-t">Historical Sui Lutris fast path: digest, signature check, quorum signatures, and finality without global ordering</title>
+<defs><marker id="fgm4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="The transaction is hashed into a digest. Everything downstream signs this one digest.">
+<rect x="16" y="36" width="128" height="52" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="80" y="58" text-anchor="middle" class="fb">digest</text>
+<text x="80" y="76" text-anchor="middle" class="fm mut">hash of the tx</text>
+<line x1="144" y1="62" x2="176" y2="62" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm4)"/>
+</g>
+<g data-step="2" data-note="Validators check the owner's signature over the digest. One check, no queue, nobody asked what comes first.">
+<rect x="180" y="36" width="140" height="52" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="250" y="58" text-anchor="middle" class="fb">signature check</text>
+<text x="250" y="76" text-anchor="middle" class="fm mut">owner's key</text>
+<line x1="320" y1="62" x2="352" y2="62" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm4)"/>
+</g>
+<g data-step="3" data-note="A quorum of validators signs the result and the signatures fold into a certificate: Byzantine consistent broadcast, safety without ordering.">
+<rect x="356" y="36" width="150" height="52" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="431" y="58" text-anchor="middle" class="fb">quorum signs</text>
+<text x="431" y="76" text-anchor="middle" class="fm mut">certificate forms</text>
+<line x1="506" y1="62" x2="538" y2="62" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm4)"/>
+</g>
+<g data-step="4" data-note="Historical Sui Lutris result: final without a global order. Mysticeti v2 now integrates transaction validation into the DAG.">
+<rect x="542" y="36" width="122" height="52" fill="none" stroke="var(--good)" stroke-width="1.5"/>
+<text x="603" y="58" text-anchor="middle" class="fb" style="fill:var(--good)">final</text>
+<text x="603" y="76" text-anchor="middle" class="fm mut">sub-second</text>
+<line x1="603" y1="88" x2="603" y2="116" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm4)"/>
+<rect x="16" y="120" width="648" height="60" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="5 5"/>
+<text x="340" y="145" text-anchor="middle" class="fb st">0 ordering steps</text>
+<text x="340" y="166" text-anchor="middle" class="mut">owned objects cannot collide with any other valid transaction, so order cannot change the outcome</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 4.1</span> The historical Sui Lutris ceremony. Mysticeti v2 replaced this separate quorum path with transaction finalization inside its DAG.</figcaption>
+</figure>
+
+<details class="toc mob">
+<summary>Contents</summary>
+<a href="#origins"><span class="no">01</span><span class="t">Where Sui comes from</span><span class="leaders"></span></a>
+<a href="#objects"><span class="no">02</span><span class="t">A ledger of objects</span><span class="leaders"></span></a>
+<a href="#ownership"><span class="no">03</span><span class="t">Owned and shared</span><span class="leaders"></span></a>
+<a href="#fastpath"><span class="no">04</span><span class="t">The fast path, then and now</span><span class="leaders"></span></a>
+<a href="#consensus"><span class="no">05</span><span class="t">One DAG, ordering where needed</span><span class="leaders"></span></a>
+<a href="#counter"><span class="no">06</span><span class="t">Six writers and one counter</span><span class="leaders"></span></a>
+<a href="#move"><span class="no">07</span><span class="t">Move safety in one screen</span><span class="leaders"></span></a>
+<a href="#types"><span class="no">08</span><span class="t">The type wall</span><span class="leaders"></span></a>
+<a href="#zklogin"><span class="no">09</span><span class="t">Sign in with Google, pay with a proof</span><span class="leaders"></span></a>
+<a href="#shipped"><span class="no">10</span><span class="t">What landed in 2025 and 2026</span><span class="leaders"></span></a>
+<a href="#compare"><span class="no">11</span><span class="t">Sui, Solana, Ethereum</span><span class="leaders"></span></a>
+</details>
+
+<h2 id="consensus"><span class="num">05</span>One DAG, ordering where needed</h2>
+
+<figure>
+<svg viewBox="0 0 720 200" role="img" aria-labelledby="fg3-t">
+<title id="fg3-t">Timeline of Sui consensus: launch in 2023 on Narwhal and Bullshark, Mysticeti in July 2024, Mysticeti v2 in November 2025, Odontoceti as research</title>
+<line x1="40" y1="110" x2="680" y2="110" stroke="var(--q-time)" stroke-width="2" data-note="Three consensus generations in three years, each attacking the same target: the delay before a shared-object write is final."/>
+<g data-step="1" data-note="May 3, 2023: mainnet launches on Narwhal (a DAG mempool) plus Bullshark (ordering). Shared-object writes finalize in about 2 s.">
+<circle cx="90" cy="110" r="4" fill="var(--q-time)"/>
+<text x="90" y="88" text-anchor="middle" class="fb">2023-05-03</text>
+<text x="90" y="136" text-anchor="middle">mainnet, Narwhal + Bullshark</text>
+<text x="90" y="152" text-anchor="middle" class="mut">about 2 s to finality</text>
+</g>
+<g data-step="2" data-note="July 2024: Mysticeti commits on a quorum of votes directly, no certificate creation or exchange. Finality drops to roughly 400 to 500 ms.">
+<circle cx="270" cy="110" r="4" fill="var(--q-time)"/>
+<text x="270" y="88" text-anchor="middle" class="fb">2024-07</text>
+<text x="270" y="136" text-anchor="middle">Mysticeti goes live</text>
+<text x="270" y="152" text-anchor="middle" class="mut">about 400 to 500 ms</text>
+</g>
+<g data-step="3" data-note="November 6, 2025: Mysticeti v2 integrates transaction validation into the DAG and adds Transaction Driver. October 2025: Odontoceti appears on arXiv as research only.">
+<circle cx="450" cy="110" r="4" fill="var(--q-time)"/>
+<text x="450" y="88" text-anchor="middle" class="fb">2025-11-06</text>
+<text x="450" y="136" text-anchor="middle">Mysticeti v2 rollout</text>
+<text x="450" y="152" text-anchor="middle" class="mut">validation inside the DAG</text>
+<circle cx="560" cy="110" r="4" fill="none" stroke="var(--q-time)" stroke-width="1.5"/>
+<text x="560" y="88" text-anchor="middle" class="mut">2025-10</text>
+<text x="560" y="136" text-anchor="middle" class="mut">Odontoceti on arXiv</text>
+<text x="560" y="152" text-anchor="middle" class="mut">research only</text>
+</g>
+<g data-step="4" data-note="September 2026: Mysticeti v2 is what runs in production. Nothing beyond it is live.">
+<circle cx="650" cy="110" r="4" fill="var(--q-nonce)"/>
+<text x="650" y="88" text-anchor="middle" class="fb">2026-09</text>
+<text x="650" y="136" text-anchor="middle">today</text>
+<text x="650" y="152" text-anchor="middle" class="mut">v2 in production</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 5.1</span> Three consensus generations in three years, each one attacking the same target: the delay before a shared object write is final.</figcaption>
+</figure>
+
+<p>What do contending shared objects pay for? A common order. Consensus is the protocol by which independent machines agree on that order even if some of them crash or lie. Sui launched in May 2023 with two components doing that job. Narwhal was a mempool, meaning the waiting room for pending transactions. It was structured as a directed acyclic graph so validators could gossip many transactions at once without waiting on each other. Bullshark read positions off that graph into an order for shared object work. Shared object transactions finalized in about two seconds. It was visibly slower than the separate owned object path.</p>
+<p>July 2024 brought Mysticeti. The earlier consensus design made each DAG block carry a certificate before it could commit. Mysticeti removed that explicit block certification round and reached roughly 400 to 500 ms consensus commits in published measurements. On November 6, 2025, <a href="https://www.sui.io/blog/mysticeti-v2-sui-consensus">Mysticeti v2</a> integrated transaction validation into the DAG and introduced Transaction Driver. Validators explicitly vote on rejections while DAG ancestry supplies implicit acceptance votes. Sui's own test results report hundreds of thousands of transactions per second; that is a benchmark, not observed public chain demand.</p>
+<p>Underneath the consensus churn, the plumbing is stable. Consensus output gets packed into checkpoints, with no fixed interval. Validators may split or merge commits to build them. A system Clock object at address 0x6 ticks on every commit. That gives contracts a shared sense of time. Time itself is sliced into epochs, meaning 24-hour windows at whose boundary staking rewards are paid out. The validator set is 100-plus machines. Staking, meaning locking coins as collateral to earn the right to validate, paid about 2 percent as of September 2025. A March 2026 writeup by the researchers put post Mysticeti consensus commit latency near 500 ms at world scale.</p>
+<aside class="note">The contrast with Solana is the sharpest way to see it. Solana builds one global order for every transaction first and executes inside it, which the <a href="solana.html#poh">Solana page</a> covers through its Proof of History clock. Sui inverts the priority. Finalize first, order only what contends. The validator economics behind both are in the <a href="proof-of-stake.html">proof of stake essay</a>.</aside>
+
+<h2 id="counter"><span class="num">06</span>Six writers and one counter</h2>
+<p>Contention is the whole story of this section. Here it is with numbers.</p>
+
+<div class="machine" id="m-counter" data-state="idle" tabindex="0" aria-labelledby="m-counter-t">
+<div class="mhead"><span class="mlab">LAB 02</span><span class="mtitle" id="m-counter-t">The shared counter</span><span class="chip">POS</span><span class="mtick" hidden>0</span><span class="mela">0.0s</span></div>
+<div class="mline" aria-hidden="true"></div>
+<div class="mrow">
+<button type="button" class="run" id="b-counter-run">Run</button>
+<button type="button" class="ghost reset" id="b-counter-reset">Reset</button>
+<button type="button" class="ghost copy" id="b-counter-copy" disabled>Copy</button>
+</div>
+<label class="mlab2" for="i-parties">Parties: <span id="v-parties">6</span></label>
+<input type="range" id="i-parties" min="3" max="12" step="1" value="6">
+<div class="out" role="log" aria-live="polite"><div class="dim">Runs every party's increment through the shared counter, then runs the same count of owned transfers that never meet.</div></div>
+</div>
+<p class="cap">Conceptual serialization model, not a protocol trace. Each pause makes a dependency visible. The hashes and counters are computed in your browser, while validator votes, network timing, and Mysticeti's DAG are simplified away. Increase the slider to see one hot shared object serialize while disjoint owned transfers remain independent.</p>
+
+<p>One shared counter means one version trail. Every increment depends on the version produced by the previous increment, so the toy serializes six writes. The owned side uses six disjoint coins, so those state transitions can complete independently. Current Mysticeti v2 handles both through its DAG rather than issuing the toy certificates printed here. The invariant survives the simplification: contention creates a dependency chain, while disjoint objects do not.</p>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="fgn6-t" data-la="Show owned" data-lb="Show shared">
+<title id="fgn6-t">Conceptual dependency model: six writes to one shared counter serialize, while six disjoint transfers can proceed concurrently</title>
+<defs><marker id="fgm6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<rect x="24" y="26" width="72" height="168" fill="none" stroke="currentColor" stroke-width="1" data-note="Six parties, the same amount of cryptographic work on both lanes. The objects they touch decide the price."/>
+<text x="60" y="20" text-anchor="middle" class="fm mut">parties</text>
+<rect x="32" y="34" width="56" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="60" y="48" text-anchor="middle" class="fm">p1</text>
+<rect x="32" y="62" width="56" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="60" y="76" text-anchor="middle" class="fm">p2</text>
+<rect x="32" y="90" width="56" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="60" y="104" text-anchor="middle" class="fm">p3</text>
+<rect x="32" y="118" width="56" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="60" y="132" text-anchor="middle" class="fm">p4</text>
+<rect x="32" y="146" width="56" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="60" y="160" text-anchor="middle" class="fm">p5</text>
+<rect x="32" y="174" width="56" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="60" y="188" text-anchor="middle" class="fm">p6</text>
+<g class="sa" data-note="One version trail creates a dependency chain: six increments serialize in this conceptual model.">
+<line x1="88" y1="44" x2="214" y2="100" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="72" x2="214" y2="100" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="100" x2="214" y2="100" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="128" x2="214" y2="100" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="156" x2="214" y2="100" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="184" x2="214" y2="100" stroke="currentColor" stroke-width="1"/>
+<rect x="222" y="76" width="140" height="48" fill="none" stroke="currentColor" stroke-width="1.5" data-note="The version field is the queue: each write's legitimacy depends on which writes came before it."/>
+<text x="292" y="96" text-anchor="middle" class="fm">counter-0</text>
+<text x="292" y="112" text-anchor="middle" class="mut">version 0 -&gt; 6</text>
+<line x1="362" y1="100" x2="396" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm6)"/>
+<rect x="400" y="76" width="200" height="48" fill="none" stroke="var(--warn)" stroke-width="1.5"/>
+<text x="500" y="96" text-anchor="middle" class="fb" style="fill:var(--warn)">6 ordering rounds</text>
+<text x="500" y="112" text-anchor="middle" class="mut">one serving window</text>
+</g>
+<g class="sb" data-note="Same six parties, same certificates, but each coin has exactly one owner: no collisions, nothing to order.">
+<line x1="88" y1="44" x2="556" y2="44" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="72" x2="556" y2="72" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="100" x2="556" y2="100" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="128" x2="556" y2="128" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="156" x2="556" y2="156" stroke="currentColor" stroke-width="1"/>
+<line x1="88" y1="184" x2="556" y2="184" stroke="currentColor" stroke-width="1"/>
+<rect x="560" y="34" width="92" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="606" y="48" text-anchor="middle" class="fm">coin-400</text>
+<rect x="560" y="62" width="92" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="606" y="76" text-anchor="middle" class="fm">coin-401</text>
+<rect x="560" y="90" width="92" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="606" y="104" text-anchor="middle" class="fm">coin-402</text>
+<rect x="560" y="118" width="92" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="606" y="132" text-anchor="middle" class="fm">coin-403</text>
+<rect x="560" y="146" width="92" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="606" y="160" text-anchor="middle" class="fm">coin-404</text>
+<rect x="560" y="174" width="92" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="606" y="188" text-anchor="middle" class="fm">coin-405</text>
+<text x="322" y="92" text-anchor="middle" class="fb" style="fill:var(--accent)">0 ordering steps</text>
+<text x="322" y="110" text-anchor="middle" class="mut">disjoint coins never meet</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 6.1</span> Toggle the two lanes: contention, not cryptography, is the only thing that differs.</figcaption>
+</figure>
+
+<h2 id="move"><span class="num">07</span>Move safety in one screen</h2>
+<p>The object model sets the stage. Move is the language that keeps actors honest on it. The linear resource is the point. A value that represents an asset can be used exactly once. The compiler refuses to copy it, and it refuses to let that value silently fall out of scope at the end of a function. Every code path has to explicitly transfer it somewhere. If a function takes a Coin as an argument, that coin must end up returned, sent, or destroyed by an explicit, typed operation, on every branch, or the program does not compile. There are no pointers you can alias behind the compiler's back. There's no way to reach into another module's storage. A module can only move resources through the public entry points other modules choose to expose.</p>
+<p>Types carry the guarantees. A <span class="num">Coin&lt;SUI&gt;</span> and a <span class="num">Coin&lt;BTC&gt;</span> are built from the same struct definition, but the type parameter makes them as incompatible as two unrelated types. The check happens before anything executes. Generic containers stay honest the same way. A bag that holds Sui coins cannot silently accept a Bitcoin coin. Its slot has a type. The value has a type. The two have to agree. That's the entire subject of the next lab.</p>
+<p>The third layer is verification. The Move Prover, a formal verifier with lineage going back to the original Move work at Meta, takes a contract plus a list of invariants, statements like "this pool's reserves can never decrease without a matching withdrawal", and either proves them across all possible executions or returns a counterexample. Testing samples behaviors. A prover exhausts them. Sui's side of this lineage went public in January 2026, when a Sui Prover was open sourced. Certora, a company that has sold formal verification for Ethereum contracts for years, ships its own Sui prover as a product. None of this makes contracts correct. It makes specific, stated properties checkable by a machine, which is a different and more durable promise.</p>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="fgn7-t">
+<title id="fgn7-t">A Move function that takes a Coin by value must hand it off on every branch: return it, transfer it, or destroy it explicitly; a branch that lets the coin drop out of scope does not compile</title>
+<g data-step="1" data-note="The coin enters by value. From this line on, the compiler tracks it along every path through the function.">
+<rect x="20" y="72" width="150" height="56" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="95" y="94" text-anchor="middle" class="fb">a Move function</text>
+<text x="95" y="112" text-anchor="middle" class="fm">coin: Coin&lt;SUI&gt;</text>
+</g>
+<g data-step="2" data-note="Control flow branches. The resource must survive every branch or the program does not compile.">
+<line x1="170" y1="100" x2="240" y2="100" stroke="currentColor" stroke-width="1.5"/>
+<line x1="240" y1="38" x2="240" y2="176" stroke="currentColor" stroke-width="1.5"/>
+<line x1="240" y1="38" x2="296" y2="38" stroke="currentColor" stroke-width="1.5"/>
+<line x1="240" y1="84" x2="296" y2="84" stroke="currentColor" stroke-width="1.5"/>
+<line x1="240" y1="130" x2="296" y2="130" stroke="currentColor" stroke-width="1.5"/>
+<line x1="240" y1="176" x2="296" y2="176" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<g data-step="3" data-note="Three legal exits: return it to the caller, transfer it with a typed public call, or destroy it explicitly. Every branch must pick one.">
+<rect x="300" y="20" width="250" height="36" fill="none" stroke="var(--good)" stroke-width="1"/>
+<text x="312" y="35" class="fb" style="fill:var(--good)">return it</text>
+<text x="312" y="49" class="fm mut">caller receives the coin</text>
+<rect x="300" y="66" width="250" height="36" fill="none" stroke="var(--good)" stroke-width="1"/>
+<text x="312" y="81" class="fb" style="fill:var(--good)">transfer it</text>
+<text x="312" y="95" class="fm mut">public_transfer(coin)</text>
+<rect x="300" y="112" width="250" height="36" fill="none" stroke="var(--good)" stroke-width="1"/>
+<text x="312" y="127" class="fb" style="fill:var(--good)">destroy it</text>
+<text x="312" y="141" class="fm mut">explicit, typed, last resort</text>
+</g>
+<g data-step="4" data-note="The fourth path does not exist: letting the value fall out of scope is a compile error, not a runtime surprise. And there are no pointers to alias behind the compiler's back.">
+<rect x="300" y="158" width="250" height="36" fill="none" stroke="var(--bad)" stroke-width="1"/>
+<text x="312" y="173" class="fb" style="fill:var(--bad)">drop it</text>
+<text x="312" y="187" class="fm mut">compile error: value not used</text>
+<circle cx="620" cy="176" r="14" fill="none" stroke="var(--bad)" stroke-width="1.5"/>
+<line x1="613" y1="169" x2="627" y2="183" stroke="var(--bad)" stroke-width="1.5"/>
+<line x1="627" y1="169" x2="613" y2="183" stroke="var(--bad)" stroke-width="1.5"/>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 7.1</span> Linear resources in one screen: every code path must hand the coin somewhere, and the compiler checks all of them before anything runs.</figcaption>
+</figure>
+
+<h2 id="types"><span class="num">08</span>The type wall</h2>
+
+<div class="machine" id="m-types" data-state="idle" tabindex="0" aria-labelledby="m-types-t">
+<div class="mhead"><span class="mlab">LAB 03</span><span class="mtitle" id="m-types-t">Type checked transfer</span><span class="chip">HASH</span><span class="mtick" hidden>0</span><span class="mela">0.0s</span></div>
+<div class="mline" aria-hidden="true"></div>
+<div class="mrow">
+<button type="button" class="run" id="b-types-run">Run</button>
+<button type="button" class="ghost reset" id="b-types-reset">Reset</button>
+<button type="button" class="ghost copy" id="b-types-copy" disabled>Copy</button>
+</div>
+<div class="out" role="log" aria-live="polite"><div class="dim">Hashes the two type tags, tries both transfers, then replays the wrong one with the type wall switched off.</div></div>
+</div>
+<p class="cap">A toy of the type system, honestly labeled: the type tags are hashed with real SHA-256 and compared nybble by nybble, and the slot rule (a Bag&lt;T&gt; accepts only T) is the real structural rule. Move's compiler does this check statically before a transaction ever runs; the lab does it at transfer time so you can watch it refuse.</p>
+
+<p>The lab hashes the type tag of <span class="num">Coin&lt;SUI&gt;</span> and the tag of <span class="num">Coin&lt;BTC&gt;</span> into two fingerprints. It shows you how far apart they land. Nybble by nybble, almost all of them differ. Then it offers a Sui coin to a bag whose slot demands Bitcoin coins. The transfer refuses. There's no error message after the fact. It refuses to exist, because no valid transaction can even be formed that moves the wrong type into that slot. The third act is the one to sit with. Replay the same wrong transfer on an untyped ledger, where a balance is just bytes in a cell, and it goes through silently. The bag now believes it holds more Bitcoin than anyone ever deposited. Nothing anywhere is going to complain.</p>
+<aside class="note">The untyped replay is a teaching contrast, not a model of every account based chain. Account model token contracts can enforce asset rules at runtime. Move's distinction is that resource and generic type rules are checked before execution, so invalid ownership paths can fail to compile or fail type checking before state changes.</aside>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="fgn8-t" data-la="Show untyped" data-lb="Show typed">
+<title id="fgn8-t">Two states: with the type wall the Bitcoin slot accepts the Bitcoin coin and refuses the Sui coin before anything moves; without it a balance is bytes and the wrong coin slips in silently</title>
+<defs><marker id="fgm8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<rect x="24" y="44" width="160" height="40" fill="none" stroke="currentColor" stroke-width="1" data-note="Two coins built from the same struct, different type parameter: as incompatible as unrelated types, and checked before anything executes."/>
+<text x="36" y="60" class="fm">Coin&lt;BTC&gt;</text>
+<text x="36" y="76" class="fm mut">1.3, type-tagged</text>
+<rect x="24" y="116" width="160" height="40" fill="none" stroke="currentColor" stroke-width="1" data-note="Same shape, different type. The tags hash to fingerprints that differ in almost every nybble."/>
+<text x="36" y="132" class="fm">Coin&lt;SUI&gt;</text>
+<text x="36" y="148" class="fm mut">1.3, type-tagged</text>
+<g class="sa" data-note="The wall checks types before any state moves: the BTC coin fits the slot, and no valid transaction can even be formed that moves the SUI coin in. Refusal is not an error message after the fact; the transaction refuses to exist.">
+<line x1="330" y1="22" x2="330" y2="180" stroke="var(--accent)" stroke-width="2.5"/>
+<text x="330" y="14" text-anchor="middle" class="fm st">type wall</text>
+<line x1="184" y1="64" x2="414" y2="64" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm8)"/>
+<text x="292" y="56" class="fm" style="fill:var(--good)">accepted</text>
+<line x1="184" y1="136" x2="308" y2="136" stroke="currentColor" stroke-width="1.5"/>
+<circle cx="330" cy="136" r="12" fill="none" stroke="var(--bad)" stroke-width="1.5"/>
+<line x1="324" y1="130" x2="336" y2="142" stroke="var(--bad)" stroke-width="1.5"/>
+<line x1="336" y1="130" x2="324" y2="142" stroke="var(--bad)" stroke-width="1.5"/>
+<text x="196" y="126" class="fm" style="fill:var(--bad)">refused: ETypeMismatch</text>
+<rect x="420" y="44" width="236" height="40" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="538" y="60" text-anchor="middle" class="fm">Bag&lt;Coin&lt;BTC&gt;&gt;</text>
+<text x="538" y="76" text-anchor="middle" class="fm mut">4.2 -&gt; 5.5 BTC, honestly</text>
+</g>
+<g class="sb" data-note="Switch the wall off and a balance is just bytes in a cell: the same SUI coin goes through silently, and the bag now believes it holds bitcoin nobody deposited. Account-model chains really do store balances as bare numbers.">
+<line x1="184" y1="64" x2="414" y2="64" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm8)"/>
+<line x1="184" y1="136" x2="414" y2="136" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm8)"/>
+<text x="230" y="56" class="fm" style="fill:var(--good)">accepted</text>
+<text x="230" y="128" class="fm" style="fill:var(--bad)">accepted too</text>
+<rect x="420" y="84" width="236" height="52" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="538" y="104" text-anchor="middle" class="fm">balance cell</text>
+<text x="538" y="122" text-anchor="middle" class="fm mut">bytes, no types</text>
+<text x="538" y="164" text-anchor="middle" class="fm" style="fill:var(--bad)">bag claims 5.5 BTC, 1.3 of it is SUI</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 8.1</span> The type wall in two states: with it the wrong transfer refuses to exist; without it the same bytes move and the ledger lies quietly.</figcaption>
+</figure>
+
+<h2 id="zklogin"><span class="num">09</span>Sign in with Google, pay with a proof</h2>
+
+<figure>
+<svg viewBox="0 0 720 250" role="img" aria-labelledby="fg4-t">
+<title id="fg4-t">zkLogin flow: an OAuth login produces a JWT, the wallet derives an address from the JWT and a salt, and a Groth16 proof lets the chain verify account ownership without revealing identity claims</title>
+<defs><marker id="ar4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="Step 1: you sign in with Google, Apple, or Twitch. An ordinary OAuth flow. No seed phrase is ever shown or typed.">
+<rect x="24" y="48" width="104" height="36" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="76" y="70" text-anchor="middle">you</text>
+<line x1="128" y1="66" x2="176" y2="66" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar4)"/>
+<rect x="180" y="48" width="140" height="36" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="250" y="70" text-anchor="middle">Google sign-in</text>
+</g>
+<g data-step="2" data-note="Step 2: the app receives a JWT, a signed token asserting who you are. Your wallet combines it with a secret salt to derive your Sui address.">
+<line x1="320" y1="66" x2="368" y2="66" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar4)"/>
+<rect x="372" y="48" width="140" height="36" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="442" y="63" text-anchor="middle" class="fm">JWT + secret salt</text>
+<text x="442" y="78" text-anchor="middle" class="mut">derives your address</text>
+</g>
+<g data-step="3" data-note="Step 3: your wallet builds a Groth16 zero-knowledge proof over four private inputs: the JWT, its randomness, your salt, and a maximum epoch.">
+<line x1="442" y1="84" x2="442" y2="112" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar4)"/>
+<rect x="352" y="116" width="180" height="40" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="442" y="133" text-anchor="middle" class="fm">Groth16 zk proof</text>
+<text x="442" y="148" text-anchor="middle" class="mut">built in your wallet</text>
+</g>
+<g data-step="4" data-note="Step 4: Sui verifies the proof against Google's published keys. A valid login stands behind the address; the chain learns no identity. A sponsor can pay the gas, and up to 1,024 calls fit in one atomic block.">
+<line x1="442" y1="156" x2="442" y2="180" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar4)"/>
+<rect x="312" y="184" width="260" height="40" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="442" y="201" text-anchor="middle">Sui verifies the proof</text>
+<text x="442" y="216" text-anchor="middle" class="mut">against Google's published keys, sees no identity</text>
+<rect x="556" y="116" width="140" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="626" y="133" text-anchor="middle" class="fm">app pays the gas</text>
+<text x="626" y="148" text-anchor="middle" class="mut">sponsored transaction</text>
+<line x1="556" y1="136" x2="532" y2="136" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar4)"/>
+<text x="360" y="30" text-anchor="middle" class="fb">No seed phrase is ever shown or typed</text>
+<text x="626" y="188" text-anchor="middle" class="mut">up to 1,024 calls in one atomic block</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 9.1</span> zkLogin in one pass: the login you already have becomes the key you never see, and the chain learns the proof, never the person.</figcaption>
+</figure>
+
+<p>Every blockchain has an onboarding wall. It's usually the seed phrase. Twelve or twenty four words, and those words are the actual master key, written on paper. A normal person finds that terrifying. Sui's answer is zkLogin, shipped and audited by zkSecurity. You sign in with Google, Apple, or Twitch. Ordinary OAuth flow. You approve an app and it receives a credential called a JWT, a signed token asserting who you are. Your wallet combines that JWT with a secret salt to derive your Sui address. I know the next question. Does Google now sit between you and your money?</p>
+
+<p>No. That's where the word zero knowledge earns its place. When you transact, your wallet builds a Groth16 zero knowledge proof, the same family of proof systems the <a href="zcash.html">Zcash page</a> explains from scratch. The proof takes four private inputs, the JWT, its randomness, your salt, and a maximum epoch after which the login expires. The chain verifies the proof against the public keys Google already publishes for its JWTs. It confirms that some valid Google login stands behind this address, and that the same salt which derived the address signed this transaction. It doesn't learn which Google account, which email, or anything else the JWT asserts. Google is never asked to approve a transaction and holds no custody of anything. The proof carries the authority. The identity claims stay off chain entirely.</p>
+<p>The second half of the wall is gas, the small fee every transaction pays. Sponsored transactions make the gas payer a separate party from the sender, natively at the protocol level, so an application can pay for you. Services like Shinami exist just to operate that faucet at scale. Put the two together. A person signs in with an account they already have, clicks send, never sees a seed phrase, and never had to buy a coin to pay for their first action. Stack on Programmable Transaction Blocks, which bundle up to 1,024 Move calls into one all or nothing transaction, and multi step operations like swap then deposit then register become a single click that cannot half fail.</p>
+
+<h2 id="shipped"><span class="num">10</span>What landed in 2025 and 2026</h2>
+<p>A protocol is a claim. A stack is evidence. This is what the fact sheet confirms has actually shipped, with dates, as of September 2026.</p>
+<ul class="dated">
+<li><span class="num">2024-09-02</span> SuiPlay0X1, a handheld gaming console built with Playtron for Web3 games, opened pre orders at $599, with units shipping through 2025.</li>
+<li><span class="num">2024-10-14</span> <a href="https://www.sui.io/blog/deepbook-version3-deep-token">DeepBook V3</a>, Sui's native central limit order book, launched on mainnet with the DEEP token, flash loans, and governance.</li>
+<li><span class="num">2025-03-27</span> <a href="https://www.sui.io/blog/celebrating-walrus-one-year-anniversary">Walrus</a>, a separate decentralized blob storage network by Mysten Labs, reached mainnet.</li>
+<li><span class="num">2025-05-30</span> <a href="https://www.sui.io/blog/asymptotic-move-prover-formal-verification">Sui Prover</a>, a formal verifier developed by Asymptotic for Sui Move, became available as open source software.</li>
+<li><span class="num">2025-09-03</span> <a href="https://www.sui.io/blog/2025-sui-stack-developments">Seal</a> reached mainnet with encryption and access control for data stored on Walrus, using policies enforced by Move contracts. Its newer decentralized MPC key server remained on testnet in March 2026.</li>
+<li><span class="num">2025-11-06</span> Mysticeti v2 rolled out across mainnet, as covered in section 5.</li>
+<li><span class="num">2026-02-24</span> The 21Shares spot SUI product, ticker TSUI, <a href="https://www.nasdaqtrader.com/TraderNews.aspx?id=ETP2026-29">began trading on Nasdaq</a>. Nasdaq approved its listing; this page does not describe that as SEC endorsement.</li>
+<li><span class="num">2026-05-20</span> <a href="https://www.sui.io/blog/sui-launches-gasless-stablecoin-transfers">Gasless stablecoin transfers</a> began rolling out on mainnet, powered by Address Balances, an account style layer for plain payments.</li>
+<li><span class="num">2026-06-08</span> Confidential Transfers entered public beta on devnet. Balances and amounts can be hidden while sender, receiver, and scoped auditability remain available. The <a href="https://www.sui.io/blog/confidential-transfers-public-beta">launch post</a> targets testnet later and gives no mainnet date.</li>
+<li><span class="num">2026-07-04</span> A public experiment using programmable offchain tunnels peaked at 6,086,766 operations per second across games, payments, and chat. Channels settled to Sui mainnet when closed, so this was an offchain channel peak, not base layer TPS. The <a href="https://www.sui.io/blog/sui-processes-over-6-million-transactions-per-second-in-ai-agent-livestream-experiment">Sui Foundation report</a> states that boundary directly.</li>
+</ul>
+<p>The headline 6,086,766 figure above is an offchain channel peak, not sustained mainnet throughput. Closed channels settle their mutually signed result to Sui. That makes the experiment useful evidence for the channel design, but it cannot be compared directly with base layer transactions per second.</p>
+<p>The money design underneath is worth one paragraph. Gas has separate computation and storage components. The storage component flows into the Storage Fund, which shifts storage rewards across epochs so future validators can be paid for retaining old data. Deleting eligible objects can return a storage rebate. These are protocol rules described in the <a href="https://docs.sui.io/paper/tokenomics.pdf">Sui tokenomics paper</a>, unlike market activity figures that change every day.</p>
+
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="fgn10-t">
+<title id="fgn10-t">The shipped stack as of September 2026, layer by layer: core consensus, storage, markets, access, privacy</title>
+<g data-step="1" data-note="Core: consensus itself shipped twice. Mysticeti went live July 2024; v2 rolled out November 6, 2025 with a cheaper submission path and a fastpath for simple transactions.">
+<text x="24" y="43" class="fb">core</text>
+<rect x="120" y="26" width="180" height="26" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+<text x="210" y="43" text-anchor="middle" class="fm">Mysticeti v2 - 2025-11</text>
+</g>
+<g data-step="2" data-note="Storage: Walrus hit mainnet March 27, 2025. Seal added encrypted access control on top September 3, 2025; its decentralized MPC key server was still on testnet in March 2026.">
+<text x="24" y="77" class="fb">storage</text>
+<rect x="120" y="60" width="150" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="195" y="77" text-anchor="middle" class="fm">Walrus - 2025-03</text>
+<rect x="282" y="60" width="130" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="347" y="77" text-anchor="middle" class="fm">Seal - 2025-09</text>
+</g>
+<g data-step="3" data-note="Markets: DeepBook V3 launched October 14, 2024 with the DEEP token and flash loans; the 21Shares TSUI spot product began trading on Nasdaq February 24, 2026.">
+<text x="24" y="111" class="fb">markets</text>
+<rect x="120" y="94" width="190" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="215" y="111" text-anchor="middle" class="fm">DeepBook V3 - 2024-10</text>
+<rect x="322" y="94" width="170" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="407" y="111" text-anchor="middle" class="fm">TSUI ETF - 2026-02</text>
+</g>
+<g data-step="4" data-note="Access: zkLogin removes the seed phrase; gasless stablecoin transfers landed May 20, 2026 on the Address Balances layer, so a first action needs no coin.">
+<text x="24" y="145" class="fb">access</text>
+<rect x="120" y="128" width="150" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="195" y="145" text-anchor="middle" class="fm">zkLogin - 2023</text>
+<rect x="282" y="128" width="210" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="387" y="145" text-anchor="middle" class="fm">gasless transfers - 2026-05</text>
+</g>
+<g data-step="5" data-note="Privacy, still settling: programmable offchain tunnels were tested publicly in July 2026; Confidential Transfers entered public beta on devnet in June 2026.">
+<text x="24" y="179" class="fb">privacy</text>
+<rect x="120" y="162" width="220" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="230" y="179" text-anchor="middle" class="fm">Tunnels stress-test - 2026-07</text>
+<rect x="352" y="162" width="230" height="26" fill="none" stroke="currentColor" stroke-width="1"/>
+<text x="467" y="179" text-anchor="middle" class="fm">Confidential Transfers - beta</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 10.1</span> The stack as it actually stands: each layer is a shipped thing with a date, not a roadmap item.</figcaption>
+</figure>
+
+<h2 id="compare"><span class="num">11</span>Sui, Solana, Ethereum</h2>
+<p>The same question about order gets three answers, one from each chain.</p>
+<table>
+<thead><tr><th></th><th scope="col">Ethereum</th><th scope="col">Solana</th><th scope="col">Sui</th></tr></thead>
+<tbody>
+<tr><th scope="row">State shape</th><td>accounts in one global trie</td><td>accounts under one global order</td><td>objects, each with an owner</td></tr>
+<tr><th scope="row">What gets a total order</th><td>every transaction</td><td>every transaction</td><td>contending shared object traffic</td></tr>
+<tr><th scope="row">A plain owned coin transfer</th><td>waits in the global sequence</td><td>waits in the global sequence</td><td>DAG integrated validation, no total order against unrelated state</td></tr>
+<tr><th scope="row">Safety from</th><td>consensus on every step</td><td>consensus on every step</td><td>Mysticeti v2 DAG finalization, with serialization where state contends</td></tr>
+</tbody>
+</table>
+<p>Ethereum and Solana expose one broad execution order. Solana's bet, the Proof of History clock described in <a href="solana.html#poh">its page</a> here, is a hardware and pipeline bet on making that sequence run quickly. Sui's object model reveals when transactions are independent. Mysticeti v2 still finalizes them through its DAG, while avoiding a single serial execution queue for disjoint state.</p>
+<p>The honest ledger has entries on both sides. Mysticeti's published production measurement put consensus commit latency near 400 ms after the 2024 rollout. The data model makes parallel execution natural because disjoint objects cannot interact. The onboarding path combines zkLogin and sponsored transactions. Against it, the chain is young. Mainnet has been live since May 2023. The validator set is a hundred plus rather than thousands. The 6 million headline came from offchain channels, not base layer demand. Shared state such as one order book still creates a serialization point. The object model also moves complexity into application design: developers must decide which state is owned, shared, or immutable.</p>
+<p>The closing comparison refuses to crown a winner. The ranking depends entirely on what your transaction touches. If your ledger is a pile of property that changes hands, Sui's fast path fits the dependency pattern. If your transaction lives inside one hot pool with a thousand other traders, those writes still need serialization. The difference between chains then narrows to how fast their arbiters run. For the economics of paying validators to be those arbiters at all, read the <a href="proof-of-stake.html">proof of stake essay</a>. For the chain that emphasizes one fast global order, the <a href="solana.html">Solana page</a> is next door.</p>
+<figure>
+<svg viewBox="0 0 680 200" role="img" aria-labelledby="fgn11-t">
+<title id="fgn11-t">Three answers to what gets ordered: Ethereum and Solana pass every transaction through one global sequence, Sui routes owned transfers around the sequence and orders only contended shared-object writes</title>
+<defs><marker id="fgm11" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<g data-step="1" data-note="Ethereum: every transaction, a plain transfer included, waits in one global sequence. Safety and order come from the same wall.">
+<text x="24" y="37" class="fb">Ethereum</text>
+<rect x="140" y="22" width="26" height="18" fill="none" stroke="currentColor" stroke-width="1"/>
+<rect x="174" y="22" width="26" height="18" fill="none" stroke="currentColor" stroke-width="1"/>
+<rect x="208" y="22" width="26" height="18" fill="none" stroke="currentColor" stroke-width="1"/>
+<line x1="240" y1="31" x2="278" y2="31" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm11)"/>
+<rect x="282" y="16" width="180" height="30" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<text x="372" y="35" text-anchor="middle" class="fm">one global order</text>
+<line x1="462" y1="31" x2="498" y2="31" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm11)"/>
+<rect x="502" y="16" width="90" height="30" fill="none" stroke="var(--good)" stroke-width="1.2"/>
+<text x="547" y="35" text-anchor="middle" class="fm" style="fill:var(--good)">final</text>
+</g>
+<g data-step="2" data-note="Solana: also one global order for everything. The bet is running that single sequence faster, with the Proof of History clock.">
+<text x="24" y="97" class="fb">Solana</text>
+<rect x="140" y="82" width="26" height="18" fill="none" stroke="currentColor" stroke-width="1"/>
+<rect x="174" y="82" width="26" height="18" fill="none" stroke="currentColor" stroke-width="1"/>
+<rect x="208" y="82" width="26" height="18" fill="none" stroke="currentColor" stroke-width="1"/>
+<line x1="240" y1="91" x2="278" y2="91" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm11)"/>
+<rect x="282" y="76" width="180" height="30" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<text x="372" y="95" text-anchor="middle" class="fm">one order + PoH clock</text>
+<line x1="462" y1="91" x2="498" y2="91" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm11)"/>
+<rect x="502" y="76" width="90" height="30" fill="none" stroke="var(--good)" stroke-width="1.2"/>
+<text x="547" y="95" text-anchor="middle" class="fm" style="fill:var(--good)">final</text>
+</g>
+<g data-step="3" data-note="Sui: Mysticeti v2 validates transactions in one DAG. Disjoint owned-object transfers use its fast path without a total order, while contending shared-object writes are ordered.">
+<text x="24" y="157" class="fb">Sui</text>
+<rect x="140" y="126" width="26" height="18" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+<rect x="174" y="126" width="26" height="18" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+<line x1="206" y1="135" x2="498" y2="135" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#fgm11)"/>
+<text x="350" y="122" text-anchor="middle" class="fm st">owned: DAG fast path, no total order</text>
+<rect x="140" y="164" width="26" height="18" fill="none" stroke="currentColor" stroke-width="1"/>
+<line x1="170" y1="173" x2="278" y2="173" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm11)"/>
+<rect x="282" y="160" width="180" height="26" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<text x="372" y="177" text-anchor="middle" class="fm">consensus if shared</text>
+<line x1="462" y1="173" x2="498" y2="173" stroke="currentColor" stroke-width="1.5" marker-end="url(#fgm11)"/>
+<rect x="502" y="126" width="90" height="56" fill="none" stroke="var(--good)" stroke-width="1.2"/>
+<text x="547" y="158" text-anchor="middle" class="fm" style="fill:var(--good)">final</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 11.1</span> The same question, three answers: what each chain forces through its single sequence, and what Sui lets go around it.</figcaption>
+</figure>
+
+</main>
+</div>
+
+<footer class="band foot">
+<nav class="pn" aria-label="Guide navigation"><a href="solana.html" rel="prev"><small>Previous</small><strong>Solana</strong></a><a href="monero-under-the-hood.html" rel="next"><small>Next</small><strong>Monero</strong></a></nav>
+<p class="colophon">Written by <a href="https://moamenbasel.com">Moamen Basel</a>, security engineer at <a href="https://greycorelabs.com">Grey Core Labs</a>. Moamen Basel, 2026, facts current September 2026. <a href="index.html">Index</a></p>
+</footer>
+
+<script>
+const enc=new TextEncoder();
+async function sha(m){const d=await crypto.subtle.digest('SHA-256',enc.encode(m));const b=new Uint8Array(d);let s='';for(let i=0;i<b.length;i++)s+=b[i].toString(16).padStart(2,'0');return s}
+let HN=0;
+async function h(m){HN++;return sha(m)}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const fmtN=n=>n.toLocaleString('en-US');
+function canonTx(t){return JSON.stringify([t.kind,t.from,t.to,t.obj,t.amount||0])}
+async function signStandIn(sk,d){return h('sig sk='+sk+' d='+d)}
+async function verifyStandIn(sk,d,s){return (await h('sig sk='+sk+' d='+d))===s}
+async function quorumCert(d,f){const s=[];for(let i=0;i<f;i++)s.push(await h('val'+i+' signs '+d));return h('qc of ['+s.join(',')+']')}
+async function certify(t,f){const d=await h(canonTx(t));const s=await signStandIn(t.from,d);const ok=await verifyStandIn(t.from,d,s);const cert=await quorumCert(d,f);return {t:t,d:d,verified:ok,cert:cert}}
+async function sharedSequence(t,f){const d=await h(canonTx(t));const cert=await quorumCert(d,f);const p=[];for(let i=0;i<f;i++)p.push(await h('val'+i+' proposes '+d));const commit=await h('commit seq on ['+p.join(',')+']');return {d:d,cert:cert,commit:commit,steps:1}}
+async function ledgerHash(map){const ks=Object.keys(map).sort();return h('ledger '+ks.map(k=>k+'='+map[k]).join(';'))}
+async function objId(seed){return '0x'+await h('object seed '+seed)}
+async function addrOf(seed){return '0x'+(await h('address seed '+seed)).slice(0,40)}
+async function typeTag(s){return h('typetag '+s)}
+function nybDiff(a,b){let n=0;for(let i=0;i<a.length;i++)if(a[i]!==b[i])n++;return n}
+function flipRows(a,b){let s='';for(let i=0;i<a.length;i++)s+=a[i]===b[i]?a[i]:'<span class="flip">'+b[i]+'</span>';return s}
+function typeFits(coin,slot){return slot==='Bag<'+coin+'>'}
+
+const LABS={
+'m-live':{runLabel:'Mint',run:async c=>{
+  const name=(c.input&&c.input.value||'first-coin').trim()||'unnamed';
+  c.line('minting <span class="dim">'+name+'</span>');
+  const id=await objId(name);const owner=await addrOf(name);const tt=await typeTag('Coin<SUI>');
+  c.line('type <span class="dim">Coin&lt;SUI&gt; '+tt.slice(0,16)+'…</span>');
+  c.line('id '+id);
+  c.line('version 0');
+  c.line('owner '+owner);
+  await c.sleep(60);
+  return {summary:'Toy object generated. The same name repeats because this lab uses deterministic hashing.',copy:id}
+}},
+'m-fast':{run:async c=>{
+  const F=4;
+  const t1={kind:'transfer',from:'alice',to:'bob',obj:'coin-111',amount:3};
+  const t2={kind:'transfer',from:'carol',to:'dave',obj:'coin-222',amount:5};
+  c.line('owned lane: two transfers, disjoint objects');
+  const states=[];
+  const orders=[[t1,t2],[t2,t1]];
+  for(let k=0;k<2;k++){
+    c.line('run '+(k+1)+' in order ['+orders[k].map(t=>t.obj).join(', ')+']');
+    const map={};
+    for(const t of orders[k]){
+      const r=await certify(t,F);
+      if(!r.verified)return {error:true,summary:'signature check failed on '+t.obj};
+      map[t.obj]=t.to;
+      c.line(' '+t.obj+': '+t.from+' -> '+t.to+' digest '+r.d.slice(0,12)+'… cert '+r.cert.slice(0,10)+'… <span class="ok">0 ordering steps</span>');
+      await c.sleep(40);
+    }
+    states.push(await ledgerHash(map));
+    c.prog((k+1)/3);
+  }
+  const same=states[0]===states[1];
+  c.line('state hash run 1: '+states[0].slice(0,26)+'…');
+  c.line('state hash run 2: '+states[1].slice(0,26)+'…');
+  c.line(same?'<span class="ok">identical final state: order never mattered</span>':'<span class="no">states differ, which should be impossible here</span>');
+  await c.sleep(200);
+  c.line('shared lane: same operation, shared pool-999');
+  const t3={kind:'swap',from:'erin',to:'pool-999',obj:'pool-999',amount:2};
+  const r=await sharedSequence(t3,F);
+  c.line('digest '+r.d.slice(0,12)+'… cert '+r.cert.slice(0,10)+'…');
+  c.line('<span class="flip">consensus round</span>: sequence assigned, pool version 41 -> 42');
+  const alive=await c.sleep(450);
+  if(!alive)return {error:true,summary:'stopped mid-consensus.'};
+  c.prog(1);
+  c.tick(HN);
+  return {summary:'Owned lane: 2 transfers, 0 ordering steps, both orders identical. Shared lane: 1 operation, 1 consensus round. '+fmtN(HN)+' hash ops total.',copy:r.cert}
+}},
+'m-counter':{run:async c=>{
+  const n=c.input?+c.input.value:6;const F=3;
+  c.line('parties: '+n+', shared counter version 0');
+  const h0=HN;let cert='';
+  for(let i=0;i<n;i++){
+    const t={kind:'increment',from:'p'+(i+1),to:'counter-0',obj:'counter-0',amount:1};
+    const r=await sharedSequence(t,F);cert=r.cert;
+    c.line('round '+(i+1)+': p'+(i+1)+' ordered at position '+(i+1)+', counter -> '+(i+1)+', cert '+r.cert.slice(0,10)+'…');
+    c.prog((i+1)/(2*n));
+    const alive=await c.sleep(70);
+    if(!alive)return {error:true,summary:'stopped during sequencing.'}
+  }
+  const sharedHashes=HN-h0;
+  c.line('<span class="dim">shared path done: '+n+' ordering steps, '+fmtN(sharedHashes)+' hash ops</span>');
+  await c.sleep(200);
+  c.line('owned lane: '+n+' transfers, disjoint coins');
+  const g0=HN;
+  const txs=[];
+  for(let i=0;i<n;i++)txs.push({kind:'transfer',from:'p'+(i+1),to:'q'+(i+1),obj:'coin-'+(400+i),amount:1});
+  await Promise.all(txs.map(async(t,i)=>{
+    const r=await certify(t,F);
+    await c.sleep(30+i*14);
+    c.line(' '+t.obj+': '+t.from+' -> '+t.to+' cert '+r.cert.slice(0,10)+'… <span class="ok">0 ordering steps</span>');
+  }));
+  c.prog(1);
+  const ownedHashes=HN-g0;
+  c.line('<span class="dim">owned path done: 0 ordering steps, '+fmtN(ownedHashes)+' hash ops</span>');
+  c.tick(HN);
+  return {summary:'Conceptual model: shared object, '+n+' dependency steps; disjoint owned objects, 0 dependency steps. Synthetic certificate hashes: '+fmtN(sharedHashes)+' and '+fmtN(ownedHashes)+'.',copy:cert}
+}},
+'m-types':{run:async c=>{
+  c.line('slot type: Bag&lt;Coin&lt;BTC&gt;&gt;');
+  const a=await typeTag('Coin<SUI>');
+  const b=await typeTag('Coin<BTC>');
+  c.line('tag Coin&lt;SUI&gt;: '+a);
+  c.line('tag Coin&lt;BTC&gt;: '+flipRows(a,b));
+  const diff=nybDiff(a,b);
+  c.line('<span class="dim">'+diff+' of '+a.length+' nybbles differ</span>');
+  c.prog(.33);
+  await c.sleep(250);
+  const fitA=typeFits('Coin<SUI>','Bag<Coin<BTC>>');
+  c.line(fitA?'':'transfer 1.3 Coin&lt;SUI&gt; into the slot: <span class="no">refused, ETypeMismatch, slot wants Coin&lt;BTC&gt;</span>');
+  c.prog(.66);
+  await c.sleep(250);
+  const fitB=typeFits('Coin<BTC>','Bag<Coin<BTC>>');
+  c.line(fitB?'transfer 1.3 Coin&lt;BTC&gt; into the slot: <span class="ok">accepted, bag 4.2 -> 5.5 BTC</span>':'transfer refused');
+  c.prog(.85);
+  await c.sleep(250);
+  c.line('untyped replay: same SUI bytes, no type wall');
+  c.line('<span class="no">accepted silently, bag claims 5.5 BTC, 1.3 of it is SUI</span>');
+  c.tick(HN);
+  return {summary:'Type wall: wrong type refused before any state moves. Untyped ledger: same bytes, silent corruption. '+diff+' of '+a.length+' nybbles differed.',copy:b}
+}}
+};
+
+function wire(root){
+const cfg=LABS[root.id];if(!cfg)return;
+const runB=root.querySelector('.run'),resetB=root.querySelector('.reset'),copyB=root.querySelector('.copy'),out=root.querySelector('.out'),tickEl=root.querySelector('.mtick'),elaEl=root.querySelector('.mela'),bar=root.querySelector('.mline');
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let busy=false,cancel=false,t0=0,raf=0,lastQ=-1,copyText='',buf=null,btimer=0,seq=0;
+const setState=s=>{root.dataset.state=s;if(runB){runB.disabled=s==='running';runB.textContent=s==='running'?'Running':(cfg.runLabel||'Run');runB.toggleAttribute('aria-busy',s==='running')}if(copyB)copyB.disabled=s!=='done'};
+const fmtEla=ms=>{const s=ms/1000;return s<60?s.toFixed(1)+'s':Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0')+'.'+Math.floor(s%1*10)+'s'};
+const loop=()=>{const ms=performance.now()-t0;const qz=Math.floor(ms/100);if(qz!==lastQ){lastQ=qz;elaEl.textContent=fmtEla(ms)}raf=requestAnimationFrame(loop)};
+const stopRaf=()=>{if(raf)cancelAnimationFrame(raf);raf=0};
+const raw=(html,cls,nanim)=>{const d=document.createElement('div');if(cls)d.className=cls;d.innerHTML=html;if(nanim)d.style.animation='none';return d};
+const flush=()=>{if(!buf)return;for(const d of buf)out.appendChild(d);buf=null;while(out.children.length>14)out.removeChild(out.firstChild);out.scrollTop=out.scrollHeight};
+const line=(html,cls,nanim)=>{const d=raw(html,cls,nanim);if(RM&&!nanim){if(!buf)buf=[];buf.push(d);if(!btimer)btimer=setTimeout(()=>{btimer=0;flush()},500);return d}out.appendChild(d);while(out.children.length>14)out.removeChild(out.firstChild);const up=out.scrollHeight-out.scrollTop-out.clientHeight>24;if(!up)out.scrollTop=out.scrollHeight;return d};
+const hardReset=()=>{seq++;cancel=true;busy=false;stopRaf();if(btimer){clearTimeout(btimer);btimer=0}buf=null;out.innerHTML='';out.setAttribute('aria-live','polite');if(tickEl){tickEl.hidden=true;tickEl.textContent='0'}elaEl.textContent='0.0s';bar.style.transform='scaleX(0)';bar.classList.remove('indet');setState('idle')};
+const finish=(kind,lastHtml)=>{stopRaf();flush();const ms=performance.now()-t0;elaEl.textContent=fmtEla(ms);line(lastHtml,kind==='error'?'no':'ok',true);out.setAttribute('aria-live',kind==='error'?'assertive':'polite');setState(kind==='error'?'error':'done')};
+async function go(){
+if(busy)return;busy=true;cancel=false;const mySeq=++seq;setState('running');out.setAttribute('aria-live','off');out.innerHTML='';t0=performance.now();lastQ=-1;loop();
+const current=()=>mySeq===seq;
+const ctx={line:(html,cls,nanim)=>current()?line(html,cls,nanim):null,prog:f=>{if(current()){bar.classList.remove('indet');bar.style.transform='scaleX('+Math.max(0,Math.min(1,f))+')'}},sleep:async ms=>{await sleep(ms);return current()&&!cancel},cancelled:()=>!current()||cancel,setCopy:t=>{if(current())copyText=t},tick:n=>{if(current()&&tickEl){tickEl.hidden=false;tickEl.textContent=fmtN(n)}},input:root.querySelector('input[type=text],input[type=range]')};
+let r=null;
+try{r=await cfg.run(ctx)}catch(e){if(!current())return;finish('error','Error: '+(e&&e.message?e.message:String(e)));busy=false;return}
+if(!current())return;
+if(r&&r.copy)copyText=r.copy;
+finish(r&&r.error?'error':'done',r&&r.summary?r.summary:'Done.');
+busy=false;
+}
+runB.addEventListener('click',go);
+resetB.addEventListener('click',hardReset);
+copyB.addEventListener('click',async()=>{
+const txt=copyText||root.dataset.copy||'';
+if(copyB.disabled||!txt)return;
+let ok=false;
+try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(txt);ok=true}}catch(_){}
+if(!ok){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{ok=document.execCommand('copy')}catch(_){}ta.remove()}
+if(ok){copyB.textContent='Copied';setTimeout(()=>{copyB.textContent='Copy'},1400)}
+});
+root.addEventListener('keydown',e=>{
+const tag=(e.target.tagName||'').toLowerCase();
+const field=tag==='input'||tag==='textarea'||tag==='select';
+if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();if(!busy)go();return}
+if(field)return;
+if(e.key==='Enter'){e.preventDefault();if(!busy)go()}
+else if(e.key==='Escape'){if(busy)cancel=true;else root.blur()}
+else if(e.key==='R'&&e.shiftKey){e.preventDefault();hardReset()}
+else if(e.key==='C'&&e.shiftKey&&!copyB.disabled){e.preventDefault();copyB.click()}
+});
+return {go:go,reset:hardReset,line:line};
+}
+
+function init(){
+document.querySelectorAll('.machine').forEach(m=>{const w=wire(m);if(m.id==='m-live'){
+const inp=document.getElementById('i-live');const root=m;let prevId=null,pend=false;
+const render=async nanim=>{
+const name=(inp.value||'').trim()||'unnamed';
+const id=await objId(name);const owner=await addrOf(name);
+const tt=await typeTag('Coin<SUI>');
+const out=root.querySelector('.out');out.innerHTML='';
+const add=(html,cls)=>{const d=document.createElement('div');if(cls)d.className=cls;d.innerHTML=html;d.style.animation='none';out.appendChild(d)};
+add('type Coin&lt;SUI&gt; <span class="dim">'+tt.slice(0,14)+'…</span>');
+if(prevId&&prevId!==id)add('previous id '+prevId.slice(0,18)+'… <span class="dim">changed, as an avalanche should</span>');
+add('id '+id);add('version 0');add('owner '+owner);
+prevId=id;root.dataset.copy=id;
+root.querySelector('.mtick').hidden=false;root.querySelector('.mtick').textContent='4';
+};
+inp.addEventListener('input',()=>{if(pend)return;pend=true;requestAnimationFrame(()=>{pend=false;render(true)})});
+}});
+const saved=typeof localStorage!=='undefined'?localStorage.getItem('cln-theme'):null;
+const dark=saved?saved==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+const apply=()=>{const d=document.documentElement.getAttribute('data-theme')==='dark';document.getElementById('themenow').textContent=d?'Dark':'Light';document.getElementById('themego').textContent=d?'Light':'Dark'};
+document.documentElement.setAttribute('data-theme',dark?'dark':'light');apply();
+document.getElementById('themego').addEventListener('click',()=>{const d=document.documentElement.getAttribute('data-theme')==='dark';const n=d?'light':'dark';document.documentElement.setAttribute('data-theme',n);if(typeof localStorage!=='undefined')try{localStorage.setItem('cln-theme',n)}catch(_){ }apply()});
+const prog=document.getElementById('prog');
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const setProg=()=>{const h=document.documentElement;const max=h.scrollHeight-innerHeight;const x=max>0?scrollY/max:0;prog.style.transform='scaleX('+Math.max(0,Math.min(1,x))+')';prog.classList.toggle('on',scrollY>8)};
+if(RM){addEventListener('scrollend',setProg);setProg()}else{
+let pend=false;addEventListener('scroll',()=>{if(pend)return;pend=true;requestAnimationFrame(()=>{pend=false;setProg()})});setProg()}
+const links=[...document.querySelectorAll('.rail a')];
+const byId={};links.forEach(a=>{byId[a.getAttribute('href').slice(1)]=a});
+if('IntersectionObserver' in window){
+const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){links.forEach(a=>a.classList.remove('cur'));const a=byId[en.target.id];if(a)a.classList.add('cur')}})},{rootMargin:'0px 0px -72% 0px'});
+document.querySelectorAll('main h2[id]').forEach(hh=>io.observe(hh));
+}
+}
+if(typeof document!=='undefined'&&typeof document.querySelector==='function'&&document.querySelector('.machine'))init();
+</script>
+<script>
+(function(){
+'use strict';
+var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var CSS='.figx{position:relative}.figctl{display:flex;flex-wrap:wrap;gap:8px;margin:12px 2px 0}.figb{font-family:var(--mono);font-size:11px;line-height:1.2;padding:4px 10px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer;transition:border-color .15s ease,color .15s ease}.figb:hover{border-color:var(--accent);color:var(--accent)}.figb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.fignote{position:absolute;top:10px;left:10px;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 9px;font-family:var(--sans);font-size:12px;line-height:1.45;color:var(--muted);pointer-events:none;opacity:0;transform:translateY(-2px);transition:opacity .12s ease,transform .12s ease;z-index:5}.fignote.on{opacity:1;transform:none}figure.figx [data-step]{transition:opacity .25s ease}figure.figx [data-step].fg-prev{opacity:.28}figure.figx [data-step].fg-cur{opacity:1;animation:fgpulse 1.3s ease-in-out infinite}@keyframes fgpulse{0%,100%{opacity:1}50%{opacity:.5}}figure.figx .sa,figure.figx .sb{transition:opacity .25s ease,transform .25s ease}figure.figx svg.fa .sb{opacity:.08;transform:translateY(8px)}figure.figx svg.fb .sa{opacity:.08;transform:translateY(8px)}figure.figx [data-note]{cursor:help}@media(prefers-reduced-motion:reduce){figure.figx [data-step],figure.figx .sa,figure.figx .sb,.fignote,.figb{transition:none}figure.figx [data-step].fg-cur{animation:none}}';
+var st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
+var DRAW='path,line,rect,circle,ellipse,polyline,polygon';
+function Q(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+function btn(t,al){var b=document.createElement('button');b.type='button';b.className='figb';b.textContent=t;b.setAttribute('aria-label',al);return b}
+function noteOf(el){var n=el.getAttribute?el.getAttribute('data-note'):'';if(n)return n;var t=el.querySelector?el.querySelector(':scope > title'):null;return t?t.textContent.trim():''}
+function wipe(list){list.forEach(function(e){e.style.transition='';e.style.strokeDasharray='';e.style.strokeDashoffset='';e.style.opacity='';e.style.transform=''})}
+function clean(svg){wipe(Q(DRAW,svg));wipe(Q('text',svg))}
+function play(svg){
+ var sk=[],fd=[];
+ Q(DRAW,svg).forEach(function(e){if(e.closest('defs'))return;var cs=getComputedStyle(e);if(cs.stroke!=='none'){var L=0;try{L=e.getTotalLength()}catch(x){}if(L>0){sk.push([e,L]);return}}fd.push(e)});
+ Q('text',svg).forEach(function(t){fd.push(t)});
+ clearTimeout(svg._fgt);
+ if(RM){clean(svg);return}
+ var end=0;
+ sk.forEach(function(p,i){var d=Math.min(i*36,420);if(d+560>end)end=d+560;p[0].style.transition='none';p[0].style.strokeDasharray=p[1]+' '+p[1];p[0].style.strokeDashoffset=p[1]});
+ fd.forEach(function(e,i){var d=Math.min(i*60,540);if(d+420>end)end=d+420;e.style.transition='none';e.style.opacity='0';if(e.tagName.toLowerCase()==='text')e.style.transform='translateY(6px)'});
+ svg.getBoundingClientRect();
+ sk.forEach(function(p,i){var d=Math.min(i*36,420);p[0].style.transition='stroke-dashoffset 560ms cubic-bezier(.22,.61,.36,1) '+d+'ms';p[0].style.strokeDashoffset='0'});
+ fd.forEach(function(e,i){var d=Math.min(i*60,540);var tx=e.tagName.toLowerCase()==='text';e.style.transition='opacity 400ms ease-out '+d+'ms'+(tx?',transform 400ms ease-out '+d+'ms':'');e.style.opacity='1';if(tx)e.style.transform='translateY(0)'});
+ svg._fgt=setTimeout(function(){clean(svg)},end+80);
+}
+function setup(fig){
+ var svg=fig.querySelector('svg');if(!svg)return;
+ fig.classList.add('figx');
+ var cap=document.createElement('div');cap.className='fignote';cap.setAttribute('aria-hidden','true');fig.insertBefore(cap,fig.firstChild);
+ var ctl=document.createElement('div');ctl.className='figctl';fig.insertBefore(ctl,svg.nextSibling);
+ var hoverEl=null,tags=[],baseTxt='',timer=0,cur=0,seen=false;
+ function mark(el,on){
+  if(!on){tags.splice(0).forEach(function(t){t[0].style[t[1]]=''});return}
+  if(el.tagName.toLowerCase()==='g'){Q('[stroke]',el).forEach(function(c){c.style.stroke='var(--accent)';tags.push([c,'stroke'])});Q('text',el).forEach(function(c){c.style.fill='var(--accent)';tags.push([c,'fill'])})}
+  else{var pr=getComputedStyle(el).stroke!=='none'?'stroke':'fill';el.style[pr]='var(--accent)';tags.push([el,pr])}
+ }
+ function showCap(t){cap.textContent=t;cap.classList.add('on')}
+ function enter(e){if(hoverEl&&hoverEl!==e)leave(hoverEl);hoverEl=e;mark(e,true);showCap(noteOf(e))}
+ function leave(e){if(hoverEl!==e)return;hoverEl=null;mark(e,false);if(baseTxt&&seen)showCap(baseTxt);else cap.classList.remove('on')}
+ Q('[data-note]',svg).forEach(function(e){
+  e.addEventListener('pointerenter',function(ev){if(ev.pointerType==='touch')return;enter(e)});
+  e.addEventListener('pointerleave',function(ev){if(ev.pointerType==='touch')return;leave(e)});
+  e.addEventListener('click',function(){if(hoverEl===e)leave(e);else enter(e)});
+ });
+ function stopAuto(){if(timer){clearInterval(timer);timer=0}}
+ function stepShow(i){cur=i;var gs2=gs;gs2.forEach(function(g,k){g.classList.toggle('fg-prev',k<i);g.classList.toggle('fg-cur',k===i)});baseTxt=noteOf(gs2[i])||'';if(!hoverEl){if(seen&&baseTxt)showCap(baseTxt);else cap.classList.remove('on')}}
+ var gs=Q('[data-step]',svg).sort(function(a,b){return(+a.getAttribute('data-step')||0)-(+b.getAttribute('data-step')||0)});
+ if(gs.length){
+  var sb=btn('Step','advance one step in the sequence');ctl.appendChild(sb);
+  sb.addEventListener('click',function(){stopAuto();seen=true;stepShow((cur+1)%gs.length)});
+  if(!RM)fig._fgauto=function(){stopAuto();var n=0;timer=setInterval(function(){stepShow((cur+1)%gs.length);if(++n>=gs.length)stopAuto()},900)};
+ }
+ if(svg.querySelector('.sa,.sb')){
+  svg.classList.add('fa');
+  var tb=btn(svg.getAttribute('data-la')||'Toggle','switch diagram state');ctl.appendChild(tb);
+  tb.addEventListener('click',function(){var fa=svg.classList.toggle('fa');svg.classList.toggle('fb',!fa);tb.textContent=fa?(svg.getAttribute('data-la')||'Toggle'):(svg.getAttribute('data-lb')||'Toggle')});
+ }
+ var rb=btn('Replay','replay the draw-in animation');rb.addEventListener('click',function(){stopAuto();play(svg)});ctl.insertBefore(rb,ctl.firstChild);
+ var fired=false;
+ function fire(){if(fired)return;fired=true;seen=true;play(svg);if(typeof fig._fgauto==='function')fig._fgauto()}
+ if(RM||!('IntersectionObserver' in window)){fire()}
+ else{var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){io.disconnect();fire()}})},{threshold:.2});io.observe(fig)}
+}
+Q('figure').forEach(function(f){if(!f.querySelector('.machine'))setup(f)});
+})();
+</script>
+</body>
+</html>

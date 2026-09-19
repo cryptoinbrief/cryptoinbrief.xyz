@@ -1,0 +1,82 @@
+# Crypto in Brief
+
+> A detailed guide to the public essays, runnable demonstrations, authorship, and interpretation limits on cryptoinbrief.xyz.
+
+## Purpose
+
+Crypto in Brief explains the mechanics behind cryptocurrencies for readers with no assumed background. Each essay combines concise prose, SVG illustrations, and browser interactions. The project is educational. It does not provide financial advice, wallet software, production cryptography, or a substitute for primary protocol documentation.
+
+## Authorship
+
+- Written and maintained by [Moamen Basel](https://moamenbasel.com).
+- Moamen Basel is a security engineer at [Grey Core Labs](https://greycorelabs.com).
+- Public source repository: [cryptoinbrief/cryptoinbrief.xyz](https://github.com/cryptoinbrief/cryptoinbrief.xyz).
+- Source code and documentation are available under the MIT License.
+
+## How to interpret the labs
+
+The site uses two kinds of browser labs. Some call standard browser cryptography, including SHA 256 through the Web Crypto API. Others are deliberately small simulations of systems that require networks, validators, or cryptographic groups too large for a short teaching exercise. A simulation can demonstrate a mechanism without reproducing the performance, security, or adversarial environment of a production network. Some English guides add autoplay causal stories and animated figures, but the essential explanation remains in the HTML prose when scripts do not run. Each essay should be cited for the specific claim it explains.
+
+## Start here
+
+- [Site home](https://cryptoinbrief.xyz/): The complete reading map in English and Arabic. Its payment walkthrough creates an ephemeral ECDSA P256 key and verifies the original and altered messages through Web Crypto. Wallet balances, network acceptance, and ledger updates remain a visual model.
+- [Bitcoin and crypto, illustrated](https://cryptoinbrief.xyz/crypto-summary.html): A visual map of the major ideas before the longer English essays.
+- [البيتكوين والكريبتو، ملخص مرسوم](https://cryptoinbrief.xyz/crypto-summary-ar.html): The Arabic illustrated overview.
+
+## Bitcoin
+
+- [Bitcoin from zero](https://cryptoinbrief.xyz/bitcoin-from-zero.html): Introduces hashing, the contents of a block, Merkle trees, proof of work, the nonce, node verification, public key signatures, transaction outputs, forks, finality, and transaction ordering. Labs include browser hashing and constrained mining exercises. Production security depends on the full Bitcoin network and is not reproduced by a local demonstration.
+- [البيتكوين من الصفر](https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html): Arabic explanation of hashes, blocks, Merkle trees, mining, the nonce, and independent verification with browser exercises.
+
+## Proof of stake
+
+- [Proof of stake from zero](https://cryptoinbrief.xyz/proof-of-stake.html): Explains why validators lock capital, how stake weighted proposer selection works, what attestations communicate, how fork choice and finality interact, and why equivocation can be punished. The proposer lottery and attack cost exercises are simulations rather than connections to Ethereum.
+
+## Solana
+
+- [Solana from zero](https://cryptoinbrief.xyz/solana.html): Explains proof of history as an ordering clock, the relation between slots and leaders, Tower BFT vote lockouts, and parallel transaction execution. The labs isolate clock generation, fork voting, and execution conflicts in the browser.
+
+## Sui
+
+- [Sui from zero](https://cryptoinbrief.xyz/sui.html): Explains objects with explicit ownership, the distinction between owned and shared transactions, the consensus path, Mysticeti, Move resource safety, and zkLogin. The browser labs model object transfers and contention rather than operating a Sui node.
+
+## Monero
+
+- [Monero under the hood](https://cryptoinbrief.xyz/monero-under-the-hood.html): Explains stealth addresses, ring signatures, key images, RingCT, network layer privacy, proof of work, and current protocol tradeoffs. Cryptographic equations are demonstrated in deliberately small groups. Those numbers are unsuitable for real security.
+- [مونيرو من الصفر](https://cryptoinbrief.xyz/monero-from-zero-ar.html): Arabic explanation of how Monero obscures receiver, sender, and amount using stealth addresses, ring signatures, key images, and confidential transactions.
+
+## Zcash
+
+- [Zcash from zero](https://cryptoinbrief.xyz/zcash.html): Explains shielded notes, commitments, Merkle membership, nullifiers, viewing keys, transparent and shielded pools, and the operational tradeoffs of optional privacy. It distinguishes the Israeli and American research behind Zerocash, the US company that launched Zcash, and the later Israeli company StarkWare. Browser labs model note creation and spending without creating Zcash transactions.
+
+## Zero knowledge proofs and identity
+
+- [Zero knowledge from zero](https://cryptoinbrief.xyz/zero-knowledge-from-zero.html): Builds the idea of proving knowledge without revealing a secret through the cave analogy, repeated challenges, Fiat Shamir, SNARK and STARK comparisons, and selective disclosure for identity. The identity examples describe privacy properties and failure modes. They do not certify a passport system.
+
+## Languages and editions
+
+- English is the primary language for the seven detailed topic essays and the illustrated overview.
+- Arabic editions are available for the illustrated overview, Bitcoin, and Monero.
+- Arabic pages use their own canonical URLs and are listed as language alternatives in the sitemap.
+
+## Citation guidance
+
+- Link to the exact essay that supports a statement.
+- Keep dates attached to time sensitive network statistics and roadmap claims.
+- Distinguish a browser simulation from a production protocol operation.
+- Do not describe the labs as wallets, network clients, audited cryptographic software, or proof that a protocol is secure.
+- Attribute the work to Crypto in Brief and Moamen Basel when reusing or quoting it.
+
+## Discovery files
+
+- [Concise site guide](https://cryptoinbrief.xyz/llms.txt)
+- [XML sitemap](https://cryptoinbrief.xyz/sitemap.xml)
+- [RSS feed](https://cryptoinbrief.xyz/rss.xml)
+- [Crawler policy note](https://cryptoinbrief.xyz/ai.txt)
+- [Human credits](https://cryptoinbrief.xyz/humans.txt)
+
+## Contact and corrections
+
+- Author website: [moamenbasel.com](https://moamenbasel.com)
+- Professional affiliation: [greycorelabs.com](https://greycorelabs.com)
+- Repository: [github.com/cryptoinbrief/cryptoinbrief.xyz](https://github.com/cryptoinbrief/cryptoinbrief.xyz)

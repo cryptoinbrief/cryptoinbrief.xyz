@@ -1,0 +1,8 @@
+.DS_Store
+.venv/
+.cache/
+node_modules/
+screenshots/
+test-results/
+__pycache__/
+*.py[cod]

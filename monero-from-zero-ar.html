@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-coin="monero">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مونيرو من الصفر، الدفع من غير ما حد يشوف حاجة | Crypto in Brief</title>
+<meta name="description" content="شرح مونيرو من الصفر بالعربي للي معرفش أي حاجة عن العملات: إخفاء المرسل والمستلم والمبلغ بالعناوين الخفية والتوقيع الحلقي وRingCT، بتجارب تعليمية حية على نموذج رياضي صغير.">
+<link rel="canonical" href="https://cryptoinbrief.xyz/monero-from-zero-ar.html">
+<meta property="og:site_name" content="Crypto in Brief">
+<meta property="og:type" content="article">
+<meta property="og:title" content="مونيرو من الصفر">
+<meta property="og:description" content="شرح مونيرو من الصفر بالعربي للي معرفش أي حاجة عن العملات: إخفاء المرسل والمستلم والمبلغ بالعناوين الخفية والتوقيع الحلقي وRingCT، بتجارب تعليمية حية على نموذج رياضي صغير.">
+<meta property="og:url" content="https://cryptoinbrief.xyz/monero-from-zero-ar.html">
+<meta property="og:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="مونيرو من الصفر">
+<meta name="twitter:description" content="شرح مونيرو من الصفر بالعربي للي معرفش أي حاجة عن العملات: إخفاء المرسل والمستلم والمبلغ بالعناوين الخفية والتوقيع الحلقي وRingCT، بتجارب تعليمية حية على نموذج رياضي صغير.">
+<meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="author" content="Moamen Basel">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"مونيرو من الصفر","description":"شرح مونيرو من الصفر بالعربي للي معرفش أي حاجة عن العملات: إخفاء المرسل والمستلم والمبلغ بالعناوين الخفية والتوقيع الحلقي وRingCT، بتجارب تعليمية حية على نموذج رياضي صغير.","datePublished":"2026-09-19","inLanguage":"ar","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz"},"mainEntityOfPage":"https://cryptoinbrief.xyz/monero-from-zero-ar.html"}</script>
+<style>
+:root{
+  --bg:#FAFAF8; --surface:#FFFFFF; --surface2:#F4F4F1;
+  --border:#E7E6E1; --border2:#D8D7D1;
+  --ink:#16171A; --muted:#5D6270; --faint:#9B9FA8;
+  --accent:#D95A00; --accent-ink:#FFFFFF; --accent-soft:rgba(217,90,0,.10);
+  --good:#0B9E6A; --bad:#D64533; --warn:#B27A22;
+  --term:#0C0E11; --term-border:#1E2229; --term-ink:#DADEE4; --term-dim:#8A909A; --term-accent:#63E2A6;
+  --serif:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --sans:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --measure:66ch; --rail:13rem; --note:13.5rem; --gutter:1.75rem;
+  --ease:cubic-bezier(.25,.8,.35,1);
+  --r-card:16px; --r-btn:10px; --r-chip:999px;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#FF7A1F; --accent-ink:#1F0E02; --accent-soft:rgba(255,122,31,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}
+@media(prefers-color-scheme:dark){
+:root:not([data-theme="light"]){
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#FF7A1F; --accent-ink:#1F0E02; --accent-soft:rgba(255,122,31,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}}
+*{box-sizing:border-box}
+html{overflow-x:clip;font-size:106.25%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0588rem;line-height:1.72;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent-soft);color:var(--ink)}
+#readprog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+#readprog.on{visibility:visible}
+.band{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:3.25rem;padding-inline:max(1.25rem,calc(50vw - 21rem));font-family:var(--sans);font-size:.75rem;letter-spacing:.02em}
+header.band{position:sticky;top:0;z-index:50;flex-wrap:wrap;padding-block:.5rem;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--border)}
+.band a{color:var(--muted);text-decoration:none;transition:color .15s var(--ease)}
+.band a:hover{color:var(--ink)}
+.band a[aria-current="page"]{color:var(--accent)}
+.band .mark{color:var(--ink);font-weight:650;white-space:nowrap;letter-spacing:-.01em;font-size:.875rem}
+.band nav.series{display:flex;flex-wrap:wrap;gap:.3rem .95rem}
+.band .series a{white-space:nowrap}
+.band .switch{display:flex;gap:1rem;margin:0;white-space:nowrap;font-family:var(--mono);font-size:.7rem}
+.band .switch b{color:var(--ink);font-weight:600}
+.band .none{color:var(--faint)}
+.band button{background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer}
+.band button:hover{color:var(--accent)}
+main{max-width:var(--measure);margin-inline:auto;padding:3rem 1.25rem 5rem;position:relative}
+.reg,main::before,main::after{display:none}
+@media(min-width:1100px){
+main{max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note));display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter)}
+nav.toc.rail{grid-column:1;align-self:start;position:sticky;top:4.5rem}
+.col{grid-column:2;max-width:var(--measure);position:relative}
+}
+.byline{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 1rem}
+.byline,.lead{max-width:60ch}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,1.7rem + 3.2vw,3.6rem);line-height:1.04;letter-spacing:-.015em;margin:.15em 0 .5em}
+.lead{font-size:1.3rem;line-height:1.45;color:var(--muted);margin:0 0 2rem;font-weight:450}
+h2{font-size:1.65rem;line-height:1.25;font-weight:650;letter-spacing:-.015em;margin:3.4em 0 .7em}
+.col>h2:first-of-type{margin-block-start:1.8em}
+h2 .num{font-family:var(--mono);color:var(--accent);font-size:.7em;margin-inline-end:.7em;font-weight:500;letter-spacing:0}
+h3{font-size:1.18rem;line-height:1.35;font-weight:600;margin:2.1em 0 .45em;letter-spacing:-.008em}
+p{margin:0 0 1.15em}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);transition:border-color .15s var(--ease)}
+a:hover{border-bottom-color:var(--accent)}
+code,.hx,.num{font-family:var(--mono);font-size:.85em;font-variant-numeric:tabular-nums}
+code{background:var(--accent-soft);border-radius:5px;padding:.1em .35em}
+strong{font-weight:650}
+figure{margin:2.5rem auto;width:min(72rem,calc(100vw - 2rem));transform:translateX(0);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:1.5rem 1.5rem 1.1rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+[dir="rtl"] figure{margin-inline:auto}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:.9rem}
+figcaption .figno{font-family:var(--mono);color:var(--accent);margin-inline-end:.55em;font-size:.95em}
+.figbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:inherit;border-radius:var(--r-card)}
+.figbtn:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.c-time{stroke:var(--warn)} .c-nonce{stroke:var(--accent)} .c-mrk{stroke:var(--good)} .c-ver{stroke:var(--faint)}
+.f-time{fill:var(--warn)} .f-nonce{fill:var(--accent)} .f-ink{fill:var(--ink)} .f-mut{fill:var(--muted)} .f-pap{fill:var(--surface)}
+table{width:100%;border-collapse:collapse;margin:1.8em 0;font-family:var(--sans);font-size:.875rem}
+th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-bottom:1px solid var(--border)}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+tbody th{font-weight:400;color:var(--muted);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+aside.note{font-size:.875rem;line-height:1.6;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+aside.note.good{border-color:color-mix(in srgb,var(--good) 35%,var(--border))}
+aside.note.bad{border-color:color-mix(in srgb,var(--bad) 35%,var(--border))}
+aside.note p{margin:0 0 .5em}
+aside.note p:last-child{margin:0}
+@media(min-width:1152px){
+aside.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+nav.toc{font-family:var(--sans);font-size:.8125rem;line-height:1.5}
+nav.toc.rail{display:none}
+@media(min-width:1100px){nav.toc.rail{display:block}}
+nav.toc.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;transition:color .15s var(--ease)}
+nav.toc.rail a .leaders{display:none}
+nav.toc.rail a .secno{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover{color:var(--ink)}
+nav.toc.rail a:hover .secno{color:var(--accent)}
+nav.toc.rail a.act{color:var(--accent);font-weight:550}
+nav.toc.rail a.act .secno{color:var(--accent)}
+nav.toc.rail .toclab{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+details.toc{border:1px solid var(--border);border-radius:12px;margin:2rem 0;padding:.35rem 1rem;background:var(--surface)}
+details.toc summary{cursor:pointer;font-weight:600;color:var(--ink);padding:.45rem 0}
+details.toc ol{margin:.4em 0 .6em;padding-inline-start:1.3em}
+details.toc li{margin:.25em 0}
+@media(min-width:1100px){details.toc{display:none}}
+.machine{background:var(--surface2);color:var(--ink);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;width:min(72rem,calc(100vw - 2rem));margin:2.5rem auto;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.machine:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mhead{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0}
+.mtag{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em}
+.mtitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.mchip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted)}
+.mtick{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:7ch;text-align:end}
+.mtick.tk{color:var(--accent)}
+.melapsed{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:6ch;text-align:end}
+.mprog{height:2px;margin:0;background:var(--accent);transform-origin:0 0;transform:scaleX(0)}
+.machine[data-state="running"] .mprog{transform:scaleX(var(--sx,0));transition:transform 120ms linear}
+.machine[data-state="running"] .mprog.ind{transform:none;animation:indbar 900ms linear infinite}
+@keyframes indbar{from{transform:translateX(-40%) scaleX(.28)}to{transform:translateX(120%) scaleX(.28)}}
+.machine[data-state="done"] .mprog{transform:scaleX(1);height:0;transition:transform 140ms var(--ease),height 180ms var(--ease) 160ms}
+.mrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 4px}
+.machine .mrow~.mrow{padding-top:0}
+.machine button{font-family:var(--sans);font-size:.875rem;line-height:1;font-weight:550;padding:10px 18px;min-height:38px;cursor:pointer;border-radius:var(--r-btn);transition:transform .12s var(--ease),background .15s var(--ease),filter .12s var(--ease)}
+.machine .run{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine .run:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine .run:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine .ghost{background:transparent;border:1px solid var(--border2);color:var(--ink)}
+.machine .ghost:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.machine button:disabled{opacity:.4;cursor:not-allowed}
+.machine button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.machine .run.pop{animation:runpop 240ms var(--ease)}
+@keyframes runpop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.machine input,.machine select{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:9px 12px}
+.machine input:focus-visible,.machine select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{background:var(--term);border:1px solid var(--term-border);border-radius:12px;margin:10px 14px 14px;padding:12px 14px;min-height:76px;max-height:240px;overflow-y:auto;font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--term-ink);word-break:break-all;transition:border-color 180ms}
+.machine[data-state="running"] .out{border-color:var(--term-border)}
+.machine .out.flash{border-color:var(--good);transition:border-color 180ms}
+.machine[data-state="error"] .out{border-color:var(--bad)}
+.out p{margin:0 0 2px;animation:linein 120ms var(--ease)}
+@keyframes linein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.out::-webkit-scrollbar{width:6px}
+.out::-webkit-scrollbar-thumb{background:var(--term-border);border-radius:3px}
+.out .hx{font-size:.8rem}
+.out .zeros{color:var(--term-accent);font-weight:700}
+.out .ok{color:var(--good)}
+.out .no{color:var(--bad)}
+.out .dim{color:var(--term-dim);font-size:.72rem;margin-top:6px}
+.out .sA{color:var(--term-dim)}
+.out .sB{color:var(--term-accent)}
+.out .lane{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0}
+.out .lane .ln{width:6ch;color:var(--term-dim);font-size:.72rem}
+.out .blkchip{border:1px solid var(--term-border);border-radius:6px;padding:1px 7px;font-size:.72rem;color:var(--term-ink)}
+.out .blkchip.win{border-color:var(--good);color:var(--good)}
+.out .blkchip.dead{color:var(--term-dim);text-decoration:line-through}
+.mcap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:.7rem 14px 1rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+footer.band{display:block;position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:0;border-top:1px solid var(--border);padding-block:1.5rem 3rem;font-size:.8rem;color:var(--muted);letter-spacing:0}
+footer.band .pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:1.2rem}
+footer.band .pn a{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;color:var(--ink);background:var(--surface);transition:border-color .15s var(--ease)}
+footer.band .pn a:hover{border-color:var(--accent)}
+footer.band .pn a:hover .t{color:var(--accent)}
+footer.band .pn .k{font-family:var(--mono);font-size:.65rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+footer.band .pn .t{font-family:var(--sans);font-size:.95rem;font-weight:550;color:var(--ink)}
+footer.band .pn .next{text-align:end;align-items:flex-end}
+footer.band .colophon{margin:1.5rem 0 0}
+footer.band .colophon a{color:var(--muted);border-bottom:0}
+footer.band .colophon a:hover{color:var(--accent)}
+@media(prefers-contrast:more){
+.machine,.out{border-width:2px}
+.mprog{height:3px}
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.out p{animation:none}
+.machine .run.pop{animation:none}
+.machine button{transition:none}
+.machine[data-state="running"] .mprog,.machine[data-state="running"] .mprog.ind{animation:none;transition:none}
+.machine[data-state="done"] .mprog{transition:none}
+}
+
+html[lang="ar"] body{line-height:1.95}
+html[lang="ar"] h1{font-family:var(--sans);font-weight:700;letter-spacing:0;font-size:clamp(2.1rem,1.5rem + 2.6vw,3rem)}
+html[lang="ar"] .lead{font-weight:450}
+html[lang="ar"] h2 .num,html[lang="ar"] .mtag,html[lang="ar"] code{font-family:var(--mono);direction:ltr;unicode-bidi:embed}
+
+/* ---- compat: old markup mapped onto the new skin ---- */
+:root{--paper:var(--bg);--card:var(--surface);--stamp:var(--accent);--stamp-soft:var(--accent-soft);
+  --good-soft:rgba(11,158,106,.12);--bad-soft:rgba(214,69,51,.10);
+  --q-ver:var(--faint);--q-prev:var(--warn);--q-mrk:var(--good);--q-time:var(--accent);--q-bits:var(--muted);--q-nonce:var(--bad)}
+:root[data-theme="dark"]{--good-soft:rgba(53,211,138,.14);--bad-soft:rgba(242,112,89,.14)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--good-soft:rgba(53,211,138,.14);--bad-soft:rgba(242,112,89,.14)}}
+.progress{position:fixed;top:0;inset-inline-start:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+html[dir="rtl"] .progress{transform-origin:100% 0}
+.sheet{max-width:82rem;margin-inline:auto}
+main{display:block}
+@media(min-width:1100px){
+.sheet{max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note));display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter);align-items:start}
+nav.toc{display:block;grid-column:1;position:sticky;top:4.5rem}
+main{grid-column:2}
+}
+nav.toc{font-family:var(--sans);font-size:.8125rem;line-height:1.5}
+.toc-h{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.1rem}
+nav.toc a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;transition:color .15s var(--ease)}
+nav.toc a .leaders{flex:1;min-width:1rem;border-bottom:1px dotted var(--border2);transform:translateY(-.28em)}
+nav.toc a:hover{color:var(--ink)}
+nav.toc a.act{color:var(--accent);font-weight:550}
+.kicker{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 .75rem}
+.facts{font-size:.875rem;color:var(--muted)}
+.en{direction:ltr;unicode-bidi:isolate;font-family:var(--mono);font-size:.85em}
+.mono{direction:ltr;unicode-bidi:isolate;font-family:var(--mono);font-size:.85em}
+.story{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin:1.5rem 0}
+.story .who{font-weight:600;color:var(--ink)}
+.note{font-size:.875rem;line-height:1.6;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+@media(min-width:1152px){
+.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+.glossary dt{font-family:var(--sans);font-weight:600;margin-top:1em}
+.glossary dd{margin:0 0 .5rem;color:var(--muted);font-size:.9375rem}
+.m-head{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0;position:relative;overflow:hidden}
+.lab{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em}
+.m-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.chip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted)}
+.machine[data-state="running"] .m-head::after{content:"";position:absolute;bottom:0;inset-inline-start:0;width:28%;height:2px;background:var(--accent);animation:indbar 900ms linear infinite}
+.machine[data-state="done"] .m-head::after{content:"";position:absolute;bottom:0;inset-inline-start:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;animation:msettle .36s var(--ease) forwards}
+@keyframes msettle{0%{transform:scaleX(0);opacity:1}40%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+.m-ctrl{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 4px;align-items:center}
+.machine .m-ctrl>button{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine .m-ctrl>button:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine .m-ctrl>button:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine .m-ctrl>button.secondary{background:transparent;border:1px solid var(--border2);color:var(--ink);font-weight:550}
+.machine .m-ctrl>button.secondary:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent);filter:none;transform:none}
+.machine button.pop{animation:runpop 240ms var(--ease)}
+.m-in{padding:2px 14px 8px}
+.machine label{display:block;font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:8px 0 4px}
+.machine input[type=range]{width:calc(100% - 28px);margin:0 14px;accent-color:var(--accent);min-height:24px}
+.ringrow{display:flex;flex-wrap:wrap;gap:.5rem;margin:0;padding:12px 14px 0}
+.member{display:inline-flex;flex-direction:column;border:1px solid var(--border2);border-radius:8px;background:var(--bg);padding:.3rem .7rem;font-family:var(--mono);font-size:.72rem;color:var(--ink)}
+.member .who{font-family:var(--sans);font-size:.68rem;color:var(--muted)}
+.member.mine{border-color:var(--good)}
+.out .cop{color:var(--term-accent);font-weight:700}
+.out table{margin:.5rem 0;font-size:.72rem}
+.out th,.out td{border-bottom:1px solid var(--term-border)}
+.out th{color:var(--term-dim)}
+.m-cap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:.7rem 14px 1rem}
+.m-score{font-family:var(--sans)}
+.tl{fill:var(--ink);font-family:var(--sans);font-size:13px;font-weight:600}
+.ts{fill:var(--muted);font-family:var(--sans);font-size:12px}
+.tm{fill:var(--ink);font-family:var(--mono);font-size:12px}
+@media(prefers-reduced-motion:reduce){
+.machine[data-state="running"] .m-head::after,.machine[data-state="done"] .m-head::after{animation:none}
+}
+.coinbadge{display:inline-flex;width:54px;height:54px;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin-inline-end:.7rem;vertical-align:-14px}.coinbadge svg{width:38px;height:38px;display:block}
+</style>
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml"><link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/monero-under-the-hood.html"><link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/monero-from-zero-ar.html"><link rel="alternate" hreflang="x-default" href="https://cryptoinbrief.xyz/monero-under-the-hood.html">
+<meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
+<link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<header class="site-header">
+  <a class="mark" href="index.html">crypto<span>in</span>brief.</a>
+  <nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="crypto-summary.html">Start here</a></nav>
+  <p class="switch">
+    <span class="lang"><b>AR</b> | <a class="langswap" href="monero-under-the-hood.html" lang="en" hreflang="en">EN</a></span>
+    <span class="theme"><span id="themenow">فاتح</span> | <button type="button" id="themego">غامق</button></span>
+  </p>
+</header>
+<div class="sheet">
+<nav class="toc" aria-label="المحتويات"><p class="toc-h">المحتويات</p><ol><li><a href="#s1"><span class="t">الدفتر الزجاجي</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s2"><span class="t">تلات حاجات مكشوفة</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s3"><span class="t">الخصوصية الإجبارية</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s4"><span class="t">إخفاء المستلم</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s5"><span class="t">إخفاء المرسل</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s6"><span class="t">منع الصرف مرتين</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s7"><span class="t">إخفاء المبلغ</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s8"><span class="t">طبقة الشبكة</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s9"><span class="t">التعدين</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s10"><span class="t">FCMP++</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s11"><span class="t">المقارنة الأمينة</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s12"><span class="t">أسئلة</span><span class="leaders" aria-hidden="true"></span></a></li><li><a href="#s13"><span class="t">القاموس</span><span class="leaders" aria-hidden="true"></span></a></li></ol></nav>
+<main id="main-content">
+<p class="kicker">كراسة تجارب، الجزء العربي عن مونيرو، من الصفر خالص</p>
+<span class="coinbadge"><img src="assets/coins/monero.svg" alt="Monero" width="34" height="34"></span><h1>مونيرو، إزاي تدفع فلوس من غير ما حد يشوف حاجة</h1>
+<p class="byline">بقلم <a href="https://moamenbasel.com">مؤمن باسل</a>، سبتمبر ٢٠٢٦، ٤ تجارب حية، حوالي ١٧ دقيقة قراءة</p>
+<p class="lead">الصفحة دي لواحد مفهمش عن مونيرو ولا حرف. مفيش افتراضات خالص: كل فكرة بتبدأ بحكاية أو تشبيه، وبعدها رسمة وتجربة صغيرة تشغّلها بإيدك.</p>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="lab1t">
+<div class="m-head"><span class="lab">LAB 01</span><span class="m-title" id="lab1t">العنوان الخفي</span><span class="chip">TOY</span></div>
+<div class="m-ctrl">
+<button type="button" onclick="stGenWallet()">١ · اعمل محفظة للمستلم</button>
+<button type="button" onclick="stPay()" id="stpaybtn" disabled>٢ · المرسل يدفع</button>
+<button type="button" onclick="stScan()" id="stscanbtn" disabled>٣ · المستلم يفتّش بمفتاح العرض</button>
+<button type="button" class="secondary" onclick="stPay()" id="stagainbtn" disabled>ادفع لنفس المحفظة تاني</button>
+</div>
+<div class="out" id="stout" role="log" aria-live="polite"><span class="dim">ابدأ بالزرار الأول.</span></div>
+<p class="m-cap">نموذج تعليمي في مجموعة ضرب صغيرة. مونيرو الحقيقي بيستخدم نقط Edwards25519 وترميز وقواعد إضافية. الشرح الكامل في القسم 04.</p>
+</div>
+<p>عارف شوية بيتكوين؟ هيسهّل عليك. مش عارف ولا حرف؟ ماشي، هنعدّي على كل تفصيلة معاك.</p>
+<details class="toc"><summary>خريطة الصفحة، 13 قسم</summary><ol><li><a href="#s1">الحكاية من الأول، الدفتر الزجاجي</a></li><li><a href="#s2">الحوالة بتكشف تلات حاجات ومونيرو بيخبي التلاتة</a></li><li><a href="#s3">الخصوصية لازم تكون إجبارية</a></li><li><a href="#s4">إخفاء المستلم، العنوان اللي بيتغير كل مرة</a></li><li><a href="#s5">إخفاء المرسل، طابور من 16 واحد</a></li><li><a href="#s6">منع الصرف مرتين، الختم السري</a></li><li><a href="#s7">إخفاء المبلغ، ظروف مقفولة على ميزان</a></li><li><a href="#s8">طبقة الشبكة، وأنت فين؟</a></li><li><a href="#s9">التعدين في مونيرو، تلات فروق عن بيتكوين</a></li><li><a href="#s10">اللي جاي، FCMP++ من 16 لكل الدفتر</a></li><li><a href="#s11">المقارنة الأمينة، بيتكوين وزي كاش ومونيرو</a></li><li><a href="#s12">أسئلتك اللي سألتها</a></li><li><a href="#s13">قاموس المصطلحات</a></li></ol></details>
+<!-- 01 -->
+<h2 id="s1"><span class="num">01</span> الحكاية من الأول، الدفتر الزجاجي</h2>
+<p>قبل أي كلمة تقنية، حكاية.</p>
+<div class="story">
+<p><span class="who">أحمد</span> شغال في شركة بتحول راتبه بيتكوين. كل شهر الراتب بيوصل لعنوانه. الإيجار بيطلع من نفس العنوان لصاحب البيت. مرة في الشهر فيه دفعة لدكتور نفسي. وفيه كتب بيشتريها.</p>
+<p>صاحب البيت فتح موقع مجاني (اسمه block explorer) وكتب العنوان اللي أحمد بيدفعله منه. الراتب ظهر قدامه بالظبط. الزيارات للدكتور النفسي ظاهرة والمشتريات ظاهرة كلها. ماسألش حد في الموضوع، ومافيش حد بلّغ أحمد. وأحمد لحد دلوقتي مش عارف إن فيه حد بيتفرج.</p>
+</div>
+<p>الحكاية دي مش متخيلة. ده بيتكوين وهو شغال كده بالظبط. بيتكوين دفتر حسابات <strong>مكشوف للكل، وللأبد</strong>: كل حوالة فيها مكتوب بوضوح "من عنوان إيه، لعنوان إيه، كام"، وأي حد في العالم يقدر يقراها. العناوين مش أسماء، وده حقيقي. أول ما عنوان واحد يتربط باسمك (لما تشتري من منصة بهويتك مثلاً) تاريخ العنوان ده يتكشف كله، والعناوين اللي مربوطة بيه كمان. فيه شركات شغلها التحليل ده: تقرا الدفتر وتبيع الأسماء.</p>
+<figure data-fig="step">
+<svg viewBox="0 0 680 250" role="img"><title>الدفتر الزجاجي</title><desc>حوالات أحمد كلها مكشوفة: راتبه من الشركة، إيجاره لصاحب البيت، ودفعته للدكتور</desc>
+<defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<rect data-step="1" data-note="راتب بيتكوين ثابت بيوصل لنفس العنوان كل شهر: أول خيط بيربط الدخل بأحمد" x="520" y="80" width="130" height="52" rx="0" fill="var(--card)" stroke="var(--border)" stroke-width="1"/>
+<text class="tl" data-step="1" x="585" y="102" text-anchor="middle">الشركة</text>
+<text class="ts" data-step="1" x="585" y="120" text-anchor="middle">bc1qe…m4</text>
+<rect data-note="عنوان أحمد: منه الراتب والإيجار والدكتور. أول ما يتربط باسمه التاريخ كله يتكشف" x="275" y="80" width="130" height="52" rx="0" fill="var(--stamp-soft)" stroke="var(--q-nonce)" stroke-width="1"/>
+<text class="tl" x="340" y="102" text-anchor="middle">أحمد</text>
+<text class="ts" x="340" y="120" text-anchor="middle">bc1qa…7k</text>
+<rect data-step="2" data-note="صاحب البيت كتب العنوان ده في موقع استكشاف مجاني وشاف الراتب كله والزيارات الحساسة" x="30" y="30" width="130" height="52" rx="0" fill="var(--card)" stroke="var(--border)" stroke-width="1"/>
+<text class="tl" data-step="2" x="95" y="52" text-anchor="middle">صاحب البيت</text>
+<text class="ts" data-step="2" x="95" y="70" text-anchor="middle">bc1ql…9x</text>
+<rect data-step="3" data-note="الزيارات الحساسة ظاهرة بنفس وضوح الإيجار: الدفتر مبيفرقش بينهم" x="30" y="130" width="130" height="52" rx="0" fill="var(--card)" stroke="var(--border)" stroke-width="1"/>
+<text class="tl" data-step="3" x="95" y="152" text-anchor="middle">الدكتور</text>
+<text class="ts" data-step="3" x="95" y="170" text-anchor="middle">bc1qd…2p</text>
+<line data-step="1" x1="520" y1="106" x2="410" y2="106" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1)"/>
+<text class="tm" data-step="1" x="465" y="98" text-anchor="middle">0.031</text>
+<line data-step="2" x1="275" y1="92" x2="165" y2="62" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1)"/>
+<text class="tm" data-step="2" x="222" y="64" text-anchor="middle">0.012</text>
+<line data-step="3" x1="275" y1="120" x2="165" y2="150" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1)"/>
+<text class="tm" data-step="3" x="222" y="152" text-anchor="middle">0.0021</text>
+<rect data-step="4" data-note="كل اللي فوق ده طلب واحد في أي موقع استكشاف: الدفتر عام للجميع وللأبد" x="180" y="200" width="320" height="34" rx="0" fill="none" stroke="var(--bad)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" data-step="4" x="340" y="221" text-anchor="middle" fill="var(--bad)" direction="rtl">كل ده على الدفتر العام، الأسماء بس اللي محتاجة تخمين واحد</text>
+</svg>
+<figcaption><span class="figno">شكل 1.1</span><span>كل سهم ورقم في الرسمة موجود على الشبكة فعلا. الأسماء بس هي اللي بتتضاف، والإضافة سهلة.</span></figcaption>
+</figure>
+<p>ليه الموضوع مشكلة؟ تلات أسباب. السبب الواحد كافي.</p>
+<p><strong>الرصد.</strong> فلوسك بتحكي حياتك من غير ما تتكلم. أكلك ظاهر ودكتورك ظاهر. دينك وسياستك ظاهرين. مين بتساعده ظاهر برضه. في بيتكوين الحكاية دي مكتوبة للأبد، ومتاحة لأي حد يقرر يدور عليها.</p>
+<p><strong>سلامتك الشخصية.</strong> لو حد عرف إن معاك مبلغ كبير، تبقى هدف. في مصر أو في أي مكان، اللي شايف رصيدك ممكن ييجي بيته يطلبه منك بالعافية. الخصوصية حماية. مش رفاهية.</p>
+<p><strong>حاجة بيتقال عليها "الفلوس متساوية" (fungibility).</strong> في بيتكوين كل عملة ليها تاريخ يتقرا. لو العملة اللي وصلتك عدّت قبل خمس إيدين على واحد سرق منصة، المنصة اللي هتبيع فيها ممكن تجمّد فلوسك "لأنها ملوثة". انت مالكش ذنب. بس عملتك بقت أقل من عملة جارك. مونيرو بيحل الموضوع من الجذر: عملة ملهاش تاريخ مقروء، ومفيش حد يقدر يميّزها عن غيرها.</p>
+
+<!-- 02 -->
+<h2 id="s2"><span class="num">02</span> الحوالة بتكشف تلات حاجات ومونيرو بيخبي التلاتة</h2>
+<figure data-fig="step">
+<svg viewBox="0 0 680 220" role="img"><title>التلات أقفال</title><desc>مونيرو بيخبي المستلم بعناوين متغيرة، والمرسل بتوقيع جماعي، والمبلغ بظروف مقفولة</desc>
+<rect data-step="1" data-note="القفل الأول، المستلم: عنوان خفي جديد لكل دفعة (القسم 4)" x="30" y="30" width="200" height="130" rx="0" fill="var(--good-soft)" stroke="var(--q-mrk)" stroke-width="1"/>
+<text class="tl" data-step="1" x="130" y="58" text-anchor="middle">مين استلم؟</text>
+<text class="ts" data-step="1" x="130" y="88" text-anchor="middle" direction="rtl">عنوان جديد لكل دفعة</text>
+<text class="ts" data-step="1" x="130" y="110" text-anchor="middle" direction="rtl">محدش يربطه بيك</text>
+<text class="ts" data-step="1" x="130" y="140" text-anchor="middle">القسم ٤</text>
+<rect data-step="2" data-note="القفل التاني، المرسل: توقيع حلقي، واحد من 16 (القسمين 5 و 6)" x="240" y="30" width="200" height="130" rx="0" fill="var(--card)" stroke="var(--q-ver)" stroke-width="1"/>
+<text class="tl" data-step="2" x="340" y="58" text-anchor="middle">مين بعت؟</text>
+<text class="ts" data-step="2" x="340" y="88" text-anchor="middle" direction="rtl">واحد من طابور 16 شخص</text>
+<text class="ts" data-step="2" x="340" y="110" text-anchor="middle" direction="rtl">مستحيل تعرف مين</text>
+<text class="ts" data-step="2" x="340" y="140" text-anchor="middle">القسم ٥ و ٦</text>
+<rect data-step="3" data-note="القفل التالت، المبلغ: RingCT ظروف مقفولة تتوازن من غير فتح (القسم 7)" x="450" y="30" width="200" height="130" rx="0" fill="var(--stamp-soft)" stroke="var(--q-nonce)" stroke-width="1"/>
+<text class="tl" data-step="3" x="550" y="58" text-anchor="middle">كام؟</text>
+<text class="ts" data-step="3" x="550" y="88" text-anchor="middle" direction="rtl">المبلغ في ظرف مقفول</text>
+<text class="ts" data-step="3" x="550" y="110" text-anchor="middle" direction="rtl">يتوازن من غير ما يتفتح</text>
+<text class="ts" data-step="3" x="550" y="140" text-anchor="middle">القسم ٧</text>
+<text class="ts" data-note="ده كل اللي الدفتر بيشوفه: إن حوالة حصلت. وخلاص" x="340" y="195" text-anchor="middle" direction="rtl">اللي الدفتر بيشوفه في مونيرو: حوالة حصلت. وخلاص.</text>
+</svg>
+<figcaption><span class="figno">شكل 2.1</span><span>التلات حاجات اللي أي حوالة بتكشفها، ومونيرو بيخبي التلاتة، كل واحدة بباب مختلف.</span></figcaption></figure>
+<p><p>أي حوالة فلوس في الدنيا فيها تلات معلومات: <strong>مين بعت</strong>، <strong>مين استلم</strong>، و<strong>كام</strong>. بيتكوين بيكشف التلاتة. مونيرو (اسمه بالإسبرانتو معناه "عملة"، اتعمل سنة 2014) بيخبي التلاتة، وكل واحدة بطريقة مختلفة هنشرحها لوحدها بالتفصيل. دي الخريطة اللي هنمشي عليها:</p></p>
+
+<!-- 03 -->
+<h2 id="s3"><span class="num">03</span> الخصوصية لازم تكون إجبارية</h2>
+<p>قبل ما ندخل في التقنية فيه قرار واحد. مونيرو خد القرار ده. كل حاجة بعده مبنية عليه، وأهم من أي رياضة.</p>
+<div class="story">
+<p>تخيّل مدينة فيها 100 واحد، والقانون بيسمح إن اللي عايز يلبس ماسك يلبس. 3 بس لبسوا ماسك. حصل إيه؟ التلاتة بقوا أشهر ناس في المدينة، وكل واحد بيسأل "مين دول وبيخبوا إيه؟". الماسك كشفهم بدل ما يخبيهم.</p>
+<p>المدينة التانية القانون فيها إن <strong>الكل</strong> لازم يلبس ماسك. مفيش استثناء. الماسك هنا مبيقول أي حاجة عن حد لأن الكل لابسه. بقى مالوش معنى كإشارة.</p>
+</div>
+<p>ده اللي بيفرّق مونيرو عن الأدوات الاختيارية. مفيش وضع معاملات مكشوف، فالخصوصية نفسها مش إشارة شك. ده مش معناه إن إخفاء المرسل وسط الشبكة كلها. في البروتوكول الحالي كل دخل بيوقّع جوه حلقة من 16 مخرج، وإخفاء المستلم والمبلغ ليهم آليات مختلفة.</p>
+<figure data-fig="toggle" data-tgl="اختياري|إجباري">
+<svg viewBox="0 0 680 200" role="img"><title>الماسك الاختياري مقابل الإجباري</title><desc>لما 3 بس يلبسوا ماسك بيتميزوا، ولما الكل يلبس محدش يتميز</desc>
+<rect class="sa" data-note="خصوصية اختيارية: اللي بيستخدمها أقلية، فبتبقى إشارة شك" x="30" y="20" width="300" height="150" rx="0" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1"/>
+<text class="tl sa" x="180" y="46" text-anchor="middle" direction="rtl">اختياري: 3 لابسين وسط 30</text>
+<g class="sa" fill="var(--muted)">
+<circle cx="60" cy="80" r="6"/><circle cx="85" cy="80" r="6"/><circle cx="110" cy="80" r="6"/><circle cx="135" cy="80" r="6"/><circle cx="160" cy="80" r="6"/><circle cx="185" cy="80" r="6"/><circle cx="210" cy="80" r="6"/><circle cx="235" cy="80" r="6"/><circle cx="260" cy="80" r="6"/><circle cx="285" cy="80" r="6"/>
+<circle cx="60" cy="105" r="6"/><circle cx="85" cy="105" r="6"/><circle cx="110" cy="105" r="6"/><circle cx="160" cy="105" r="6"/><circle cx="185" cy="105" r="6"/><circle cx="210" cy="105" r="6"/><circle cx="235" cy="105" r="6"/><circle cx="285" cy="105" r="6"/>
+<circle cx="60" cy="130" r="6"/><circle cx="85" cy="130" r="6"/><circle cx="110" cy="130" r="6"/><circle cx="135" cy="130" r="6"/><circle cx="160" cy="130" r="6"/><circle cx="185" cy="130" r="6"/><circle cx="235" cy="130" r="6"/><circle cx="260" cy="130" r="6"/><circle cx="285" cy="130" r="6"/>
+</g>
+<g class="sa" fill="var(--bad)">
+<circle cx="135" cy="105" r="7"/><circle cx="260" cy="105" r="7"/><circle cx="210" cy="130" r="7"/>
+</g>
+<text class="ts sa" x="180" y="160" text-anchor="middle" fill="var(--bad)" direction="rtl">التلاتة دول بقوا مشبوهين</text>
+<rect class="sb" data-note="خصوصية إجبارية: الكل مخفي غصب عنه من أول يوم، فمحدش بيتميز" x="350" y="20" width="300" height="150" rx="0" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1"/>
+<text class="tl sb" x="500" y="46" text-anchor="middle" direction="rtl">إجباري: الـ 30 كلهم لابسين</text>
+<g class="sb" fill="var(--good)">
+<circle cx="380" cy="80" r="6"/><circle cx="405" cy="80" r="6"/><circle cx="430" cy="80" r="6"/><circle cx="455" cy="80" r="6"/><circle cx="480" cy="80" r="6"/><circle cx="505" cy="80" r="6"/><circle cx="530" cy="80" r="6"/><circle cx="555" cy="80" r="6"/><circle cx="580" cy="80" r="6"/><circle cx="605" cy="80" r="6"/>
+<circle cx="380" cy="105" r="6"/><circle cx="405" cy="105" r="6"/><circle cx="430" cy="105" r="6"/><circle cx="455" cy="105" r="6"/><circle cx="480" cy="105" r="6"/><circle cx="505" cy="105" r="6"/><circle cx="530" cy="105" r="6"/><circle cx="555" cy="105" r="6"/><circle cx="580" cy="105" r="6"/><circle cx="605" cy="105" r="6"/>
+<circle cx="380" cy="130" r="6"/><circle cx="405" cy="130" r="6"/><circle cx="430" cy="130" r="6"/><circle cx="455" cy="130" r="6"/><circle cx="480" cy="130" r="6"/><circle cx="505" cy="130" r="6"/><circle cx="530" cy="130" r="6"/><circle cx="555" cy="130" r="6"/><circle cx="580" cy="130" r="6"/><circle cx="605" cy="130" r="6"/>
+</g>
+<text class="ts sb" x="500" y="160" text-anchor="middle" fill="var(--good)" direction="rtl">محدش مشبوه، الماسك مبقى يقول حاجة</text>
+</svg>
+<figcaption><span class="figno">شكل 3.1</span><span>لما التلاتة بس يلبسوا ماسك بيتميزوا. لما الكل يلبس، الماسك مبقى يقول حاجة.</span></figcaption></figure>
+<div class="note"><strong>حدود النموذج:</strong> مونيرو الحقيقي بيستخدم نقط على منحنى Edwards25519 وأعداد سرية رتبتها حوالي 2²⁵². التجارب هنا بتستخدم أسس في مجموعة ضرب صغيرة رتبتها 1013. النموذج بيحافظ على علاقات مفيدة زي السر المشترك وقفل دايرة التحديات واتزان الالتزامات، لكنه مش تنفيذ لمونيرو. مش موجود فيه ترميز المعاملات الحقيقي ولا CLSAG كامل ولا Bulletproofs+.</div>
+
+<!-- 04 -->
+<h2 id="s4"><span class="num">04</span> إخفاء المستلم، العنوان اللي بيتغير كل مرة</h2>
+<p>في بيتكوين العنوان اللي بتديه للناس هو اللي بيظهر على الدفتر. اللي دفعلك مرة يتفرج على كل اللي هيوصلك بعد كده. مونيرو بيحل ده بفكرة أذكى من إنك تغيّر عنوانك بإيدك كل مرة:</p>
+<div class="story">
+<p>عنوانك مش صندوق بريد. عنوانك <strong>وصفة لعمل صناديق بريد</strong>. كل واحد عايز يبعتلك حاجة بيستخدم الوصفة ويطلّع صندوق جديد بالكامل ملوش أي علاقة ظاهرة بالصندوق اللي عمله الشخص اللي قبله، والناس بتشوف صناديق عشوائية منتشرة في الشارع وانت بس اللي معاك المفتاح اللي يعرّفك إن الصندوق ده بتاعك وتفتحه.</p>
+</div>
+<p>اسم الصناديق دي <strong>مفاتيح خرج لمرة واحدة</strong> (stealth addresses). عنوانك المنشور نفسه مبيظهرش على الدفتر. المرسل والمستلم يقدروا يعرفوا الدفعة، ومراقب غريب المفروض ميقدرش يربطها بعنوانك. المستلم بس هو اللي يقدر يصرفها. الفكرة مبنية على سر مشترك:</p>
+<figure data-fig="step">
+<svg viewBox="0 0 680 290" role="img"><title>السر المشترك بالألوان</title><desc>كل طرف عنده لون سري، يخلطه مع لون عام، يتبادلوا النتيجة، ويخلط كل واحد لونه السري مع اللي وصله، فيوصلوا لنفس اللون النهائي من غير ما يكشف حد سره</desc>
+<defs><marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<text class="tl" x="560" y="34" text-anchor="middle">المرسل</text>
+<text class="tl" x="120" y="34" text-anchor="middle">المستلم</text>
+<rect data-step="1" data-note="سر المرسل: بيفضل عنده، عمره ما بيتبعت" x="520" y="50" width="80" height="34" rx="0" fill="#a8322a"/><text class="ts" x="560" y="72" text-anchor="middle" fill="var(--paper)" direction="rtl">لونه السري</text>
+<rect data-step="1" data-note="سر المستلم: بيفضل عنده برضه" x="80" y="50" width="80" height="34" rx="0" fill="#33658a"/><text class="ts" x="120" y="72" text-anchor="middle" fill="var(--paper)" direction="rtl">لونه السري</text>
+<rect data-step="1" data-note="لون عام: معروف للكل ومحدش يقدر يعترضه" x="300" y="50" width="80" height="34" rx="0" fill="#f2c14e"/><text class="ts" x="340" y="72" text-anchor="middle" fill="#3a2a00" direction="rtl">لون عام للكل</text>
+<text class="ts" data-step="2" x="560" y="112" text-anchor="middle" direction="rtl">يخلط سره + العام</text>
+<rect data-step="2" data-note="برتقاني = سر المرسل + العام، وفك الخلط مستحيل" x="520" y="122" width="80" height="34" rx="0" fill="#e0894f"/><text class="ts" x="560" y="144" text-anchor="middle" fill="#3a1a00" direction="rtl">برتقاني</text>
+<text class="ts" data-step="2" x="120" y="112" text-anchor="middle" direction="rtl">يخلط سره + العام</text>
+<rect data-step="2" data-note="أخضر = سر المستلم + العام" x="80" y="122" width="80" height="34" rx="0" fill="#7fa86a"/><text class="ts" x="120" y="144" text-anchor="middle" fill="#0f2a05" direction="rtl">أخضر</text>
+<line data-step="3" x1="516" y1="139" x2="380" y2="139" stroke="var(--muted)" stroke-width="1" marker-end="url(#a4)"/>
+<line data-step="3" x1="164" y1="139" x2="300" y2="139" stroke="var(--muted)" stroke-width="1" marker-end="url(#a4)"/>
+<text class="ts" data-step="3" data-note="التبادل على الملأ: المتفرج شايف البرتقاني والأخضر بس" x="340" y="130" text-anchor="middle" direction="rtl">يتبادلوا على الملأ</text>
+<text class="ts" data-step="4" x="560" y="188" text-anchor="middle" direction="rtl">يخلط سره + الأخضر اللي وصله</text>
+<text class="ts" data-step="4" x="120" y="188" text-anchor="middle" direction="rtl">يخلط سره + البرتقاني اللي وصله</text>
+<rect data-step="4" data-note="سر المرسل + الأخضر اللي وصله = بني" x="520" y="200" width="80" height="34" rx="0" fill="#7b5b3f"/><text class="ts" x="560" y="222" text-anchor="middle" fill="var(--paper)" direction="rtl">بني</text>
+<rect data-step="4" data-note="سر المستلم + البرتقاني اللي وصله = نفس البني" x="80" y="200" width="80" height="34" rx="0" fill="#7b5b3f"/><text class="ts" x="120" y="222" text-anchor="middle" fill="var(--paper)" direction="rtl">بني</text>
+<rect data-step="4" x="215" y="200" width="250" height="34" rx="0" fill="none" stroke="var(--good)" stroke-width="1"/>
+<text class="ts" data-step="4" x="340" y="222" text-anchor="middle" fill="var(--good)" direction="rtl">نفس اللون! والمتفرج شاف برتقاني وأخضر بس</text>
+<text class="ts" data-step="5" data-note="الخلط اتجاه واحد: من البرتقاني مستحيل تطلع الأحمر" x="340" y="268" text-anchor="middle" direction="rtl">فك الخلط مستحيل: من البرتقاني متقدرش تطلّع الأحمر</text>
+</svg>
+<figcaption><span class="figno">شكل 4.1</span><span>الاتنين وصلوا لنفس اللون السري من غير ما يبعتوا أسرارهم. اللي بيتفرج مش هيوصل للبني أبداً.</span></figcaption>
+</figure>
+<p>في الرياضة، "الخلط" عملية اتجاه واحد (زي الهاش اللي اتكلمنا عنه): سهل تخلط ومستحيل تفك، ومونيرو بيستخدمها كده:</p>
+<p>عنوانك فيه <strong>مفتاحين عامين</strong>: مفتاح "عرض" (<span class="en">A</span>) ومفتاح "صرف" (<span class="en">B</span>). والنسخ السرية بتاعتهم عندك: <span class="en">a</span> و <span class="en">b</span>. لما حد يبعتلك، بيختار رقم سري عشوائي <span class="en">r</span> وبينشر على الدفتر نسخته العامة <span class="en">R</span> (زي البرتقاني) ويخلط سره مع مفتاح عرضك العام فيطلع "اللون البني"، سر مشترك بينك وبينه. من السر ده بيصنع الصندوق: عنوان لمرة واحدة <span class="en">P</span>. اللي بيظهر على الدفتر: <span class="en">R</span> و <span class="en">P</span> بس، رقمين عشوائيين ملهمش علاقة ظاهرة بعنوانك.</p>
+<p>انت بتمشي على الدفتر. تاخد كل <span class="en">R</span> وتخلطه بمفتاح عرضك السري <span class="en">a</span>. لو طلع نفس اللون البني وودّى لنفس <span class="en">P</span>، يبقى ده صندوقك. لما تيجي تصرفه بتحتاج مفتاح الصرف السري <span class="en">b</span>. التجربة شغالة فوق في أول الصفحة، والشرح ده هو اللي بيحصل فيها.</p>
+<p>ادفع لنفس المحفظة مرتين في النموذج وهتشوف مفتاح خرج مختلف لكل دفعة. مفتاح العرض يقدر يلاقي الدفعات الداخلة لكنه ميقدرش يصرف من غير مفتاح الصرف. ينفع تشارك مفتاح العرض لمراجعة الدخل، لكن مفتاح العرض لوحده مش بيكشف كل الحوالات الخارجة بشكل موثوق ومينفعش تعتمد عليه ككشف رصيد كامل.</p>
+
+<!-- 05 -->
+<h2 id="s5"><span class="num">05</span> إخفاء المرسل، طابور من 16 واحد</h2>
+<p>المستلم اتشال من قدام. الأصعب دلوقتي المرسل. في بيتكوين لما تطلع فلوس بتورّيها بإيدك: "أنا بصرف العملة دي، وأهو توقيعي". الإيد دي هي اللي تفضحك. مونيرو بيحط الإيد وسط زحمة:</p>
+<div class="story">
+<p>التوقيع الحلقي بيحط المخرج الحقيقي مع 15 تمويه. معادلات التوقيع نفسها مبتسميش أنهي عضو وقّع، لكن ده مش وعد إن كل عضو احتماله متساوي بالظبط. توقيت الحوالة وطريقة اختيار التمويه ممكن يغيروا ترجيح المحلل.</p>
+</div>
+<p>ده بيتسمّى <strong>توقيع الحلقة</strong> (ring signature). ساعة ما تصرف مخرج فلوس بتاعك، محفظتك بتلمّ 15 مخرج تاني من أي حتة على الدفتر بتوع ناس غريبة (اتصرفت أو لأ مش فارقة) وتعمل "حلقة" من 16، وتطلّع توقيع واحد يشهد إن صاحب واحد من الـ 16 هو اللي وقّع. الغرباء مش مطلوب منهم موافقة ولا معرفة؛ مخرجاتهم العامة تمويه زي صور الأرشيف.</p>
+<figure data-fig="plain">
+<svg viewBox="0 0 680 250" role="img"><title>حلقة من 16</title><desc>16 مخرج في دايرة، واحد بس هو الحقيقي، والتوقيع صالح للحلقة كلها</desc>
+<circle data-note="شكل الحلقة على الدفتر: 16 مخرج متطابقين، مفيش أي تمييز" cx="340" cy="125" r="92" fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4"/>
+<g data-note="15 مخرج بتوع ناس غرباء اتجابت من الدفتر من غير علمهم ولا موافقتهم" fill="none" stroke="var(--muted)">
+<circle cx="340" cy="33" r="9"/><circle cx="375" cy="40" r="9"/><circle cx="405" cy="60" r="9"/><circle cx="425" cy="90" r="9"/>
+<circle cx="425" cy="160" r="9"/><circle cx="405" cy="190" r="9"/><circle cx="375" cy="210" r="9"/><circle cx="340" cy="217" r="9"/>
+<circle cx="305" cy="210" r="9"/><circle cx="275" cy="190" r="9"/><circle cx="255" cy="160" r="9"/><circle cx="248" cy="125" r="9"/>
+<circle cx="255" cy="90" r="9"/><circle cx="275" cy="60" r="9"/><circle cx="305" cy="40" r="9"/>
+</g>
+<circle data-note="المخرج الحقيقي: صاحبه بس اللي يعرفه، والقارئ مش يقدر يفرقه" cx="432" cy="125" r="9" fill="none" stroke="var(--q-nonce)" stroke-width="1.5"/>
+<text class="tl" data-note="توقيع واحد يثبت إن واحد من الـ 16 وقّع فعلا، ومش بيقول مين" x="340" y="120" text-anchor="middle" direction="rtl">توقيع واحد</text>
+<text class="ts" x="340" y="140" text-anchor="middle" direction="rtl">صالح للحلقة كلها</text>
+<line x1="447" y1="125" x2="510" y2="125" stroke="var(--q-nonce)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" x="516" y="120" fill="var(--q-nonce)" direction="rtl" text-anchor="start">الحقيقي ،</text>
+<text class="ts" x="516" y="138" fill="var(--q-nonce)" direction="rtl" text-anchor="start">صاحبه بس عارف</text>
+<text class="ts" x="130" y="120" text-anchor="middle" direction="rtl">15 تمويه من الدفتر</text>
+<text class="ts" x="130" y="138" text-anchor="middle" direction="rtl">من غير علم أصحابهم</text>
+</svg>
+<figcaption><span class="figno">شكل 5.1</span><span>الألوان للقارئ وهو بيبص. على الدفتر الحقيقي الـ 16 دايرة نفس اللون.</span></figcaption>
+</figure>
+<p>التوقيع يعدّي من غير فضيحة إزاي؟ لو بسّطناها: التوقيع سلسلة معادلات بتمشي تلف على الحلقة. كل مخرج بيبعت "تحدّي" للي وراه، والدايرة لازم تقفل على نفسها. اللي معاه المفتاح السري لأي مخرج في الحلقة يقدر يقفل الدايرة من عنده. اللي بيتحقق يشوف إنها اتقفلت. من برّه كل مقعد شكله زي التاني. تحت التوقيع ده لعبة: الكمبيوتر هيوقّع بواحد من مخرجين بتوعك عشوائي، وانت خمّن مين.</p>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="lab2t">
+<div class="m-head"><span class="lab">LAB 02</span><span class="m-title" id="lab2t">خمّن مين وقّع</span><span class="chip">TOY</span></div>
+<div class="ringrow" id="ringrow"></div>
+<div class="m-ctrl">
+<button type="button" onclick="gameSign()" id="gsignbtn">وقّع بواحد من مخرجاتي عشوائياً</button>
+</div>
+<div class="out" id="gameout" role="log" aria-live="polite"><span class="dim">دوس الزرار، هيطلع توقيع صحيح، وبعدين خمّن أنهي مخرج اللي وقّع.</span></div>
+<div id="guessbtns" class="m-ctrl" style="display:none">
+<button type="button" class="secondary" onclick="guess(0)">أظن كان مخرجي #١</button>
+<button type="button" class="secondary" onclick="guess(1)">أظن كان مخرجي #٢</button>
+</div>
+<p class="dim m-score" id="gamescore">النتيجة: 0 صح من 0</p>
+<p class="m-cap">نموذج تعليمي: توقيع بأسلوب LSAG من 5 مخرجات في مجموعة صغيرة. مونيرو الحالي بيستخدم CLSAG على Edwards25519 وحلقة من 16، وفيه مفاتيح مرتبطة بالالتزامات النموذج ده مش بينفذها. المجموعة الصغيرة قابلة للكسر بالتجربة، فمبتديش خصوصية حقيقية.</p>
+</div>
+<p>العب أكتر من مرة وقيس نسبة إجاباتك الصح. هتفضل حوالين 50%، قد رمية عملة. مش عشان مستواك وحش. التوقيع <strong>بالرياضيات</strong> مفيهوش معلومة عن مين وقّع. حتى الحاسوب اللي فحص التوقيع ومرّره مش عارف.</p>
+<div class="note">صراحة في جملة تتقال: 1 من 16 ده "إنكار معقول" مش اختفاء كامل. لو حد قعد يحلّل توقيت الحوالات وأنماط اختيار التمويه بذكاء، ممكن يضيّق الاحتمالات شوية. عشان كده مونيرو شغّال على ترقية كبيرة (القسم ١٠) بتخلي الحلقة تضم كل المخرجات اللي على الدفتر بدل 16.</div>
+
+<!-- 06 -->
+<h2 id="s6"><span class="num">06</span> منع الصرف مرتين، الختم السري</h2>
+<p>لو حتة القسم اللي فات وصلتك، المفروض جرس يدق في دماغك دلوقتي. بيتكوين بيمنعك تصرف نفس الفلوس مرتين لأنه <strong>باصص</strong> على إيه اللي اتصرف. العملة بتتعلم "مصروفة" قدام الناس كلها. طب لو محدش عارف مين في الحلقة صرف، إيه اللي يوقفني ألفّ نفس المخرج في 10 حلقات مختلفة وآخد الفلوس 10 مرات؟</p>
+<p>المسألة دي كانت هتنجّح مونيرو أو تموّتها. الحل أذكى حتة في التصميم كله: <strong>صورة المفتاح</strong> (key image).</p>
+<div class="story">
+<p>تخيّل إن لكل مخرج فلوس ختم سري بيطلع منه. زي بصمة، بس البصمة بتاعة <em>المخرج نفسه</em> مش صاحبه. مفيش حد يطلّع الختم غير مالك المخرج، ومفيش رجوع من الختم للمخرج. وكل توقيع حلقي لازم ينشر الختم ده معاه.</p>
+<p>اللعبة هنا: <strong>المخرج الواحد بيولّد نفس الختم في كل مرة</strong>، حتى لو غيّرت الحلقة اللي حواليه. كل جهاز على الشبكة ماسك قايمة بكل الأختام اللي عدّت عليه. صرفت مخرج مرة، ختمه اتحط في القايمة. حاولت تصرفه تاني في حلقة جديدة بغرباء جداد، نفس الختم ظهر. القايمة قالت إن الختم ده عدّى قبل كده، فالحوالة اتردّت، <strong>من غير ما الشبكة تعرف مين انت جوه الحلقة</strong>.</p>
+</div>
+<figure data-fig="step">
+<svg viewBox="0 0 680 240" role="img"><title>الختم السري يكشف الصرف المكرر</title><desc>حلقتين مختلفتين بيصرفوا نفس المخرج بيطلعوا نفس الختم، فالتانية تترفض</desc>
+<ellipse data-step="1" cx="200" cy="80" rx="80" ry="36" fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4"/>
+<ellipse data-step="2" cx="480" cy="80" rx="80" ry="36" fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4"/>
+<text class="ts" data-step="1" x="200" y="24" text-anchor="middle" direction="rtl">الحلقة الأولى، 16 مخرج</text>
+<text class="ts" data-step="2" x="480" y="24" text-anchor="middle" direction="rtl">الحلقة التانية، 16 غيرهم</text>
+<g fill="none" stroke="var(--muted)">
+<circle data-step="1" cx="130" cy="80" r="8"/><circle data-step="1" cx="200" cy="60" r="8"/><circle data-step="1" cx="265" cy="95" r="8"/>
+<circle data-step="2" cx="545" cy="80" r="8"/><circle data-step="2" cx="475" cy="60" r="8"/><circle data-step="2" cx="415" cy="95" r="8"/>
+</g>
+<circle data-step="3" data-note="نفس المخرج بيتصرف في حلقتين مختلفتين بعضويتهما" cx="340" cy="80" r="10" fill="var(--q-nonce)"/>
+<text class="ts" data-step="3" x="340" y="52" text-anchor="middle" fill="var(--q-nonce)" direction="rtl">نفس المخرج في الاتنين</text>
+<line data-step="3" x1="270" y1="118" x2="320" y2="165" stroke="var(--ink)" stroke-width="1"/>
+<line data-step="3" x1="410" y1="118" x2="360" y2="165" stroke="var(--ink)" stroke-width="1"/>
+<rect data-step="3" data-note="صورة المفتاح: بصمة المخرج نفسه، بتطلع نفسها في أي حلقة مهما اتغيرت" x="265" y="168" width="150" height="30" rx="0" fill="none" stroke="var(--ink)" stroke-width="1"/>
+<text class="tm" data-step="3" x="340" y="188" text-anchor="middle">الختم = 1102</text>
+<text class="ts" data-step="3" x="245" y="188" text-anchor="end" fill="var(--good)" direction="rtl">الأولى: اتسجّل ✓</text>
+<text class="ts" data-step="3" x="435" y="188" text-anchor="start" fill="var(--bad)" direction="rtl">التانية: شفته قبل كده، مرفوضة</text>
+<text class="ts" data-step="4" data-note="الشبكة عرفت إنها حوالة تانية من غير ما تعرف مين صاحبها" x="340" y="224" text-anchor="middle" direction="rtl">الشبكة عرفت "تاني" من غير ما تعرف "مين"</text>
+</svg>
+<figcaption><span class="figno">شكل 6.1</span><span>نفس المخرج بيطلّع نفس الختم في أي حلقة، فالشبكة ترفض التانية من غير ما تعرف مين صاحبها.</span></figcaption></figure>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="lab3t">
+<div class="m-head"><span class="lab">LAB 03</span><span class="m-title" id="lab3t">اصرف مرتين وشوف</span><span class="chip">TOY</span></div>
+<div class="ringrow" id="ringrow2"></div>
+<div class="m-ctrl">
+<button type="button" onclick="spend(0)">اصرف مخرجي #١</button>
+<button type="button" onclick="spend(1)">اصرف مخرجي #٢</button>
+<button type="button" class="secondary" onclick="spend(0)">جرّب #١ تاني برسالة جديدة</button>
+</div>
+<div class="out" id="ringout" role="log" aria-live="polite"><span class="dim">اصرف #١، وبعدين جرّبه تاني. التوقيع التاني هيبقى صحيح رياضياً 100% وهو هيترفض برضه.</span></div>
+<div class="out" id="ledgerout" role="log" aria-live="polite"><span class="dim">قايمة الأختام اللي الشبكة شافتها: (فاضية)</span></div>
+</div>
+<p>في التجربة، التوقيع التعليمي التاني عدى التحقق والدفتر المحلي رفض ختم الربط المكرر. ده بيمثل وظيفة صورة المفتاح، لكنه مش معناه إن المتصفح بقى عقدة مونيرو. على الشبكة الحقيقية، قواعد الإجماع بترفض صورة مفتاح اتشوفت قبل كده والتوقيع الحلقي بيفضل مخبي أنهي عضو وقّع.</p>
+
+<!-- 07 -->
+<h2 id="s7"><span class="num">07</span> إخفاء المبلغ، ظروف مقفولة على ميزان</h2>
+<p>ستّرنا مين بياخد ومين بيبعت. لحد يناير 2017 مونيرو كان واقف هنا، والمبالغ كانت مكشوفة قدام الكل. ودي كانت فتحة تخوف: لو شفت 13.37121 داخلة و13.37121 خارجة، وصلت حدثين "غير مرتبطين" في لحظة. الحل اسمه <strong>RingCT</strong> (إجباري من سبتمبر 2017)، وقاعد على فكرة الالتزام (commitment):</p>
+<div class="story">
+<p>ميزان بكفتين. كفة فيها ظرف مقفول بالمبلغ الداخل. التانية فيها ظرفين مقفولين للخارجين زائد ورقة صغيرة مكشوفة فيها الرسوم. اتوزن. يبقى "الداخل = الخارج + الرسوم" مظبوطة، <strong>من غير ما تفتح أي ظرف</strong>.</p>
+</div>
+<p>الظرف المقفول ده في الرياضة رقم بيتكوّن من المبلغ زائد رقم عشوائي بيتسمّى "تعمية". الرقم العشوائي بيخلي نفس المبلغ يطلع ظرف مختلف كل مرة. فمحدش يقدر يقعد يجرّب مبالغ ويقارن الظروف ببعض. الظروف دي بتجمع من غير فتح. ظرف فيه 100 مع ظرف فيه 40 بيساووا ظرف فيه 140. أي جهاز على الشبكة يتأكد إن الميزان متوازن، والمبالغ نفسها تفضل سر.</p>
+<figure data-fig="step">
+<svg viewBox="0 0 680 190" role="img"><title>الميزان والظروف</title><desc>ظرف الداخل يساوي ظرفي الخارج زائد الرسوم المكشوفة، والميزان يتوازن بدون فتح</desc>
+<rect data-step="1" data-note="ظرف الداخل: المبلغ + تعمية عشوائية، نفس المبلغ يطلع ظرف مختلف كل مرة" x="490" y="60" width="130" height="60" rx="0" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" data-step="1" x="555" y="86" text-anchor="middle" direction="rtl">ظرف الداخل</text>
+<text class="ts" data-step="1" x="555" y="106" text-anchor="middle" direction="rtl">المبلغ مقفول</text>
+<text class="tl" data-step="2" x="445" y="96" text-anchor="middle" style="font-size:20px">=</text>
+<rect data-step="2" data-note="ظرف خارج 1: مقفول، محدش يشوف اللي جواه" x="290" y="60" width="110" height="60" rx="0" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" data-step="2" x="345" y="86" text-anchor="middle" direction="rtl">ظرف خارج ١</text>
+<text class="ts" data-step="2" x="345" y="106" text-anchor="middle" direction="rtl">مقفول</text>
+<text class="tl" data-step="3" x="265" y="96" text-anchor="middle" style="font-size:20px">+</text>
+<rect data-step="3" data-note="ظرف خارج 2: مقفول برضه" x="130" y="60" width="110" height="60" rx="0" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" data-step="3" x="185" y="86" text-anchor="middle" direction="rtl">ظرف خارج ٢</text>
+<text class="ts" data-step="3" x="185" y="106" text-anchor="middle" direction="rtl">مقفول</text>
+<text class="tl" data-step="4" x="105" y="96" text-anchor="middle" style="font-size:20px">+</text>
+<rect data-step="4" data-note="الرسوم: الرقم المكشوف الوحيد في الحوالة كلها" x="20" y="70" width="65" height="40" rx="0" fill="var(--stamp-soft)" stroke="var(--q-nonce)" stroke-width="1"/>
+<text class="ts" data-step="4" x="52" y="95" text-anchor="middle" direction="rtl">الرسوم</text>
+<text class="ts" data-step="5" data-note="الميزان متوازن: الداخل = الخارجين + الرسوم، من غير فتح أي ظرف" x="340" y="160" text-anchor="middle" fill="var(--good)" direction="rtl">الرقم المكشوف الوحيد هو الرسوم، المعادلة تتحقق والظروف مقفولة</text>
+</svg>
+<figcaption><span class="figno">شكل 7.1</span><span>ظرف الداخل يساوي ظرفي الخارج زائد الرسوم المكشوفة، والميزان يتوازن من غير فتح ظرف.</span></figcaption></figure>
+<p>لو نظام الالتزامات فحص الاتزان بس، الأعداد السالبة تقدر تلف جوه المجموعة. في النموذج، 150 و−51 مع رسوم 1 بيتزنوا مع دخل 100. عشان كده المعاملة الحقيقية لازم تثبت كمان إن كل مبلغ جوه المدى من صفر لحد 2⁶⁴ ناقص واحد. مونيرو استخدم إثباتات Borromean، وبعدها Bulletproofs في 2018، وبعدها Bulletproofs+.</p>
+<div class="machine" data-state="idle" tabindex="0" role="group" aria-labelledby="lab4t">
+<div class="m-head"><span class="lab">LAB 04</span><span class="m-title" id="lab4t">الميزان والظروف</span><span class="chip">TOY</span></div>
+<div class="m-ctrl">
+<button type="button" class="secondary" onclick="pedTamper()">زوّد الخارج ١ بـ 10 في السر</button>
+<button type="button" class="secondary" onclick="pedNegative()">الثغرة: خارج ١ = 150، خارج ٢ = −51</button>
+<button type="button" class="secondary" onclick="pedRender()">ارجع للصح</button>
+</div>
+<div class="m-in">
+<label for="v1sl">التقسيم: الخارج ١ = <span id="v1v">40</span>، الخارج ٢ = <span id="v2v">59</span></label>
+<input type="range" id="v1sl" min="0" max="99" value="40" oninput="pedRender()">
+</div>
+<div class="out" id="pedout" role="log" aria-live="polite"></div>
+<p class="m-cap">نموذج تعليمي: دخل 100 ورسوم 1 والتزامات في مجموعة ضرب صغيرة. بيوضح العشوائية والاتزان، مش أمان الربط الحقيقي. RingCT الحقيقي بيستخدم التزامات Edwards25519 وإثبات مدى لكل خرج.</p>
+</div>
+
+<!-- 08 -->
+<h2 id="s8"><span class="num">08</span> طبقة الشبكة، وأنت فين؟</h2>
+<p>كل ده على الدفتر نفسه. تحته الإنترنت. أول جهاز يسمع حوالتك يقدر يخمّن إنها جت من الـ IP بتاعك. مونيرو بيعالجها بـ <strong>Dandelion++</strong> (من 2020):</p>
+<div class="story">
+<p>متصرخش بالحوالة في الشارع كله مرة واحدة. وشوش بيها لجهاز واحد. هو يوصلها للتاني، والتاني يوصلها لتالت. بعدين واحد منهم عشوائي هو اللي يصرخ بيها للكل. المتفرجين شافوا الصرخة، مش الوشوشة. فمصدر الحوالة اللي بيبان هو الجهاز اللي صرخ، مش انت.</p>
+</div>
+<figure data-fig="step">
+<svg viewBox="0 0 680 150" role="img"><title>الوشوشة والصرخة</title><desc>الحوالة تمشي في مسار وشوشة ثم تنفجر من عقدة عشوائية</desc>
+<defs><marker id="a8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<circle data-step="1" data-note="انت: بتبعت الحوالة لجهاز واحد بس، مش للشبكة كلها" cx="620" cy="75" r="10" fill="var(--q-nonce)"/>
+<text class="ts" data-step="1" x="620" y="105" text-anchor="middle">انت</text>
+<circle data-step="2" cx="520" cy="75" r="8" fill="none" stroke="var(--muted)"/>
+<circle data-step="3" cx="425" cy="75" r="8" fill="none" stroke="var(--muted)"/>
+<circle data-step="4" data-note="العقدة اللي هتصرخ: عشوائية ومش بتاعتك" cx="330" cy="75" r="8" fill="none" stroke="var(--q-nonce)" stroke-width="1.5"/>
+<line data-step="2" x1="608" y1="75" x2="532" y2="75" stroke="var(--muted)" stroke-width="1" marker-end="url(#a8)"/>
+<line data-step="3" x1="510" y1="75" x2="437" y2="75" stroke="var(--muted)" stroke-width="1" marker-end="url(#a8)"/>
+<line data-step="4" x1="415" y1="75" x2="342" y2="75" stroke="var(--muted)" stroke-width="1" marker-end="url(#a8)"/>
+<text class="ts" data-step="2" data-note="المرحلة الأولى (الوشوشة): الحوالة بتنتقل لجهاز واحد في كل خطوة" x="475" y="55" text-anchor="middle" direction="rtl">وشوشة: واحد واحد</text>
+<line data-step="5" x1="320" y1="68" x2="210" y2="25" stroke="var(--q-nonce)" stroke-width="1" marker-end="url(#a8)"/>
+<line data-step="5" x1="318" y1="75" x2="200" y2="75" stroke="var(--q-nonce)" stroke-width="1" marker-end="url(#a8)"/>
+<line data-step="5" x1="320" y1="82" x2="210" y2="125" stroke="var(--q-nonce)" stroke-width="1" marker-end="url(#a8)"/>
+<circle data-step="5" cx="198" cy="22" r="8" fill="none" stroke="var(--muted)"/>
+<circle data-step="5" cx="188" cy="75" r="8" fill="none" stroke="var(--muted)"/>
+<circle data-step="5" cx="198" cy="128" r="8" fill="none" stroke="var(--muted)"/>
+<text class="ts" data-step="5" data-note="المرحلة التانية (الصرخة): بث لكل الشبكة مرة واحدة من عقدة عشوائية" x="100" y="70" text-anchor="middle" direction="rtl">صرخة: للكل مرة واحدة</text>
+<text class="ts" data-step="5" x="100" y="90" text-anchor="middle" direction="rtl">من حد غيرك</text>
+</svg>
+<figcaption><span class="figno">شكل 8.1</span><span>الحوالة تمشي وشوشة من جهاز لجهاز، وبعدين تنفجر صرخة من عقدة عشوائية مش منك.</span></figcaption></figure>
+<p>خد الحقيقة كاملة عشان بتلخبط ناس كتير: <strong>الجهاز اللي ماشي عليه مونيرو (الـ node) بيورّي الـ IP بتاعه زي بيتكوين بالظبط.</strong> عشان تبقى جزء من الشبكة لازم تتصل بأجهزة تانية، وهم شايفين عنوانك. Dandelion++ بيخبي "الحوالة دي جت منين"، ومبيخبيش إن "الجهاز ده بيشغّل مونيرو". مونيرو بيخبي فلوسك. مش بيخبي إنك بتشغّل الشبكة. لو عايز تخبي النقطة دي كمان، الحل اسمه <strong>Tor أو I2P</strong>، ومونيرو بيدعمهم مدمج، بس لازم تفعّلهم بنفسك.</p>
+
+<!-- 09 -->
+<h2 id="s9"><span class="num">09</span> التعدين في مونيرو، تلات فروق عن بيتكوين</h2>
+<p>التعدين في مونيرو ماشي بنفس منطق بيتكوين (قرعة بالكهربا)، والاختلاف تلات قرارات:</p>
+<p><strong>RandomX (2019): التعدين معمول للمعالجات العامة.</strong> ده بيقلل حاجز الأجهزة المتخصصة، لكنه ميضمنش لوحده توزيع جغرافي ولا يمنع تجمّع المعدنين في مسابح كبيرة.</p>
+<p><strong>إصدار دائم (tail emission): 0.6 عملة كل بلوك.</strong> من 2022 المكافأة الاسمية ثابتة. قيمتها الأمنية الحقيقية بتتغير مع سعر XMR والرسوم وتكلفة التعدين وسلوك المعدنين، فمش ميزانية مضمونة.</p>
+<p><strong>وزن بلوك متغير.</strong> الحد بيتحرك حسب أوزان البلوكات الأخيرة، والمعدن بيتعاقب في المكافأة لو البلوك زاد عن المنطقة المسموحة.</p>
+
+<figure data-fig="step">
+<svg viewBox="0 0 680 210" role="img"><title>مكافأة البلوك: بيتكوين بتنصّف، مونيرو بتثبت</title><desc>منحنى مكافأة بيتكوين بينزل درجات للصفر، ومونيرو بيهبط لـ 0.6 ويفضل هناك للأبد</desc>
+<line x1="70" y1="170" x2="640" y2="170" stroke="var(--border2)" stroke-width="1"/>
+<line x1="70" y1="30" x2="70" y2="170" stroke="var(--border2)" stroke-width="1"/>
+<text class="tm" x="62" y="174" text-anchor="end" fill="var(--faint)">0</text>
+<text class="tm" x="62" y="111" text-anchor="end" fill="var(--faint)">3.1</text>
+<text class="tm" x="62" y="49" text-anchor="end" fill="var(--faint)">6.25</text>
+<text class="tm" x="70" y="194" text-anchor="middle" fill="var(--faint)">2020</text>
+<text class="tm" x="214" y="194" text-anchor="middle" fill="var(--faint)">2024</text>
+<text class="tm" x="357" y="194" text-anchor="middle" fill="var(--faint)">2028</text>
+<text class="tm" x="499" y="194" text-anchor="middle" fill="var(--faint)">2032</text>
+<text class="tm" x="636" y="194" text-anchor="middle" fill="var(--faint)">2036</text>
+<polyline data-step="1" data-note="بيتكوين: التنصيف كل 4 سنين، والمكافأة رايحة للصفر. وبعدها مين هيدفع للمعدّنين؟" fill="none" stroke="var(--muted)" stroke-width="2" points="70,45 214,45 214,107 357,107 357,139 499,139 499,154 640,154"/>
+<text class="ts" data-step="1" x="195" y="36" text-anchor="middle" fill="var(--muted)" direction="rtl">بيتكوين: بتنصّف كل 4 سنين</text>
+<polyline data-step="2" data-note="مونيرو: المكافأة بتنزل بالشوية لحد 2022 وبعدين 0.6 ثابتة للأبد" fill="none" stroke="var(--accent)" stroke-width="2" points="70,138 165,150 250,158 640,158"/>
+<text class="ts" data-step="2" x="120" y="128" text-anchor="middle" fill="var(--accent)" direction="rtl">مونيرو</text>
+<line data-step="3" x1="250" y1="30" x2="250" y2="158" stroke="var(--good)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" data-step="3" x="440" y="120" text-anchor="middle" fill="var(--good)" direction="rtl">الإصدار الدائم: 0.6 للأبد</text>
+</svg>
+<figcaption><span class="figno">شكل 9.1</span><span>مكافأة البلوك (تقريبية): بيتكوين بتنصّف لحد الصفر، مونيرو بتثبت على 0.6 للأبد من 2022.</span></figcaption>
+</figure>
+
+<!-- 10 -->
+<h2 id="s10"><span class="num">10</span> اللي جاي، FCMP++ من 16 لكل الدفتر</h2>
+<p>افتكر الاعتراف في القسم ٥: الحلقة من 16 إنكار معقول، مش اختفاء. أكبر ترقية في تاريخ مونيرو اسمها <strong>FCMP++</strong> وبتحل الموضوع من جذوره. بدل ما تدفن مخرجك وسط 15 تمويه، بتعمل إثبات رياضي إنه واحد من <strong>كل المخرجات على الدفتر</strong>. أكتر من 100 مليون. "واحد من 16" تبقى "واحد من الكل، من أول يوم"، وبتسري حتى على المخرجات القديمة.</p>
+<div class="note b"><strong>الوضع بدقة (سبتمبر 2026):</strong> الترقية لسه <strong>ماتفعّلتش</strong> على الشبكة الحقيقية. الكود موجود وفيه شبكة اختبار شغالة. شركات تدقيق (Veridise، وTrail of Bits في مايو 2026) راجعته. المشروع معلنش تاريخ التفعيل، والشبكة النهارده لسه بحلقات من 16. لو قريت مقال يقول "FCMP++ اتفعّل في يناير 2026" ده كلام مكتوب للسيرش مش للحقيقة.</div>
+
+<figure data-fig="toggle" data-tgl="حلقة الـ 16|الدفتر كله">
+<svg viewBox="0 0 680 210" role="img"><title>من 16 لكل الدفتر</title><desc>النهارده الحلقة 16 مخرج، وبعد FCMP++ الحلقة تبقى كل مخرجات الدفتر</desc>
+<text class="tl sa" x="500" y="24" text-anchor="middle" direction="rtl">حلقة من 16</text>
+<g class="sa" data-note="1 من 16 إنكار معقول: تحليل التوقيت والأنماط بيضيّق الاحتمالات">
+<circle cx="568.0" cy="105.0" r="5" fill="var(--muted)"/>
+<circle cx="562.8" cy="131.0" r="5" fill="var(--muted)"/>
+<circle cx="548.1" cy="153.1" r="5" fill="var(--muted)"/>
+<circle cx="526.0" cy="167.8" r="5" fill="var(--muted)"/>
+<circle cx="500.0" cy="173.0" r="5" fill="var(--muted)"/>
+<circle cx="474.0" cy="167.8" r="5" fill="var(--muted)"/>
+<circle cx="451.9" cy="153.1" r="5" fill="var(--muted)"/>
+<circle cx="437.2" cy="131.0" r="5" fill="var(--muted)"/>
+<circle cx="432.0" cy="105.0" r="5" fill="var(--muted)"/>
+<circle cx="437.2" cy="79.0" r="5" fill="var(--muted)"/>
+<circle cx="451.9" cy="56.9" r="5" fill="var(--muted)"/>
+<circle cx="474.0" cy="42.2" r="5" fill="var(--muted)"/>
+<circle cx="500.0" cy="37.0" r="5" fill="var(--muted)"/>
+<circle cx="526.0" cy="42.2" r="5" fill="var(--muted)"/>
+<circle cx="548.1" cy="56.9" r="5" fill="var(--muted)"/>
+<circle cx="562.8" cy="79.0" r="5" fill="var(--muted)"/>
+</g>
+<circle class="sa" data-note="مخرجك الحقيقي وسط الـ 16: على الدفتر شكله زي التمويه بالظبط" cx="437.2" cy="79" r="7" fill="var(--accent)"/>
+<text class="ts sa" x="500" y="200" text-anchor="middle" direction="rtl">النهارده: مخرجك وسط 15 تمويه</text>
+<text class="tl sb" x="220" y="24" text-anchor="middle" direction="rtl">كل مخرجات الدفتر</text>
+<g class="sb" data-note="FCMP++: إثبات إن مخرجك واحد من كل المخرجات، من أول يوم، وحتى المخرجات القديمة">
+<circle cx="40" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="65" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="90" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="115" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="140" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="165" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="190" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="215" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="240" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="265" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="290" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="315" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="340" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="365" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="390" cy="44" r="3.4" fill="var(--muted)"/>
+<circle cx="40" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="65" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="90" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="115" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="140" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="165" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="190" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="215" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="240" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="265" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="290" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="315" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="340" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="365" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="390" cy="62" r="3.4" fill="var(--muted)"/>
+<circle cx="40" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="65" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="90" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="115" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="140" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="165" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="190" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="215" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="240" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="265" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="290" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="315" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="340" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="365" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="390" cy="80" r="3.4" fill="var(--muted)"/>
+<circle cx="40" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="65" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="90" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="115" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="140" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="165" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="190" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="215" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="240" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="265" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="290" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="315" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="340" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="365" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="390" cy="98" r="3.4" fill="var(--muted)"/>
+<circle cx="40" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="65" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="90" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="115" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="140" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="165" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="190" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="215" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="240" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="265" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="290" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="315" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="340" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="365" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="390" cy="116" r="3.4" fill="var(--muted)"/>
+<circle cx="40" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="65" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="90" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="115" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="140" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="165" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="190" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="215" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="240" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="265" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="290" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="315" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="340" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="365" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="390" cy="134" r="3.4" fill="var(--muted)"/>
+<circle cx="40" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="65" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="90" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="115" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="140" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="165" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="190" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="215" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="240" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="265" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="290" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="315" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="340" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="365" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="390" cy="152" r="3.4" fill="var(--muted)"/>
+<circle cx="40" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="65" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="90" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="115" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="140" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="165" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="190" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="215" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="240" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="265" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="290" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="315" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="340" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="365" cy="170" r="3.4" fill="var(--muted)"/>
+<circle cx="390" cy="170" r="3.4" fill="var(--muted)"/>
+</g>
+<text class="ts sb" x="220" y="200" text-anchor="middle" direction="rtl">بعد FCMP++: مخرجك وسط الكل</text>
+</svg>
+<figcaption><span class="figno">شكل 10.1</span><span>النهارده الحلقة 16 مخرج، وبعد FCMP++ تبقى كل مخرجات الدفتر، أكتر من 100 مليون. دوس «اعرض» للتبديل.</span></figcaption>
+</figure>
+
+<!-- 11 -->
+<h2 id="s11"><span class="num">11</span> المقارنة الأمينة، بيتكوين وزي كاش ومونيرو</h2>
+<p>هبقى عادل هنا، عشان الصفحة تبقى ليها قيمة. "مونيرو أأمن من بيتكوين" جملة غلط لو قلتها كده. الأمان مالوش معنى إلا ضد <strong>خصم معين</strong>. وفيه خصوم بيتكوين أقوى قدامهم.</p>
+<p><strong>فين بيتكوين بيكسب:</strong> أكبر قوة تعدين في التاريخ عنده، فتزوير تاريخه أغلى بمراحل. الرصيد الكلي تقدر تحسبه بالجمع. في مونيرو المبالغ مخفية، فسلامة الرصيد الكلي معتمدة على صحة التشفير والتنفيذ. مونيرو صلّح ثغرة تضخم قبل استغلالها في 2017، بس سببها كان نقطة صغيرة الرتبة في صورة المفتاح سمحت بصرف مكرر. مكانتش ثغرة مبلغ سالب ولا إثبات مدى.</p>
+<p><strong>زي كاش (Zcash):</strong> أقوى أداة إخفاء موجودة عنده: إثباتات المعرفة الصفرية (zk SNARKs). بتخبي كل حاجة من غير حلقة ولا تمويه، وحشد الإخفاء كل المستخدمين "المحميين" مش 16. رياضياً ده <strong>أقوى</strong> من حلقة مونيرو، ومونيرو نفسه بيحاول يوصله بالـ FCMP++. وقع في مشكلة الماسك الاختياري من القسم ٣. الإخفاء اختياري والمنصات بتتعامل بالوضع المكشوف. كل عبور بين المكشوف والمخفي حدث علني. من 2025 لسنة 2026 الصورة اتغيّرت: نسبة زي كاش المحمية زادت من 8% أوائل 2024 لحوالي 29% دلوقتي. حقيقي. اقلب الرقم: 70% لسه مكشوف. الاختيار نفسه إشارة.</p>
+<p><strong>ضعف مونيرو نفسه بصراحة:</strong> إخفاء المرسل احتمالي (1 من 16) لحد ما FCMP++ يتفعّل. الحوالات القديمة قبل 2017 قابلة للتتبع بدرجة كبيرة. هجوم "سبام" في 2024 ملأ الدفتر بمخرجات المهاجم وقلّل التمويه الفعّال. الـ IP مكشوف زي بيتكوين. منصات كتير شالته تحت ضغط الحكومات (اليابان وكوريا الجنوبية زمان، Binance في 2024، والاتحاد الأوروبي بيضغط لـ 2027).</p>
+<table>
+<tr><th>ضد مين؟</th><th>بيتكوين</th><th>زي كاش</th><th>مونيرو</th></tr>
+<tr><td>حد بيقرا الدفتر العام</td><td style="color:var(--bad)">شايف كل حاجة</td><td style="color:var(--muted)">شايف ~70%</td><td style="color:var(--good)">مش شايف حاجة</td></tr>
+<tr><td>شركة تحليل للمستخدم العادي</td><td style="color:var(--bad)">تتبع روتيني</td><td style="color:var(--muted)">قوي لو محمي بالكامل</td><td style="color:var(--good)">الأطراف والقديم بس</td></tr>
+<tr><td>خصوصية من غير مجهود</td><td style="color:var(--bad)">مفيش</td><td style="color:var(--bad)">مكشوف افتراضياً</td><td style="color:var(--good)">كاملة، مفيش وضع تاني</td></tr>
+<tr><td>تكلفة تزوير التاريخ</td><td style="color:var(--good)">الأعلى في العالم</td><td style="color:var(--muted)">متوسطة</td><td style="color:var(--muted)">متوسطة، بس موزّعة</td></tr>
+<tr><td>تدقيق الرصيد الكلي</td><td style="color:var(--good)">جمع بسيط</td><td style="color:var(--muted)">بقى ممكن 2026</td><td style="color:var(--bad)">بيعتمد على الإثباتات</td></tr>
+<tr><td>سهولة المنصات والقانون</td><td style="color:var(--good)">في كل مكان</td><td style="color:var(--muted)">تحت ضغط</td><td style="color:var(--bad)">شيل من منصات</td></tr>
+</table>
+<figure data-fig="step">
+<svg viewBox="0 0 680 200" role="img"><title>قد إيه الدفتر العام بيكشف؟</title><desc>قارئ الدفتر العام بيشوف 100% من حوالات بيتكوين، حوالي 70% من زي كاش، وصفر من مونيرو</desc>
+<text class="tl" x="340" y="26" text-anchor="middle" direction="rtl">اللي بيشوفه قارئ الدفتر العام</text>
+<rect data-step="1" data-note="بيتكوين: كل حوالة مقروءة بالكامل، المرسل والمستلم والمبلغ" x="70" y="44" width="440" height="32" rx="0" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1"/>
+<text class="tl" data-step="1" x="655" y="65" text-anchor="end" direction="rtl">بيتكوين</text>
+<text class="tm" data-step="1" x="518" y="65" fill="var(--bad)">100%</text>
+<rect data-step="2" data-note="زي كاش: الوضع المحمي قوي جدا بس اختياري، وحوالي 70% من الحوالات لسه مكشوفة" x="70" y="94" width="308" height="32" rx="0" fill="var(--stamp-soft)" stroke="var(--warn)" stroke-width="1"/>
+<text class="tl" data-step="2" x="655" y="115" text-anchor="end" direction="rtl">زي كاش</text>
+<text class="tm" data-step="2" x="386" y="115" fill="var(--warn)">~70%</text>
+<rect data-step="3" data-note="مونيرو: مفيش وضع مكشوف أصلا، التلاتة مخفيين إجباري من أول يوم" x="70" y="144" width="3" height="32" rx="0" fill="var(--good)" stroke="var(--good)" stroke-width="1"/>
+<text class="tl" data-step="3" x="655" y="165" text-anchor="end" direction="rtl">مونيرو</text>
+<text class="tm" data-step="3" x="84" y="165" fill="var(--good)">~0%</text>
+<text class="ts" x="340" y="192" text-anchor="middle" direction="rtl">نسبة الحوالات اللي بتبان على الدفتر، تقريبية لسبتمبر 2026</text>
+</svg>
+<figcaption><span class="figno">شكل 11.1</span><span>قارئ الدفتر العام: بيتكوين كله، زي كاش حوالي 70%، مونيرو صفر. ضد ده بالذات مونيرو بيكسب.</span></figcaption>
+</figure>
+
+<div class="note g">الجملة اللي تقدر تدافع عنها: <strong>بيتكوين أأمن دفتر، ومونيرو أأمن مستخدم.</strong> لو خصمك "حد ممكن يقرا الدفتر"، وده خصم كل إنسان تقريباً، مونيرو بيكسب. لو خصمك "حد عايز يعيد كتابة التاريخ" أو "حد عايز يطبع عملة في السر"، بيتكوين أقوى.</div>
+
+<!-- 12 -->
+<h2 id="s12"><span class="num">12</span> أسئلتك اللي سألتها</h2>
+<div class="story">
+<p><span class="who">تقدر الحكومة تصادر البيتكوين أو مونيرو بأمر؟</span><br>البروتوكول لأ في الاتنين. مفيش زرار مركزي. لازم تسيطر على أغلب قوة التعدين عشان تعمل حاجة، وحتى ساعتها متقدرش تاخد فلوس حد لأن التوقيعات بتمنع. المنصات المنظّمة بقى بيتكوين ممكن يتخنق لأن تاريخه مقروء فتقدر تقول "العملة دي جت من الصين، جمّدها". مونيرو أصعب بكتير عليها لأن مفيش تاريخ تتبعه، ودي بالظبط النقطة اللي مونيرو بيكسب فيها.</p>
+</div>
+<div class="story">
+<p><span class="who">الـ node بتاع مونيرو بيكشف الـ IP؟</span><br>آه. بيتكوين كمان كده بالظبط. الخصوصية على الدفتر مش على الشبكة، والحل في الاتنين Tor/I2P.</p>
+</div>
+<div class="story">
+<p><span class="who">هل مونيرو أأمن من بيتكوين وزي كاش؟</span><br>أأمن ضد المراقبة وبشكل افتراضي للكل؟ آه. أأمن في كل حاجة؟ لأ: بيتكوين أقوى دفتر، وزي كاش عنده أقوى أداة إخفاء واحدة. الجدول فوق بيغطي الباقي.</p>
+</div>
+
+<figure data-fig="toggle" data-tgl="البروتوكول|المنصة">
+<svg viewBox="0 0 680 200" role="img"><title>أمر التجميد بيمشي فين؟</title><desc>الأمر الحكومي بينزل على منصة منظّمة فينجح تجميد بيتكوين بتاريخه المقروء، وعلى البروتوكول فبيرتد في الاتنين</desc>
+<defs><marker id="f12m" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<rect x="270" y="14" width="140" height="42" rx="0" fill="var(--card)" stroke="var(--ink)" stroke-width="1"/>
+<text class="tl" x="340" y="40" text-anchor="middle" direction="rtl">أمر حكومي بالتجميد</text>
+<line class="sa" x1="390" y1="56" x2="470" y2="98" stroke="var(--bad)" stroke-width="1" marker-end="url(#f12m)"/>
+<rect class="sa" data-note="المنصة شايفة عنوانك وتاريخ حوالاتك في بيتكوين: تنفّذ الأمر بالفلوس اللي عندها" x="400" y="102" width="220" height="58" rx="0" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1"/>
+<text class="tl sa" x="510" y="126" text-anchor="middle" direction="rtl">منصة منظّمة</text>
+<text class="ts sa" x="510" y="148" text-anchor="middle" direction="rtl">تاريخ بيتكوين مقروء: تجميد ممكن</text>
+<line class="sb" x1="290" y1="56" x2="210" y2="98" stroke="var(--good)" stroke-width="1" marker-end="url(#f12m)"/>
+<rect class="sb" data-note="البروتوكول لامركزي: مفيش زرار مركزي، وحتى بأغلب قوة التعدين مش هتاخد فلوس حد" x="60" y="102" width="220" height="58" rx="0" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1"/>
+<text class="tl sb" x="170" y="126" text-anchor="middle" direction="rtl">البروتوكول نفسه</text>
+<text class="ts sb" x="170" y="148" text-anchor="middle" direction="rtl">مفيش زرار مركزي: الأمر بيرتد</text>
+<text class="ts" x="340" y="186" text-anchor="middle" direction="rtl">مونيرو أصعب على الأمر من الأساس: مفيش تاريخ حوالة يتتبع أصلا</text>
+</svg>
+<figcaption><span class="figno">شكل 12.1</span><span>الأمر بيوصل للمنصة أو للبروتوكول، والفرق هو تاريخ الحوالات المقروء. دوس «اعرض» للتبديل.</span></figcaption>
+</figure>
+
+<!-- 13 -->
+<h2 id="s13"><span class="num">13</span> قاموس المصطلحات</h2>
+<dl class="glossary">
+<dt>الهاش (hash)</dt><dd>آلة بصمة: تاخد أي كلام وتطلّع بصمة ثابتة، اتجاه واحد، وتغيير حرف يقلبها كلها.</dd>
+<dt>مخرج (output)</dt><dd>"شيكة" فلوس موجهة لعنوان معين. الفلوس في مونيرو وبيتكوين مخرجات مش أرصدة.</dd>
+<dt>عنوان خفي (stealth address)</dt><dd>عنوان لمرة واحدة بيتولّد لكل دفعة من عنوانك الحقيقي، ومحدش يقدر يربطه بيك.</dd>
+<dt>مفتاح العرض / مفتاح الصرف (view key / spend key)</dt><dd>الأول يخليك تشوف الفلوس اللي وصلتك (وينفع تديه لمحاسب)، التاني هو اللي بيصرف.</dd>
+<dt>توقيع حلقي (ring signature)</dt><dd>توقيع بيثبت إن واحد من مجموعة (16) وقّع، من غير ما يقول مين.</dd>
+<dt>تمويه (decoy)</dt><dd>مخرجات غرباء بتتاخد من الدفتر لتكوين الحلقة، من غير علم أصحابها.</dd>
+<dt>صورة المفتاح (key image)</dt><dd>ختم فريد لكل مخرج بيظهر لما يتصرف، فيمنع الصرف مرتين من غير ما يكشف أنهي مخرج.</dd>
+<dt>RingCT</dt><dd>نظام إخفاء المبالغ: ظروف مقفولة (التزامات) بتتوازن بدون فتح + إثبات إن المبلغ موجب.</dd>
+<dt>إثبات المدى (range proof / Bulletproofs+)</dt><dd>إثبات إن المبلغ المقفول رقم موجب معقول، عشان محدش يطبع فلوس بأرقام سالبة.</dd>
+<dt>Dandelion++</dt><dd>طريقة نشر الحوالة بالوشوشة قبل الصرخة، عشان مصدرها الظاهر ميبقاش انت.</dd>
+<dt>RandomX</dt><dd>لغز التعدين في مونيرو، معمول عشان المعالج العادي يكون الأكفأ فيه.</dd>
+<dt>FCMP++</dt><dd>الترقية الجاية: إثبات إن مخرجك واحد من كل المخرجات على الدفتر بدل حلقة من 16. لسه ماتفعّلتش (سبتمبر 2026).</dd>
+<dt>node (عقدة)</dt><dd>جهاز بيشغّل برنامج الشبكة وبيتحقق من كل حاجة بنفسه. بيكشف الـ IP بتاعه للأجهزة اللي بيتصل بيها.</dd>
+</dl><figure data-fig="step">
+<svg viewBox="0 0 680 200" role="img"><title>خريطة المصطلحات</title><desc>الحوالة الواحدة بتعدي على العنوان الخفي والتوقيع الحلقي وصورة المفتاح وRingCT وDandelion++، وFCMP++ جاية</desc>
+<defs><marker id="f13m" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+<text class="tl" x="340" y="30" text-anchor="middle" direction="rtl">الحوالة الواحدة عدّت على إيه</text>
+<rect x="572" y="60" width="95" height="56" rx="0" fill="var(--stamp-soft)" stroke="var(--q-nonce)" stroke-width="1"/>
+<text class="tl" x="572" y="84" text-anchor="middle" direction="rtl">حوالة</text>
+<text class="ts" x="572" y="104" text-anchor="middle" direction="rtl">مونيرو</text>
+<rect data-step="1" data-note="عنوان لمرة واحدة لكل دفعة، محدش يقدر يربطه بيك" x="464" y="60" width="95" height="56" rx="0" fill="var(--good-soft)" stroke="var(--q-mrk)" stroke-width="1"/>
+<text class="tl" data-step="1" x="464" y="84" text-anchor="middle" direction="rtl">عنوان خفي</text>
+<text class="ts" data-step="1" x="464" y="104" text-anchor="middle" direction="rtl">القسم 4</text>
+<rect data-step="2" data-note="يثبت إن واحد من 16 وقّع، من غير ما يقول مين" x="356" y="60" width="95" height="56" rx="0" fill="var(--card)" stroke="var(--border2)" stroke-width="1"/>
+<text class="tl" data-step="2" x="356" y="84" text-anchor="middle" direction="rtl">توقيع حلقي</text>
+<text class="ts" data-step="2" x="356" y="104" text-anchor="middle" direction="rtl">القسم 5</text>
+<rect data-step="3" data-note="ختم فريد لكل مخرج يمنع الصرف مرتين من غير كشف" x="248" y="60" width="95" height="56" rx="0" fill="var(--card)" stroke="var(--border2)" stroke-width="1"/>
+<text class="tl" data-step="3" x="248" y="84" text-anchor="middle" direction="rtl">صورة المفتاح</text>
+<text class="ts" data-step="3" x="248" y="104" text-anchor="middle" direction="rtl">القسم 6</text>
+<rect data-step="4" data-note="ظروف مقفولة بتتوازن من غير فتح، زائد إثبات مدى" x="140" y="60" width="95" height="56" rx="0" fill="var(--card)" stroke="var(--border2)" stroke-width="1"/>
+<text class="tl" data-step="4" x="140" y="84" text-anchor="middle" direction="rtl">RingCT</text>
+<text class="ts" data-step="4" x="140" y="104" text-anchor="middle" direction="rtl">القسم 7</text>
+<rect data-step="5" data-note="وشوشة قبل الصرخة: المصدر الظاهر مش انت" x="32" y="60" width="95" height="56" rx="0" fill="var(--card)" stroke="var(--border2)" stroke-width="1"/>
+<text class="tl" data-step="5" x="32" y="84" text-anchor="middle" direction="rtl">Dandelion++</text>
+<text class="ts" data-step="5" x="32" y="104" text-anchor="middle" direction="rtl">القسم 8</text>
+<line data-step="1" x1="570" y1="88" x2="561" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#f13m)"/>
+<line data-step="2" x1="462" y1="88" x2="453" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#f13m)"/>
+<line data-step="3" x1="354" y1="88" x2="345" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#f13m)"/>
+<line data-step="4" x1="246" y1="88" x2="237" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#f13m)"/>
+<line data-step="5" x1="138" y1="88" x2="129" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#f13m)"/>
+<line data-step="6" x1="380" y1="118" x2="340" y2="136" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4 3"/>
+<rect data-step="6" data-note="الترقية الجاية: واحد من كل مخرجات الدفتر بدل 16. متدقّقة ومفيش تاريخ تفعيل لسه" x="240" y="140" width="200" height="44" rx="0" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="5 3"/>
+<text class="tl" data-step="6" x="340" y="158" text-anchor="middle" direction="rtl">FCMP++ الجاية</text>
+<text class="ts" data-step="6" x="340" y="176" text-anchor="middle" direction="rtl">القسم 10</text>
+</svg>
+<figcaption><span class="figno">شكل 13.1</span><span>الحوالة الواحدة في مونيرو بتعدي على الخمس حاجات دول بالترتيب، والسادسة جاية.</span></figcaption>
+</figure>
+
+
+<p class="facts">التجارب نماذج تعليمية قابلة للفحص في مجموعة ضرب رتبتها 1013، ومش تنفيذ لمونيرو. المصادر الأصلية: <a href="https://www.getmonero.org/library/Zero-to-Monero-2-0-0.pdf">Zero to Monero</a> لمعادلات البروتوكول، <a href="https://github.com/monero-project/monero-docs/blob/master/docs/en/technical-specs.md">المواصفات التقنية لمونيرو</a> لحجم الحلقة والإصدار وحدود طبقة الشبكة، <a href="https://www.getmonero.org/2017/05/17/disclosure-of-a-major-bug-in-cryptonote-based-currencies.html">إفصاح ثغرة 2017</a> لتفاصيل عيب صورة المفتاح، و<a href="https://github.com/monero-project/monero/milestone/1">متابعة FCMP++ الرسمية</a> لحالة التفعيل. اتراجعت الحقائق يوم 20 سبتمبر 2026.</p>
+</main>
+</div>
+<footer class="band foot">
+  <nav class="pn" aria-label="Guide navigation"><a href="bitcoin-from-zero-ar.html" rel="prev"><small>السابق</small><strong>بيتكوين</strong></a><a href="index.html" rel="next"><small>التالي</small><strong>كل المقالات</strong></a></nav>
+  <p class="colophon">كتبه <a href="https://moamenbasel.com">مؤمن باسل</a>، مهندس أمن في <a href="https://greycorelabs.com">Grey Core Labs</a>. مؤمن باسل، 2026، الأرقام صحيحة لسبتمبر 2026. <a href="index.html">الفهرس</a></p>
+</footer>
+<script>
+const P = 2027n, Q = 1013n, G = 4n;
+const enc = new TextEncoder();
+function modpow(b, e, m){ b%=m; let r=1n; while(e>0n){ if(e&1n) r=r*b%m; b=b*b%m; e>>=1n; } return r; }
+function rnds(){ const a=new Uint32Array(1); crypto.getRandomValues(a); return (BigInt(a[0]) % (Q-1n)) + 1n; }
+async function Hs(){ const s=[...arguments].join('|'); const d=await crypto.subtle.digest('SHA-256', enc.encode(s)); const hx=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join(''); return BigInt('0x'+hx) % Q; }
+const HGEN = {}; async function hpOf(Pk){ const k=Pk.toString(); if(!HGEN[k]){ const d=await crypto.subtle.digest('SHA-256',enc.encode('hp|'+k)); const hx=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join(''); const x=(BigInt('0x'+hx)%(P-3n))+2n; HGEN[k]=x*x%P; } return HGEN[k]; }
+function el(id){ return document.getElementById(id); }
+
+/* ---- stealth ---- */
+let st = null;
+function stGenWallet(){
+  const a=rnds(), b=rnds();
+  st = { a, b, A:modpow(G,a,P), B:modpow(G,b,P), pays:[] };
+  el('stout').innerHTML =
+    '<div>المستلم عنده رقمين سريين: مفتاح العرض <span class="mono cop">a = '+a+'</span> ومفتاح الصرف <span class="mono cop">b = '+b+'</span>.</div>'+
+    '<div>ومنهم بيتولّد العنوان اللي بيديه للناس: <span class="mono">(A = '+st.A+', B = '+st.B+')</span>.</div>'+
+    '<div class="dim">راقب العنوان ده، عمره ما هيظهر على الدفتر.</div>';
+  el('stpaybtn').disabled=false; el('stscanbtn').disabled=true; el('stagainbtn').disabled=true;
+}
+async function stPay(){
+  if(!st) return;
+  const r=rnds();
+  const R=modpow(G,r,P);
+  const S=modpow(st.A,r,P);
+  const hs=await Hs('stealth',S.toString());
+  const Pk = modpow(G,hs,P) * st.B % P;
+  st.pays.push({R,Pk});
+  let rows = st.pays.map((p,i)=>'<tr><td>دفعة '+(i+1)+'</td><td class="mono">R = '+p.R+'</td><td class="mono">P = '+p.Pk+'</td></tr>').join('');
+  el('stout').innerHTML =
+    '<div>المرسل اختار رقم سري <span class="mono">r = '+r+'</span>، خلطه مع مفتاح عرض المستلم فطلع "اللون البني" <span class="mono">S = '+S+'</span>، وعمل منه صندوق لمرة واحدة.</div>'+
+    '<div class="dim" style="margin-top:.4rem">اللي العالم كله بيشوفه على الدفتر:</div>'+
+    '<table><tr><th></th><th>R (عام)</th><th>الصندوق P</th></tr>'+rows+'</table>'+
+    '<div class="dim">مفيش أثر لـ A أو B ('+st.A+'، '+st.B+'). '+(st.pays.length>1?'القيم العامة لوحدها مبتقولش إن الدفعتين لنفس المستلم.':'')+'</div>';
+  el('stscanbtn').disabled=false; el('stagainbtn').disabled=false;
+}
+async function stScan(){
+  if(!st || !st.pays.length) return;
+  let html='<div class="dim">المستلم بيعيد الخلط من ناحيته بمفتاح العرض السري a:</div>';
+  for(let i=0;i<st.pays.length;i++){
+    const p=st.pays[i];
+    const S2=modpow(p.R, st.a, P);
+    const hs=await Hs('stealth',S2.toString());
+    const Pk2=modpow(G,hs,P)*st.B%P;
+    const mine = Pk2===p.Pk;
+    const x=(hs+st.b)%Q;
+    html += '<div style="margin-top:.35rem">دفعة '+(i+1)+': خلط R بـ a → <span class="mono">'+S2+'</span> → الصندوق المتوقع <span class="mono">'+Pk2+'</span> → <span class="'+(mine?'ok':'no')+'">'+(mine?'ده بتاعي ✓':'مش بتاعي')+'</span>'+
+      (mine?'، وعشان يصرفه محتاج مفتاح الصرف b: المفتاح السري للصندوق = <span class="mono">'+x+'</span>':'')+'</div>';
+  }
+  html += '<div class="dim" style="margin-top:.5rem">محاسب معاه a يقدر يراجع الدفعات الداخلة من غير قدرة على الصرف. المفتاح لوحده مش بيدي كشف موثوق لكل الحوالات الخارجة ولا رصيد كامل.</div>';
+  el('stout').innerHTML = html;
+}
+
+/* ---- ring: shared machinery ---- */
+async function lsagSign(msg, ring, hps, j, x){
+  const n=ring.length;
+  const I = modpow(hps[j], x, P);
+  const alpha = rnds();
+  const e = new Array(n), s = new Array(n);
+  let L = modpow(G, alpha, P), R = modpow(hps[j], alpha, P);
+  e[(j+1)%n] = await Hs(msg, L, R);
+  for(let k=1;k<n;k++){
+    const i=(j+k)%n;
+    s[i]=rnds();
+    const Li = modpow(G,s[i],P)*modpow(ring[i],e[i],P)%P;
+    const Ri = modpow(hps[i],s[i],P)*modpow(I,e[i],P)%P;
+    e[(i+1)%n] = await Hs(msg, Li, Ri);
+  }
+  s[j] = ((alpha - x*e[j]) % Q + Q) % Q;
+  return {I, e0:e[0], s};
+}
+async function lsagVerify(msg, ring, hps, sig){
+  let e = sig.e0;
+  for(let i=0;i<ring.length;i++){
+    const Li = modpow(G,sig.s[i],P)*modpow(ring[i],e,P)%P;
+    const Ri = modpow(hps[i],sig.s[i],P)*modpow(sig.I,e,P)%P;
+    e = await Hs(msg, Li, Ri);
+  }
+  return e===sig.e0;
+}
+function makeWallets(n){ const w=[]; for(let i=0;i<n;i++){ const x=rnds(); w.push({x, P:modpow(G,x,P)}); } return w; }
+function renderRing(id, wallets, mineIdx){
+  el(id).innerHTML = wallets.map((w,i)=>{
+    const mine = mineIdx.includes(i);
+    return '<span class="member'+(mine?' mine':'')+'"><span class="who">'+(mine?(i===mineIdx[0]?'بتاعك · مخرج #١':'بتاعك · مخرج #٢'):'بتاع غريب')+'</span><span class="mono">P = '+w.P+'</span></span>';
+  }).join('');
+}
+
+/* ---- game ---- */
+const gW = makeWallets(5), gMine=[0,2];
+renderRing('ringrow', gW, gMine);
+let gTruth=null, gRight=0, gTotal=0;
+async function gameSign(){
+  el('gsignbtn').disabled=true;
+  const which = Math.random()<0.5?0:1;
+  gTruth = which;
+  const j=gMine[which];
+  const ring=gW.map(w=>w.P); const hps=[]; for(const Pk of ring) hps.push(await hpOf(Pk));
+  const msg='لعبة '+rnds();
+  const sig=await lsagSign(msg, ring, hps, j, gW[j].x);
+  const ok=await lsagVerify(msg, ring, hps, sig);
+  el('gameout').innerHTML=
+    '<div>التوقيع: <span class="mono">e₀ = '+sig.e0+'، s = ['+sig.s.join(', ')+']</span></div>'+
+    '<div>الشبكة تحققت من الدايرة: <span class="'+(ok?'ok':'no')+'">'+(ok?'مقفولة ✓، التوقيع صحيح':'مكسورة')+'</span></div>'+
+    '<div class="dim">الخمس أرقام s دول كلهم عشوائيين بنفس الشكل. طيب مين وقّع؟</div>';
+  el('guessbtns').style.display='block';
+}
+function guess(g){
+  gTotal++; if(g===gTruth) gRight++;
+  el('gameout').innerHTML += '<div style="margin-top:.4rem">الحقيقة: كان مخرج #'+(gTruth+1)+'. انت '+(g===gTruth?'<span class="ok">صح</span>':'<span class="no">غلط</span>')+'، بس لاحظ إنك خمّنت، التوقيع مقالك أي حاجة.</div>';
+  el('gamescore').textContent='النتيجة: '+gRight+' صح من '+gTotal+(gTotal>=4?'، حوالين النص، زي رمي عملة':'');
+  el('guessbtns').style.display='none';
+  el('gsignbtn').disabled=false;
+}
+
+/* ---- key image lab ---- */
+const kW = makeWallets(5), kMine=[0,2];
+renderRing('ringrow2', kW, kMine);
+let ledger=new Map(), spendCount=0;
+async function spend(which){
+  const j=kMine[which];
+  const ring=kW.map(w=>w.P); const hps=[]; for(const Pk of ring) hps.push(await hpOf(Pk));
+  spendCount++;
+  const msg='حوالة '+spendCount+'، رقم عشوائي '+rnds();
+  const sig=await lsagSign(msg, ring, hps, j, kW[j].x);
+  const ok=await lsagVerify(msg, ring, hps, sig);
+  const Ikey=sig.I.toString();
+  let decision;
+  if(ledger.has(Ikey)){ decision='<span class="no">مرفوضة، الختم '+Ikey+' شفناه قبل كده في '+ledger.get(Ikey)+'. صرف مكرر، والشبكة لسه مش عارفة انت مين في الحلقة.</span>'; }
+  else { ledger.set(Ikey,'حوالة '+spendCount); decision='<span class="ok">مقبولة، الختم '+Ikey+' اتسجّل في القايمة.</span>'; }
+  el('ringout').innerHTML=
+    '<div>حوالة '+spendCount+' بنفس الحلقة ورسالة جديدة.</div>'+
+    '<div>التوقيع الحلقي: <span class="'+(ok?'ok':'no')+'">'+(ok?'صحيح رياضياً ✓':'مكسور')+'</span> · الختم (key image): <span class="mono cop">'+sig.I+'</span></div>'+
+    '<div style="margin-top:.3rem">قرار الشبكة: '+decision+'</div>';
+  el('ledgerout').innerHTML='<span class="dim">قايمة الأختام اللي الشبكة شافتها:</span> '+(ledger.size?[...ledger.entries()].map(([k,v])=>'<span class="mono">'+k+'</span> <span class="dim">('+v+')</span>').join(' · '):'(فاضية)');
+}
+
+/* ---- pedersen ---- */
+let Hp2=null;
+(async()=>{ Hp2 = await hpOf('pedersen-h-nums'); pedRender(); })();
+const VIN=100n, FEE=1n;
+let rIn=rnds();
+function commit(v, r){ const vv=((v%Q)+Q)%Q; return modpow(G,vv,P)*modpow(Hp2,r,P)%P; }
+function pedShow(v1, v2, note){
+  const r1=rnds(); const r2=((rIn - r1)%Q+Q)%Q;
+  const Cin=commit(VIN,rIn), C1=commit(v1,r1), C2=commit(v2,r2);
+  const rhs=C1*C2%P*modpow(G,FEE,P)%P;
+  const pass = Cin===rhs;
+  el('pedout').innerHTML=
+    '<div>ظرف الداخل (فيه 100 مقفولة): <span class="mono">'+Cin+'</span></div>'+
+    '<div>ظرف الخارج ١ (فيه '+v1+'): <span class="mono">'+C1+'</span> · ظرف الخارج ٢ (فيه '+v2+'): <span class="mono">'+C2+'</span></div>'+
+    '<div>الظرفين + الرسوم مع بعض: <span class="mono">'+rhs+'</span></div>'+
+    '<div>الميزان: <span class="'+(pass?'ok':'no')+'">'+(pass?'متوازن ✓':'مش متوازن ✗، الشبكة ترفض')+'</span></div>'+
+    '<div class="dim" style="margin-top:.3rem">'+note+'</div>';
+}
+function pedRender(){
+  if(!Hp2) return;
+  const v1=BigInt(el('v1sl').value); const v2=VIN-FEE-v1;
+  el('v1v').textContent=v1; el('v2v').textContent=v2;
+  pedShow(v1, v2, 'تقسيم صح. حرّك المؤشر: الظروف بتتغير، الميزان بيفضل متوازن، ومحدش شاف أي مبلغ. حتى لو رجعت لنفس القيمة، الظروف بتطلع مختلفة كل مرة (تعمية عشوائية)، فالمبالغ المتساوية مبتبانش متساوية.');
+}
+function pedTamper(){
+  if(!Hp2) return;
+  const v1=BigInt(el('v1sl').value)+10n; const v2=VIN-FEE-BigInt(el('v1sl').value);
+  pedShow(v1, v2, '<span class="no">حاولت تطلّع أكتر من اللي داخل. الميزان مسكك، من غير ما يعرف أي مبلغ.</span>');
+}
+function pedNegative(){
+  if(!Hp2) return;
+  pedShow(150n, -51n, '<span class="no">150 + (−51) + 1 = 100، ففحص الاتزان لوحده عدى في النموذج.</span> السبب إن −51 بيلف جوه المجموعة ويبقى '+(((-51n%Q)+Q)%Q)+'. عشان كده كل خرج حقيقي لازم يثبت إن المبلغ جوه المدى المسموح. ثغرة مونيرو سنة 2017 كانت عيب صورة مفتاح سمح بصرف مكرر، ومكانتش المثال ده.');
+}
+
+
+(function(){
+  var html=document.documentElement;
+  function labels(d){
+    var now=document.getElementById('themenow'),go=document.getElementById('themego');
+    if(now)now.textContent=d?'غامق':'فاتح';
+    if(go)go.textContent=d?'فاتح':'غامق';
+  }
+  var saved=null;
+  try{saved=localStorage.getItem('cln-theme')}catch(e){}
+  var dark=saved?saved==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  if(saved){html.setAttribute('data-theme',saved)}
+  labels(dark);
+  var tg=document.getElementById('themego');
+  if(tg)tg.addEventListener('click',function(){
+    var d=html.getAttribute('data-theme')!=='dark';
+    try{localStorage.setItem('cln-theme',d?'dark':'light')}catch(e){}
+    html.setAttribute('data-theme',d?'dark':'light');
+    labels(d);
+  });
+  var pr=document.getElementById('progress');
+  function onScroll(){
+    if(!pr)return;
+    var max=document.documentElement.scrollHeight-innerHeight;
+    var y=window.scrollY;
+    pr.style.visibility=y>8?'visible':'hidden';
+    pr.style.transform='scaleX('+(max>0?Math.min(1,y/max):0)+')';
+  }
+  var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced&&'onscrollend' in window){addEventListener('scrollend',onScroll)}
+  else{addEventListener('scroll',onScroll,{passive:true})}
+  onScroll();
+  var links={};
+  document.querySelectorAll('nav.toc a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a});
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(es){
+      es.forEach(function(en){
+        if(en.isIntersecting){
+          Object.keys(links).forEach(function(k){links[k].classList.remove('act')});
+          var a=links[en.target.id];
+          if(a)a.classList.add('act');
+        }
+      });
+    },{rootMargin:'0px 0px -72% 0px'});
+    document.querySelectorAll('main h2[id]').forEach(function(h){obs.observe(h)});
+  }
+  var langmap={s1:'glass',s4:'stealth',s5:'rings',s6:'keyimage',s7:'ringct',s8:'network',s10:'fcmp',s11:'scorecard'};
+  var lsw=document.querySelector('a.langswap');
+  if(lsw)lsw.addEventListener('click',function(){
+    var h=location.hash&&location.hash.slice(1);
+    if(h&&langmap[h])lsw.setAttribute('href','monero-under-the-hood.html#'+langmap[h]);
+  });
+  var snaps=[];
+  document.querySelectorAll('.machine').forEach(function(mc,mi){
+    var outs=Array.prototype.slice.call(mc.querySelectorAll('.out'));
+    var btns=Array.prototype.slice.call(mc.querySelectorAll('button'));
+    var gb=mc.querySelector('#guessbtns');
+    snaps.push({outs:outs.map(function(o){return o.innerHTML}),btns:btns.map(function(b){return b.disabled})});
+    var timer=null;
+    mc.addEventListener('click',function(e){
+      var b=e.target.closest('button');
+      if(!b||b.disabled)return;
+      clearTimeout(timer);
+      outs.forEach(function(o){o.classList.remove('previous')});
+      mc.setAttribute('data-state','running');
+      b.setAttribute('aria-busy','true');
+      timer=setTimeout(function(){
+        mc.setAttribute('data-state','done');
+        b.classList.add('pop');
+        b.removeAttribute('aria-busy');
+        setTimeout(function(){
+          b.classList.remove('pop');
+          mc.setAttribute('data-state','idle');
+          outs.forEach(function(o){o.classList.add('previous')});
+        },700);
+      },180);
+    });
+    mc.addEventListener('keydown',function(e){
+      var tag=e.target.tagName;
+      if(e.key==='Escape'){mc.blur();return}
+      if(tag==='BUTTON'||tag==='INPUT')return;
+      if(e.key==='Enter'||((e.ctrlKey||e.metaKey)&&e.key==='Enter')){
+        e.preventDefault();
+        var run=btns.find(function(b){return !b.disabled});
+        if(run)run.click();
+      }else if(e.code==='KeyR'&&e.shiftKey){
+        e.preventDefault();
+        var s=snaps[mi];
+        outs.forEach(function(o,i){o.innerHTML=s.outs[i];o.classList.remove('previous')});
+        btns.forEach(function(b,i){b.disabled=s.btns[i]});
+        if(gb)gb.style.display='none';
+        mc.setAttribute('data-state','idle');
+      }else if(e.code==='KeyC'&&e.shiftKey){
+        e.preventDefault();
+        var last=outs[outs.length-1];
+        if(last&&navigator.clipboard)navigator.clipboard.writeText(last.textContent.trim()).catch(function(){});
+      }
+    });
+  });
+})();
+</script>
+<script>
+(function(){
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.hasAttribute('data-anim-off');
+const EZ = 'cubic-bezier(.25,.8,.35,1)';
+const st = document.createElement('style');
+st.textContent = '.fx{position:relative}.fx-strip{display:flex;flex-wrap:wrap;gap:8px;margin:.8rem 0 0}.fx-b{font-family:var(--mono);font-size:11px;border:1px solid var(--border2);border-radius:8px;padding:4px 10px;background:transparent;color:var(--ink);cursor:pointer;transition:border-color .15s}.fx-b:hover{border-color:var(--accent)}.fx-b:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.fx-note{position:absolute;top:10px;left:10px;max-width:240px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:12px;line-height:1.5;color:var(--muted);pointer-events:none;opacity:0;transition:opacity .12s;z-index:5}.fx-note.on{opacity:1}.fx-sel{pointer-events:all;transition:stroke .15s ease,fill .15s ease}.fx-hi{stroke:var(--accent)!important}.fx-hit{fill:var(--accent)!important}.fx [data-step]{transition:opacity .25s ease}.fx-dim{opacity:.25!important}.fx-cur{animation:fxpu 1.8s ease-in-out infinite}.fx-cur:is(rect,line,path,circle,ellipse,polyline,polygon),.fx-cur :is(rect,line,path,circle,ellipse,polyline,polygon){stroke:var(--accent)}.fx-cur:is(text),.fx-cur text{fill:var(--accent)}@keyframes fxpu{0%,100%{opacity:1}50%{opacity:.5}}.fx2 .sa,.fx2 .sb{transition:opacity .25s ease,transform .25s ease}.fx2 .sb{opacity:0;transform:translateY(6px)}.fx2.fb .sb{opacity:1;transform:none}.fx2.fb .sa{opacity:0;transform:translateY(-6px)}@media(prefers-reduced-motion:reduce){.fx-cur{animation:none}.fx *{transition-duration:0s!important}}';
+document.head.appendChild(st);
+function wire(fig){
+if(fig.dataset.fxDone) return;
+fig.dataset.fxDone = '1';
+fig.classList.add('fx');
+const svg = fig.querySelector('svg');
+if(!svg) return;
+const note = document.createElement('div');
+note.className = 'fx-note';
+fig.appendChild(note);
+const strokes = [];
+const texts = [];
+svg.querySelectorAll('path,line,rect,circle,ellipse,polygon,polyline').forEach(el=>{ if(!el.closest('defs')) strokes.push(el); });
+svg.querySelectorAll('text').forEach(el=>texts.push(el));
+let clearT = 0;
+let noteOwner = null;
+const togHide = el => svg.classList.contains('fx2') && !svg.classList.contains('fb') && el.classList.contains('sb');
+function clean(){
+strokes.concat(texts).forEach(el=>{ el.style.transition=''; el.style.opacity=''; el.style.transform=''; el.style.strokeDasharray=''; el.style.strokeDashoffset=''; });
+}
+function noteShow(txt, who){ note.textContent = txt; note.classList.add('on'); noteOwner = who; }
+function noteHide(who){ if(noteOwner && noteOwner !== who) return; note.classList.remove('on'); noteOwner = null; }
+function play(){
+clearTimeout(clearT);
+if(RM){ clean(); return; }
+strokes.forEach((el, k)=>{
+if(togHide(el)) return;
+let L = 0;
+try{ L = el.getTotalLength && !el.getAttribute('stroke-dasharray') ? el.getTotalLength() : 0; }catch(err){ L = 0; }
+const d = Math.min(k*60, 480);
+el.style.transition = 'none';
+if(L > 0){
+el.style.strokeDasharray = L + ' ' + L;
+el.style.strokeDashoffset = L;
+el.getBoundingClientRect();
+el.style.transition = 'stroke-dashoffset 480ms ' + EZ + ' ' + d + 'ms';
+el.style.strokeDashoffset = '0';
+}else{
+el.style.opacity = '0';
+el.getBoundingClientRect();
+el.style.transition = 'opacity 480ms ' + EZ + ' ' + d + 'ms';
+el.style.opacity = '1';
+}
+});
+texts.forEach((el, k)=>{
+if(togHide(el)) return;
+const d = 240 + Math.min(k*60, 480);
+const fixed = el.hasAttribute('transform');
+el.style.transition = 'none';
+el.style.opacity = '0';
+if(!fixed) el.style.transform = 'translateY(6px)';
+el.getBoundingClientRect();
+el.style.transition = 'opacity 360ms ' + EZ + ' ' + d + 'ms' + (fixed ? '' : ',transform 360ms ' + EZ + ' ' + d + 'ms');
+el.style.opacity = '1';
+if(!fixed) el.style.transform = 'translateY(0px)';
+});
+clearT = setTimeout(clean, 1400);
+}
+const kind = fig.dataset.fig;
+const strip = document.createElement('div');
+strip.className = 'fx-strip';
+const re = document.createElement('button');
+re.type = 'button';
+re.className = 'fx-b';
+re.textContent = 'إعادة';
+strip.appendChild(re);
+let groups = [];
+let si = -1;
+let autoT = 0;
+let tgBtn = null;
+let tgLab = null;
+function neutral(){
+groups.forEach(g=>g.els.forEach(el=>el.classList.remove('fx-dim','fx-cur')));
+noteHide('step');
+si = -1;
+}
+function setStep(k){
+if(!groups.length) return;
+si = ((k % groups.length) + groups.length) % groups.length;
+groups.forEach((g, i)=>{ g.els.forEach(el=>{ el.classList.toggle('fx-dim', i !== si); el.classList.toggle('fx-cur', i === si); }); });
+const ne = groups[si].els.find(el=>el.dataset && el.dataset.note);
+if(ne) noteShow(ne.dataset.note, 'step');
+}
+if(kind === 'step'){
+const m = new Map();
+svg.querySelectorAll('[data-step]').forEach(el=>{ const n = +el.getAttribute('data-step') || 0; if(!m.has(n)) m.set(n, []); m.get(n).push(el); });
+groups = Array.from(m.entries()).sort((a,b)=>a[0]-b[0]).map(e=>({n:e[0], els:e[1]}));
+const sb = document.createElement('button');
+sb.type = 'button';
+sb.className = 'fx-b';
+sb.textContent = 'خطوة';
+sb.addEventListener('click', ()=>{ clearInterval(autoT); clearTimeout(fig._fxAuto); setStep(si + 1); });
+strip.appendChild(sb);
+}
+if(kind === 'toggle'){
+svg.classList.add('fx2');
+const labs = (fig.dataset.tgl || 'أ|ب').split('|');
+tgBtn = document.createElement('button');
+tgBtn.type = 'button';
+tgBtn.className = 'fx-b';
+tgLab = ()=>{ tgBtn.textContent = 'اعرض: ' + (svg.classList.contains('fb') ? labs[0] : labs[1]); };
+tgLab();
+tgBtn.addEventListener('click', ()=>{ svg.classList.toggle('fb'); tgLab(); });
+strip.appendChild(tgBtn);
+}
+re.addEventListener('click', ()=>{
+clearInterval(autoT);
+clearTimeout(fig._fxAuto);
+if(kind === 'step') neutral();
+if(kind === 'toggle'){ svg.classList.remove('fb'); if(tgLab) tgLab(); }
+play();
+});
+svg.after(strip);
+let curEl = null;
+function hov(el, on, txt){
+if(on){
+if(curEl && curEl !== el) curEl.classList.remove('fx-hi','fx-hit');
+curEl = el;
+el.classList.add(el.tagName.toLowerCase() === 'text' ? 'fx-hit' : 'fx-hi');
+noteShow(txt, 'hover');
+}else{
+el.classList.remove('fx-hi','fx-hit');
+if(curEl === el){ curEl = null; noteHide('hover'); }
+}
+}
+const cand = new Set(svg.querySelectorAll('[data-note]'));
+svg.querySelectorAll('text,rect,line,path,circle,ellipse,polygon,polyline,g').forEach(el=>{
+if(el.querySelector(':scope > title') && !el.dataset.note) cand.add(el);
+});
+cand.forEach(el=>{
+const t = el.dataset.note || (el.querySelector(':scope > title') || {}).textContent || '';
+if(!t.trim()) return;
+el.classList.add('fx-sel');
+el.addEventListener('pointerenter', e=>{ if(e.pointerType !== 'touch') hov(el, true, t); });
+el.addEventListener('pointerleave', ()=>hov(el, false));
+el.addEventListener('click', e=>{ if(e.pointerType !== 'touch') return; e.stopPropagation(); if(curEl === el) hov(el, false); else hov(el, true, t); });
+});
+play();
+if(kind === 'step' && !RM && groups.length > 1 && !fig.dataset.fxAutoDone){
+fig.dataset.fxAutoDone = '1';
+fig._fxAuto = setTimeout(()=>{
+let k = 0;
+setStep(0);
+autoT = setInterval(()=>{
+k++;
+if(k >= groups.length){ clearInterval(autoT); setTimeout(neutral, 1000); }
+else setStep(k);
+}, 900);
+}, 1400);
+}
+}
+const figs = document.querySelectorAll('figure[data-fig]');
+if('IntersectionObserver' in window && !RM){
+const io = new IntersectionObserver(es=>{
+es.forEach(e=>{ if(e.isIntersecting){ io.unobserve(e.target); wire(e.target); } });
+}, {threshold:.2});
+figs.forEach(f=>io.observe(f));
+}else{
+figs.forEach(f=>wire(f));
+}
+})();
+</script>
+</body>
+</html>

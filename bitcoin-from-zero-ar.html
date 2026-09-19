@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-coin="bitcoin">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>البيتكوين من الصفر | دفتر تجارب الكريبتو | Crypto in Brief</title>
+<meta name="description" content="شرح البيتكوين من الصفر للي معاهم صفر خلفية: الهاش، جوّه البلوك، شجرة Merkle، التعدين، الـ nonce، والتحقق، بخمس تجارب حية بتشتغل في متصفحك بنفس آلة SHA-256 اللي بيتكوين شغالة بيها.">
+<link rel="canonical" href="https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html">
+<meta property="og:site_name" content="Crypto in Brief">
+<meta property="og:type" content="article">
+<meta property="og:title" content="البيتكوين من الصفر">
+<meta property="og:description" content="شرح البيتكوين من الصفر للي معاهم صفر خلفية: الهاش، جوّه البلوك، شجرة Merkle، التعدين، الـ nonce، والتحقق، بخمس تجارب حية بتشتغل في متصفحك بنفس آلة SHA-256 اللي بيتكوين شغالة بيها.">
+<meta property="og:url" content="https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html">
+<meta property="og:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="البيتكوين من الصفر">
+<meta name="twitter:description" content="خمس تجارب حية تشتغل في المتصفح: الهاش، بلوك الميلاد، شجرة Merkle، التعدين، وتزوير سلسلة.">
+<meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<meta name="author" content="Moamen Basel">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"البيتكوين من الصفر","description":"شرح البيتكوين من الصفر للي معاهم صفر خلفية: الهاش، جوّه البلوك، شجرة Merkle، التعدين، الـ nonce، والتحقق، بخمس تجارب حية بتشتغل في متصفحك بنفس آلة SHA-256 اللي بيتكوين شغالة بيها.","datePublished":"2026-09-19","inLanguage":"ar","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz"},"mainEntityOfPage":"https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html"}</script>
+<style>
+:root{
+  --bg:#FAFAF8; --surface:#FFFFFF; --surface2:#F4F4F1;
+  --border:#E7E6E1; --border2:#D8D7D1;
+  --ink:#16171A; --muted:#5D6270; --faint:#9B9FA8;
+  --accent:#B87400; --accent-ink:#FFFFFF; --accent-soft:rgba(184,116,0,.10);
+  --good:#0B9E6A; --bad:#D64533; --warn:#B27A22;
+  --term:#0C0E11; --term-border:#1E2229; --term-ink:#DADEE4; --term-dim:#8A909A; --term-accent:#63E2A6;
+  --serif:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --sans:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --measure:66ch; --rail:13rem; --note:13.5rem; --gutter:1.75rem;
+  --ease:cubic-bezier(.25,.8,.35,1);
+  --r-card:16px; --r-btn:10px; --r-chip:999px;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#F7931A; --accent-ink:#1A1205; --accent-soft:rgba(247,147,26,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}
+@media(prefers-color-scheme:dark){
+:root:not([data-theme="light"]){
+  --bg:#0A0B0D; --surface:#111318; --surface2:#15181E;
+  --border:#20242C; --border2:#2B303A;
+  --ink:#EDEEF1; --muted:#9CA1AB; --faint:#666C76;
+  --accent:#F7931A; --accent-ink:#1A1205; --accent-soft:rgba(247,147,26,.12);
+  --good:#35D38A; --bad:#F27059; --warn:#E9AE5C;
+}}
+*{box-sizing:border-box}
+html{overflow-x:clip;font-size:106.25%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0588rem;line-height:1.72;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent-soft);color:var(--ink)}
+#readprog{position:fixed;top:0;left:0;width:100%;height:2px;background:var(--accent);transform-origin:0 0;transform:scaleX(0);z-index:60;visibility:hidden;border-radius:0 2px 2px 0}
+#readprog.on{visibility:visible}
+.band{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:3.25rem;padding-inline:max(1.25rem,calc(50vw - 21rem));font-family:var(--sans);font-size:.75rem;letter-spacing:.02em}
+header.band{position:sticky;top:0;z-index:50;flex-wrap:wrap;padding-block:.5rem;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--border)}
+.band a{color:var(--muted);text-decoration:none;transition:color .15s var(--ease)}
+.band a:hover{color:var(--ink)}
+.band a[aria-current="page"]{color:var(--accent)}
+.band .mark{color:var(--ink);font-weight:650;white-space:nowrap;letter-spacing:-.01em;font-size:.875rem}
+.band nav.series{display:flex;flex-wrap:wrap;gap:.3rem .95rem}
+.band .series a{white-space:nowrap}
+.band .switch{display:flex;gap:1rem;margin:0;white-space:nowrap;font-family:var(--mono);font-size:.7rem}
+.band .switch b{color:var(--ink);font-weight:600}
+.band .none{color:var(--faint)}
+.band button{background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer}
+.band button:hover{color:var(--accent)}
+main{max-width:var(--measure);margin-inline:auto;padding:3rem 1.25rem 5rem;position:relative}
+.reg,main::before,main::after{display:none}
+@media(min-width:1100px){
+main{max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note));display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter)}
+nav.toc.rail{grid-column:1;align-self:start;position:sticky;top:4.5rem}
+.col{grid-column:2;max-width:var(--measure);position:relative}
+}
+.byline{font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:0 0 1rem}
+.byline,.lead{max-width:60ch}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,1.7rem + 3.2vw,3.6rem);line-height:1.04;letter-spacing:-.015em;margin:.15em 0 .5em}
+.lead{font-size:1.3rem;line-height:1.45;color:var(--muted);margin:0 0 2rem;font-weight:450}
+h2{font-size:1.65rem;line-height:1.25;font-weight:650;letter-spacing:-.015em;margin:3.4em 0 .7em}
+.col>h2:first-of-type{margin-block-start:1.8em}
+h2 .num{font-family:var(--mono);color:var(--accent);font-size:.7em;margin-inline-end:.7em;font-weight:500;letter-spacing:0}
+h3{font-size:1.18rem;line-height:1.35;font-weight:600;margin:2.1em 0 .45em;letter-spacing:-.008em}
+p{margin:0 0 1.15em}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);transition:border-color .15s var(--ease)}
+a:hover{border-bottom-color:var(--accent)}
+code,.hx,.num{font-family:var(--mono);font-size:.85em;font-variant-numeric:tabular-nums}
+code{background:var(--accent-soft);border-radius:5px;padding:.1em .35em}
+strong{font-weight:650}
+figure{margin:2.5rem auto;width:min(72rem,calc(100vw - 2rem));transform:translateX(0);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:1.5rem 1.5rem 1.1rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+[dir="rtl"] figure{margin-inline:auto}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:.9rem}
+figcaption .figno{font-family:var(--mono);color:var(--accent);margin-inline-end:.55em;font-size:.95em}
+.figbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:inherit;border-radius:var(--r-card)}
+.figbtn:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.c-time{stroke:var(--warn)} .c-nonce{stroke:var(--accent)} .c-mrk{stroke:var(--good)} .c-ver{stroke:var(--faint)}
+.f-time{fill:var(--warn)} .f-nonce{fill:var(--accent)} .f-ink{fill:var(--ink)} .f-mut{fill:var(--muted)} .f-pap{fill:var(--surface)}
+table{width:100%;border-collapse:collapse;margin:1.8em 0;font-family:var(--sans);font-size:.875rem}
+th,td{padding:.6rem .7rem;text-align:start;vertical-align:top;border-bottom:1px solid var(--border)}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+tbody th{font-weight:400;color:var(--muted);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+aside.note{font-size:.875rem;line-height:1.6;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+aside.note.good{border-color:color-mix(in srgb,var(--good) 35%,var(--border))}
+aside.note.bad{border-color:color-mix(in srgb,var(--bad) 35%,var(--border))}
+aside.note p{margin:0 0 .5em}
+aside.note p:last-child{margin:0}
+@media(min-width:1152px){
+aside.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+nav.toc{font-family:var(--sans);font-size:.8125rem;line-height:1.5}
+nav.toc.rail{display:none}
+@media(min-width:1100px){nav.toc.rail{display:block}}
+nav.toc.rail a{display:flex;align-items:baseline;gap:.5rem;color:var(--muted);text-decoration:none;border:0;padding:.28rem 0;transition:color .15s var(--ease)}
+nav.toc.rail a .leaders{display:none}
+nav.toc.rail a .secno{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover{color:var(--ink)}
+nav.toc.rail a:hover .secno{color:var(--accent)}
+nav.toc.rail a.act{color:var(--accent);font-weight:550}
+nav.toc.rail a.act .secno{color:var(--accent)}
+nav.toc.rail .toclab{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+details.toc{border:1px solid var(--border);border-radius:12px;margin:2rem 0;padding:.35rem 1rem;background:var(--surface)}
+details.toc summary{cursor:pointer;font-weight:600;color:var(--ink);padding:.45rem 0}
+details.toc ol{margin:.4em 0 .6em;padding-inline-start:1.3em}
+details.toc li{margin:.25em 0}
+@media(min-width:1100px){details.toc{display:none}}
+.machine{background:var(--surface2);color:var(--ink);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;width:min(72rem,calc(100vw - 2rem));margin:2.5rem auto;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.machine:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mhead{display:flex;align-items:center;gap:10px;min-height:2.75rem;padding:.55rem 1.1rem;border-bottom:1px solid var(--border);font-family:var(--sans);margin:0}
+.mtag{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em}
+.mtitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600;color:var(--ink)}
+.mchip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted)}
+.mtick{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--ink);min-width:7ch;text-align:end}
+.mtick.tk{color:var(--accent)}
+.melapsed{font-family:var(--mono);font-size:.72rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:6ch;text-align:end}
+.mprog{height:2px;margin:0;background:var(--accent);transform-origin:0 0;transform:scaleX(0)}
+.machine[data-state="running"] .mprog{transform:scaleX(var(--sx,0));transition:transform 120ms linear}
+.machine[data-state="running"] .mprog.ind{transform:none;animation:indbar 900ms linear infinite}
+@keyframes indbar{from{transform:translateX(-40%) scaleX(.28)}to{transform:translateX(120%) scaleX(.28)}}
+.machine[data-state="done"] .mprog{transform:scaleX(1);height:0;transition:transform 140ms var(--ease),height 180ms var(--ease) 160ms}
+.mrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 4px}
+.machine .mrow~.mrow{padding-top:0}
+.machine button{font-family:var(--sans);font-size:.875rem;line-height:1;font-weight:550;padding:10px 18px;min-height:38px;cursor:pointer;border-radius:var(--r-btn);transition:transform .12s var(--ease),background .15s var(--ease),filter .12s var(--ease)}
+.machine .run{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine .run:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine .run:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine .ghost{background:transparent;border:1px solid var(--border2);color:var(--ink)}
+.machine .ghost:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.machine button:disabled{opacity:.4;cursor:not-allowed}
+.machine button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.machine .run.pop{animation:runpop 240ms var(--ease)}
+@keyframes runpop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.machine input,.machine select{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:9px 12px}
+.machine input:focus-visible,.machine select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.out{background:var(--term);border:1px solid var(--term-border);border-radius:12px;margin:10px 14px 14px;padding:12px 14px;min-height:76px;max-height:240px;overflow-y:auto;font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--term-ink);word-break:break-all;transition:border-color 180ms}
+.machine[data-state="running"] .out{border-color:var(--term-border)}
+.machine .out.flash{border-color:var(--good);transition:border-color 180ms}
+.machine[data-state="error"] .out{border-color:var(--bad)}
+.out p{margin:0 0 2px;animation:linein 120ms var(--ease)}
+@keyframes linein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.out::-webkit-scrollbar{width:6px}
+.out::-webkit-scrollbar-thumb{background:var(--term-border);border-radius:3px}
+.out .hx{font-size:.8rem}
+.out .zeros{color:var(--term-accent);font-weight:700}
+.out .ok{color:var(--good)}
+.out .no{color:var(--bad)}
+.out .dim{color:var(--term-dim);font-size:.72rem;margin-top:6px}
+.out .sA{color:var(--term-dim)}
+.out .sB{color:var(--term-accent)}
+.out .lane{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0}
+.out .lane .ln{width:6ch;color:var(--term-dim);font-size:.72rem}
+.out .blkchip{border:1px solid var(--term-border);border-radius:6px;padding:1px 7px;font-size:.72rem;color:var(--term-ink)}
+.out .blkchip.win{border-color:var(--good);color:var(--good)}
+.out .blkchip.dead{color:var(--term-dim);text-decoration:line-through}
+.mcap{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin:.7rem 14px 1rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+footer.band{display:block;position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:0;border-top:1px solid var(--border);padding-block:1.5rem 3rem;font-size:.8rem;color:var(--muted);letter-spacing:0}
+footer.band .pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:1.2rem}
+footer.band .pn a{display:flex;flex-direction:column;gap:4px;border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;color:var(--ink);background:var(--surface);transition:border-color .15s var(--ease)}
+footer.band .pn a:hover{border-color:var(--accent)}
+footer.band .pn a:hover .t{color:var(--accent)}
+footer.band .pn .k{font-family:var(--mono);font-size:.65rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+footer.band .pn .t{font-family:var(--sans);font-size:.95rem;font-weight:550;color:var(--ink)}
+footer.band .pn .next{text-align:end;align-items:flex-end}
+footer.band .colophon{margin:1.5rem 0 0}
+footer.band .colophon a{color:var(--muted);border-bottom:0}
+footer.band .colophon a:hover{color:var(--accent)}
+@media(prefers-contrast:more){
+.machine,.out{border-width:2px}
+.mprog{height:3px}
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.out p{animation:none}
+.machine .run.pop{animation:none}
+.machine button{transition:none}
+.machine[data-state="running"] .mprog,.machine[data-state="running"] .mprog.ind{animation:none;transition:none}
+.machine[data-state="done"] .mprog{transition:none}
+}
+
+html[lang="ar"] body{line-height:1.95}
+html[lang="ar"] h1{font-family:var(--sans);font-weight:700;letter-spacing:0;font-size:clamp(2.1rem,1.5rem + 2.6vw,3rem)}
+html[lang="ar"] .lead{font-weight:450}
+html[lang="ar"] h2 .num,html[lang="ar"] .mtag,html[lang="ar"] code{font-family:var(--mono);direction:ltr;unicode-bidi:embed}
+
+/* compat: selectors this page's markup still uses, mapped to the new tokens */
+.progress{position:fixed;top:0;inset-inline:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:0 0;z-index:60;opacity:0;transition:opacity .25s var(--ease)}
+[dir="rtl"] .progress{transform-origin:100% 0}
+.kicker{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.06em;margin:0 0 .6rem}
+.toc-h{font-family:var(--mono);font-size:.68rem;color:var(--faint);text-transform:uppercase;letter-spacing:.16em;margin:0 0 .6rem}
+.shell{position:relative}
+.sheet{position:relative}
+@media(min-width:1100px){
+.shell{display:grid;grid-template-columns:var(--rail) minmax(0,1fr) var(--note);column-gap:var(--gutter);align-items:start;max-width:calc(var(--rail) + var(--gutter) + var(--measure) + var(--gutter) + var(--note) + 2.5rem);margin-inline:auto;padding-inline:1.25rem}
+main{display:block;max-width:var(--measure);padding-inline:0}
+nav.toc.rail{grid-column:1;position:sticky;top:4.5rem}
+.sheet{grid-column:2;min-width:0;max-width:var(--measure)}
+}
+nav.toc.rail a .n{font-family:var(--mono);font-size:.72em;color:var(--faint)}
+nav.toc.rail a:hover .n{color:var(--accent)}
+nav.toc.rail a.on{color:var(--accent);font-weight:550}
+nav.toc.rail a.on .n{color:var(--accent)}
+.hx{direction:ltr;unicode-bidi:isolate;word-break:break-all}
+.num-ltr{direction:ltr;unicode-bidi:isolate;font-family:var(--mono)}
+html[dir="rtl"] em{font-style:normal;font-weight:500}
+.facts{font-family:var(--sans);font-size:.8125rem;line-height:1.7;color:var(--muted);margin:3rem 0 0;padding-top:1rem;border-top:1px solid var(--border)}
+div.note{font-size:.875rem;line-height:1.7;color:var(--muted);margin:1.6rem 0;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+div.note.good{border-color:color-mix(in srgb,var(--good) 35%,var(--border))}
+div.note.bad{border-color:color-mix(in srgb,var(--bad) 35%,var(--border))}
+div.note p{margin:0 0 .5em}
+div.note p:last-child{margin:0}
+@media(min-width:1152px){
+div.note{position:absolute;inset-inline-end:calc(-1 * (var(--note) + var(--gutter)));width:var(--note);margin:0}
+}
+.machine{--q-ver:#46586a;--q-prev:#8a5a24;--q-mrk:#1f5c46;--q-time:#274d54;--q-bits:#4b4b55;--q-nonce:#9e2b16}
+.mlab{font-family:var(--mono);font-size:.68rem;color:var(--accent);background:var(--accent-soft);border-radius:var(--r-chip);padding:3px 10px;white-space:nowrap;letter-spacing:.04em;flex:none;direction:ltr}
+.chip{font-family:var(--mono);font-size:.68rem;border:1px solid var(--border2);border-radius:var(--r-chip);padding:2px 9px;color:var(--muted);flex:none;direction:ltr}
+.mtick,.melapsed{flex:none;direction:ltr}
+.mhead{position:relative;overflow:hidden}
+.machine[data-state="running"] .mhead::after{content:"";position:absolute;bottom:0;inset-inline:0;height:2px;background:var(--accent);animation:indbar 900ms linear infinite}
+.machine>label{display:block;font-family:var(--sans);font-size:.8125rem;color:var(--muted);margin:10px 14px 4px}
+.machine>input,.machine>select{width:calc(100% - 28px);margin:4px 14px}
+.machine textarea{font-family:var(--sans);font-size:.875rem;color:var(--ink);background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-btn);padding:8px 10px;resize:vertical}
+.machine textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.machine>.dim{font-family:var(--sans);font-size:.75rem;line-height:1.6;color:var(--muted);margin:.6rem 14px 1rem}
+.machine button[data-run]{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.machine button[data-run]:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.machine button[data-run]:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
+.machine button.secondary{background:transparent;border:1px solid var(--border2);color:var(--ink);font-weight:550}
+.machine button.secondary:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 6%,transparent);filter:none;transform:none}
+.machine[data-state="done"] .out{border-color:var(--good)}
+.machine[data-state="error"] .out{border-color:var(--bad)}
+.machine>.fieldrow,.machine>.legend{margin-inline:14px}
+.fieldrow{display:flex;flex-wrap:wrap;gap:.3rem;direction:ltr;font-family:var(--mono);font-size:.78rem;line-height:1.9;margin-top:.6rem;margin-bottom:.4rem;word-break:break-all}
+.f{padding:.1rem .3rem;color:#E8ECEF}
+.f-ver{background:var(--q-ver)}
+.f-prev{background:var(--q-prev)}
+.f-mrk{background:var(--q-mrk)}
+.f-time{background:var(--q-time)}
+.f-bits{background:var(--q-bits)}
+.f-nonce{background:var(--q-nonce);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem .9rem;font-family:var(--sans);font-size:.75rem;color:var(--muted);margin-top:.4rem}
+.legend span::before{content:"";display:inline-block;width:.6rem;height:.6rem;margin-inline-end:.35rem;vertical-align:-1px;border-radius:2px}
+.lg-ver::before{background:var(--q-ver)}
+.lg-prev::before{background:var(--q-prev)}
+.lg-mrk::before{background:var(--q-mrk)}
+.lg-time::before{background:var(--q-time)}
+.lg-bits::before{background:var(--q-bits)}
+.lg-nonce::before{background:var(--q-nonce)}
+.machine>.stats{margin:.8rem 14px 0}
+.stats{display:flex;flex-wrap:wrap;gap:1.2rem;font-family:var(--sans)}
+.stat .v{display:block;font-family:var(--mono);font-size:1.05rem;color:var(--ink);direction:ltr;unicode-bidi:isolate;text-align:end;font-variant-numeric:tabular-nums}
+.stat .k{font-size:.75rem;color:var(--faint)}
+.machine>.tree{margin:.8rem 14px 0}
+.tree{direction:ltr;font-family:var(--mono);font-size:.8rem;text-align:center}
+.tier{display:flex;justify-content:center;flex-wrap:wrap;gap:.6rem;margin:.35rem 0}
+.tnode{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:.25rem .5rem;min-width:6.2rem;transition:border-color .3s var(--ease)}
+.tnode.hot{border-color:var(--accent)}
+.tnode .lbl{display:block;font-size:.68rem;color:var(--faint)}
+.tnode .hv{font-size:.75rem}
+.machine>.blocks{margin:.6rem 14px 0}
+.blocks{display:flex;flex-direction:column;gap:1rem}
+.blk{border:1px solid color-mix(in srgb,var(--good) 45%,var(--border));border-radius:10px;padding:.8rem .9rem;background:var(--surface2);transition:border-color .3s var(--ease)}
+.blk.broken{border-color:var(--bad)}
+.blk .b-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--sans);font-weight:600;margin-bottom:.4rem}
+.blk .b-state{font-size:.75rem;font-family:var(--sans);font-weight:400}
+.blk.broken .b-state{color:var(--bad)}
+.blk:not(.broken) .b-state{color:var(--good)}
+.blk .row2{display:grid;grid-template-columns:1fr 8rem;gap:.6rem}
+@media(max-width:34rem){.blk .row2{grid-template-columns:1fr}}
+.blk .out{min-height:0;padding:6px 8px;font-size:12px;max-height:none;margin:0}
+@media(prefers-reduced-motion:reduce){
+.machine[data-state="running"] .mhead::after{animation:none}
+}
+.coinbadge{display:inline-flex;width:54px;height:54px;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin-inline-end:.7rem;vertical-align:-14px}.coinbadge svg{width:38px;height:38px;display:block}
+.coinbadge{background:#F7931A;border-color:color-mix(in srgb,#F7931A 55%,transparent)}
+.coinbadge svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+</style>
+<style>
+:root{--bg:#C5CAD4;--ink:#14161C;--muted:#4A5160;--faint:#7A8294;--border:color-mix(in srgb,#14161C 18%,transparent);--border2:color-mix(in srgb,#14161C 26%,transparent);--surface:color-mix(in srgb,#14161C 4%,var(--bg));--surface2:color-mix(in srgb,#14161C 7%,var(--bg));--accent:#F7931A;--accent-ink:#1A1008;--accent-soft:color-mix(in srgb,#F7931A 10%,transparent);--good:#F7931A;--coin:#F7931A;--coin2:#F7931A;--serif:"Syne","Noto Sans Arabic",sans-serif;--sans:"Schibsted Grotesk","Noto Sans Arabic",system-ui,sans-serif;--mono:"Martian Mono",ui-monospace,monospace}
+:root[data-theme="dark"]{--bg:#171B24;--ink:#E6EAF0;--muted:#8B93A3;--faint:#5A6272;--border:color-mix(in srgb,#E6EAF0 20%,transparent);--border2:color-mix(in srgb,#E6EAF0 28%,transparent);--surface:color-mix(in srgb,#E6EAF0 4%,var(--bg));--surface2:color-mix(in srgb,#E6EAF0 7%,var(--bg));--accent:#F7931A;--accent-ink:#1A1008;--accent-soft:color-mix(in srgb,#F7931A 12%,transparent);--good:#F7931A}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171B24;--ink:#E6EAF0;--muted:#8B93A3;--faint:#5A6272;--border:color-mix(in srgb,#E6EAF0 20%,transparent);--border2:color-mix(in srgb,#E6EAF0 28%,transparent);--surface:color-mix(in srgb,#E6EAF0 4%,var(--bg));--surface2:color-mix(in srgb,#E6EAF0 7%,var(--bg));--accent:#F7931A;--accent-ink:#1A1008;--accent-soft:color-mix(in srgb,#F7931A 12%,transparent);--good:#F7931A}}
+*{border-radius:0!important}
+body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.045;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")}
+:root[data-theme="dark"] body::after{opacity:.07;mix-blend-mode:overlay}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) body::after{opacity:.07;mix-blend-mode:overlay}}
+::selection{background:var(--coin);color:#1A1008}
+h1{font-family:"Syne","Noto Sans Arabic",sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1.04}
+h2{font-family:"Syne","Noto Sans Arabic",sans-serif;font-weight:700;letter-spacing:-.02em}
+header.band{position:static;backdrop-filter:none;-webkit-backdrop-filter:none;background:none;border-bottom:1px solid var(--border)}
+header.band .series a,header.band .mark,header.band .switch{font-family:"Martian Mono","Noto Sans Arabic",monospace;font-size:.625rem;letter-spacing:.02em}
+.spine{position:fixed;left:0;top:0;width:6px;height:100dvh;z-index:45;background:#F7931A;opacity:.35}
+.spine i{position:absolute;inset:0;background:#F7931A;transform-origin:top;transform:scaleY(0);animation:spinefill linear;animation-timeline:scroll()}
+@keyframes spinefill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.spine i{animation:none;transform:scaleY(1)}}
+.bay{margin-inline:calc(50% - 50vw);width:100vw;background:#F7931A;color:#1A1008;padding:2.2rem max(1.25rem,3vw) 2rem;clip-path:inset(0 100% 0 0);animation:bayfill .64s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes bayfill{to{clip-path:inset(0 0 0 0)}}
+@media(prefers-reduced-motion:reduce){.bay{animation:none;clip-path:none}}
+.bay .byline,.bay .lead{color:#3A2410}
+.bay .byline a{color:#241305}
+.bay h1{color:#1A1008;max-width:22ch}
+.bay .coinbadge{background:rgba(255,255,255,.35);border-color:rgba(26,16,8,.35)}
+.bay .machine{width:100%;max-width:38rem;margin:1.4rem 0 0}
+footer.band .pn a{border:0;background:color-mix(in srgb,#F7931A 35%,var(--bg));min-height:6rem;align-items:flex-end;justify-content:flex-start;padding:1rem 1.2rem}
+footer.band .pn a .t{font-family:"Syne","Noto Sans Arabic",sans-serif;font-weight:700;letter-spacing:-.02em}
+nav.toc.rail a.act{color:var(--accent);box-shadow:none;border-bottom:0}
+nav.toc.rail a{font-family:"Schibsted Grotesk","Noto Sans Arabic",sans-serif}
+nav.toc .toclab,nav.toc .toc-h{font-family:"Martian Mono","Noto Sans Arabic",monospace}
+.machine{background:var(--surface2);border:1px solid var(--border)}
+figure{background:var(--surface)}
+code{background:color-mix(in srgb,#F7931A 14%,transparent)}
+aside.note{background:var(--surface)}
+html[lang="ar"] body{line-height:1.9}
+html[lang="ar"] h1{font-family:"Syne","Noto Sans Arabic",sans-serif;font-weight:700;letter-spacing:0}
+html[lang="ar"] .bay h1{letter-spacing:0}
+html[lang="ar"] h2,html[lang="ar"] footer.band .pn a .t{letter-spacing:0}
+html[dir="rtl"] .bay{clip-path:inset(0 0 0 100%)}
+</style>
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml"><link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/bitcoin-from-zero.html"><link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html"><link rel="alternate" hreflang="x-default" href="https://cryptoinbrief.xyz/bitcoin-from-zero.html">
+<meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
+<link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="spine" aria-hidden="true"><i></i></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<header class="site-header">
+<a class="mark" href="index.html">crypto<span>in</span>brief.</a>
+<nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="crypto-summary.html">Start here</a></nav>
+<p class="switch">
+<span class="lang"><b>AR</b> | <a id="langswap" href="bitcoin-from-zero.html" lang="en" hreflang="en">EN</a></span>
+<span class="theme"><span id="themenow">فاتح</span> | <button type="button" id="themego">غامق</button></span>
+</p>
+</header>
+<div class="shell">
+<nav class="toc rail" aria-label="المحتويات">
+<p class="toc-h">المحتويات</p>
+<ol>
+<li><a href="#problem"><span class="t">مين يكتب الصفحة الجاية؟</span><span class="leaders"></span><span class="n">01</span></a></li>
+<li><a href="#hash"><span class="t">يعني إيه هاش أصلاً؟</span><span class="leaders"></span><span class="n">02</span></a></li>
+<li><a href="#block"><span class="t">جوّه البلوك</span><span class="leaders"></span><span class="n">03</span></a></li>
+<li><a href="#merkle"><span class="t">بصمة البصمات</span><span class="leaders"></span><span class="n">04</span></a></li>
+<li><a href="#mining"><span class="t">فين المجهود؟</span><span class="leaders"></span><span class="n">05</span></a></li>
+<li><a href="#nonce"><span class="t">خانة العبث الحر</span><span class="leaders"></span><span class="n">06</span></a></li>
+<li><a href="#time"><span class="t">ساعة الشبكة</span><span class="leaders"></span><span class="n">07</span></a></li>
+<li><a href="#trust"><span class="t">مين بيصدق مين؟</span><span class="leaders"></span><span class="n">08</span></a></li>
+<li><a href="#chain"><span class="t">ليه التاريخ بيتقفل؟</span><span class="leaders"></span><span class="n">09</span></a></li>
+<li><a href="#faq"><span class="t">أسئلة بتسألهالك</span><span class="leaders"></span><span class="n">10</span></a></li>
+</ol>
+</nav>
+<div class="sheet">
+<main id="main-content">
+
+<section class="bay">
+<p class="kicker">البيتكوين من الصفر</p>
+<span class="coinbadge"><img src="assets/coins/bitcoin.svg" alt="Bitcoin" width="34" height="34"></span><h1>إزاي شبكة من الغرباء بتتفق على دفتر واحد</h1>
+<p class="byline">بقلم <a href="https://moamenbasel.com">مؤمن باسل</a>، سبتمبر ٢٠٢٦، <span class="num">5</span> تجارب حية، قراءة <span class="num">16</span> دقيقة تقريباً</p>
+<p class="lead">الصفحة دي مش محتاجة أي خلفية عن التشفير. الآليات الأساسية فيها تجارب تشغّلها بإيدك، منها SHA-256، كارت بلوك الميلاد، شجرة Merkle، التعدين، وتعديل سلسلة مصغّرة.</p>
+
+<div class="machine live" data-state="idle" data-type="HASH" tabindex="0" aria-labelledby="lab1t">
+<div class="mhead"><span class="mlab">LAB 01</span><span class="mtitle" id="lab1t">آلة البصمة</span><span class="chip">HASH</span></div>
+<label for="hin">اكتب أي حاجة وشوف بصمتها</label>
+<input type="text" id="hin" value="انا بعت لعمر 10 بيتكوين">
+<div class="mrow">
+<button class="secondary" type="button" onclick="setH('انا بعت لعمر 10 بيتكوين')">بعت لعمر 10</button>
+<button class="secondary" type="button" onclick="setH('انا بعت لعمر 90 بيتكوين')">بعت لعمر 90</button>
+<button class="secondary" type="button" onclick="setH('انا بعت لعمر 10 بيتكوين.')">نفس الجملة + نقطة</button>
+</div>
+<div class="out" role="log" aria-live="polite"><span class="hx" id="hout">…</span></div>
+<div class="dim" id="hprev"></div>
+</div>
+</section>
+
+<p>دوس على الزرارين الأولانيين بالتبادل. فرق رقم واحد في المبلغ، والبصمتين ملهمش أي علاقة ببعض. حتى نقطة في آخر الجملة بتقلب كل حاجة. الخاصية دي هي اللي هتخلي "القفل" اللي جاي يشتغل.</p>
+
+<details class="toc">
+<summary>المحتويات</summary>
+<ol>
+<li><a href="#problem">01 مين يكتب الصفحة الجاية؟</a></li>
+<li><a href="#hash">02 يعني إيه هاش أصلاً؟</a></li>
+<li><a href="#block">03 المعاملات والكارت الصغير جوّه البلوك</a></li>
+<li><a href="#merkle">04 بصمة البصمات وشجرة الـ Merkle</a></li>
+<li><a href="#mining">05 فين المجهود في لعبة التعدين؟</a></li>
+<li><a href="#nonce">06 الـ nonce وخانة العبث الحر</a></li>
+<li><a href="#time">07 ساعة الشبكة</a></li>
+<li><a href="#trust">08 مين بيصدق مين؟</a></li>
+<li><a href="#chain">09 ليه التاريخ بيتقفل؟</a></li>
+<li><a href="#faq">10 أسئلة بتسألهالك</a></li>
+</ol>
+</details>
+
+<h2 id="problem"><span class="num">01</span> مين يكتب الصفحة الجاية؟</h2>
+<p>قبل أي هاش وأي تعدين، فيه مشكلة كل ده واقف عليها. بيتكوين في جوهرها <strong>دفتر حسابات واحد</strong>: مين معاه كام، ومين بعت لمين. الدفتر ده متشارك بين ملايين الغرباء حوالين العالم، ومفيش بنك مسؤول عنه. الشركة مش طرف ومفيش حد مسؤول عنه. طيب مين اللي يكتب الصفحة الجاية فيه؟</p>
+<p>البنك جاوب السؤال ده بموظف، هو اللي بيكتب وانت مضطر تثق فيه. شيل الموظف وهتقع في مشكلتين فوراً. الأولى اسمها <strong>الصرف المزدوج</strong> (double spend): أكتب صفحة بقول فيها إني بعتلك فلوسي، وفي نفس اللحظة أكتب صفحة تانية بقول فيها إني بعت نفس الفلوس لحد تاني، وأوزع النسختين، فمين يحدد أنهي واحدة "الحقيقية"؟ التانية، لو قلنا "نعمل تصويت"، هعمل مليون حساب وهمي وأصوّت بيهم كلهم، لأن الهويات على النت ببلاش. دي اسمها هجمة <span class="num-ltr">Sybil</span>.</p>
+<p>حق كتابة الصفحة عند بيتكوين بيتكسب <strong>بقرعة تمن تذكرتها كهربا حقيقية</strong> محدش يقدر يزوّرها. مش صوت لكل شخص، صوت لكل وات. القرعة دي هي التعدين، وباقي الصفحة بتفكك إزاي بتشتغل قطعة قطعة.</p>
+
+<figure class="fig" id="fig01">
+<svg viewBox="0 0 680 200" role="img" aria-label="مشكلة من يكتب الصفحة الجاية وحلها" data-la="رجوع للمشكلة" data-lb="شوف الحل: القرعة">
+<g class="sa">
+<rect class="kb" x="24" y="76" width="132" height="52" rx="10" data-note="مفيش موظف مركزي - أي حد يقدر يقترح صفحة في الدفتر" data-hl="stroke"/>
+<text class="tx" x="90" y="99" text-anchor="middle">أنا</text>
+<text class="txs" x="90" y="117" text-anchor="middle">معايا 10 بس</text>
+<path class="ks" d="M156 88 C210 62 230 54 286 48" data-note="نفس العشرة اتكتبت في صفحتين"/>
+<path class="kah" d="M286 48 l-9 -3 4 8 z"/>
+<path class="ks" d="M156 116 C210 142 230 150 286 156" data-note="نفس العشرة اتكتبت في صفحتين"/>
+<path class="kah" d="M286 156 l-9 3 4 -8 z"/>
+<rect class="kb" x="290" y="26" width="212" height="44" rx="8" data-note="نسخة أولى من الصفحة" data-hl="stroke"/>
+<text class="tx" x="396" y="45" text-anchor="middle">دفعت 10 لعلي</text>
+<text class="tm" x="396" y="62" text-anchor="middle">TX-A</text>
+<rect class="kb" x="290" y="134" width="212" height="44" rx="8" data-note="نسخة تانية بنفس الفلوس" data-hl="stroke"/>
+<text class="tx" x="396" y="153" text-anchor="middle">دفعت 10 لأحمد</text>
+<text class="tm" x="396" y="170" text-anchor="middle">TX-B</text>
+<path class="ks" d="M502 48 C556 58 566 66 596 78"/>
+<path class="kah" d="M596 78 l-9 -1 5 7 z"/>
+<path class="ks" d="M502 156 C556 146 566 138 596 126"/>
+<path class="kah" d="M596 126 l-9 1 5 -7 z"/>
+<rect class="kaf" x="598" y="72" width="72" height="58" rx="14" data-note="مين يحدد النسخة الصح؟ مفيش مرجع مركزي" data-hl="stroke"/>
+<text class="tx" x="634" y="96" text-anchor="middle">الشبكة</text>
+<text class="tma" x="634" y="114" text-anchor="middle">؟؟</text>
+</g>
+<g class="sb">
+<rect class="kb" x="24" y="28" width="150" height="40" rx="8"/>
+<text class="tx" x="99" y="53" text-anchor="middle">صفحة علي</text>
+<rect class="kb" x="24" y="132" width="150" height="40" rx="8"/>
+<text class="tx" x="99" y="157" text-anchor="middle">صفحة أحمد</text>
+<path class="ks" d="M174 48 C226 52 238 70 266 86"/>
+<path class="kah" d="M266 86 l-7 -6 1 9 z"/>
+<path class="ks" d="M174 152 C226 148 238 130 266 114"/>
+<path class="kah" d="M266 114 l-7 6 1 -9 z"/>
+<rect class="kaf" x="270" y="72" width="140" height="58" rx="14" data-note="قرعة بإثبات العمل: تمن التذكرة كهربا حقيقية - مين يجيب الأصفار الأول" data-hl="stroke"/>
+<text class="tx" x="340" y="94" text-anchor="middle">قرعة الكهربا</text>
+<text class="tm" x="340" y="112" text-anchor="middle">SHA-256 x N</text>
+<path class="kg" d="M410 88 C452 80 462 72 496 62"/>
+<path class="kgh" d="M496 62 l-9 0 6 7 z"/>
+<path class="kbad" d="M410 110 C444 118 452 128 472 140"/>
+<rect class="kgd" x="500" y="40" width="164" height="44" rx="8" data-note="الفايزة بس هي اللي تتقفل في بلوك" data-hl="stroke"/>
+<text class="tx" x="582" y="59" text-anchor="middle">بلوك واحد بس</text>
+<text class="tmg" x="582" y="75" text-anchor="middle">TX-A ✓</text>
+<path class="kbad" d="M522 146 L642 182"/>
+<path class="kbad" d="M642 146 L522 182"/>
+<text class="txs" x="582" y="142" text-anchor="middle">التانية اترمت</text>
+</g>
+</svg>
+<figcaption><span class="figno">شكل ١</span>من غير بنك، نفس الفلوس ممكن تتكتب مرتين: وشبكة بيتكوين بتحسمها بقرعة تمنها كهربا، مش تصويت.</figcaption>
+</figure>
+
+<h2 id="hash"><span class="num">02</span> يعني إيه هاش أصلاً؟</h2>
+<p>في ناس فاكرة إن الموضوع قفل ومفتاح. لأ. <strong>الهاش مش تشفير</strong>. التشفير قفل ليه مفتاح، اللي معاه المفتاح يفك ويرجّع الرسالة. الهاش معندوش مفتاح ومفيش رجوع أصلاً، آلة بتاخد أي كلام مهما كان طوله وتطلعلك <strong>بصمة ثابتة الحجم</strong>، في حالة SHA-256 دايماً 64 خانة hex (256 بت).</p>
+<p>سلوك الآلة أساس كل حاجة جاية.</p>
+<p>نفس المدخل يطلّع نفس البصمة كل مرة، على أي جهاز، مدى الحياة. دي <strong>ثابتة (deterministic)</strong>. من البصمة ترجع للكلام؟ لأ، <strong>باتجاه واحد (one way)</strong>، الخلاط بيعمل عصير في ثانية ورجوع الفاكهة من العصير مستحيل. بعدين تقلب حرف واحد في المدخل. الآلة <strong>فوضوية (avalanche)</strong>، البصمة كلها تتقلب بشكل مالوش أي علاقة بالقديمة. الـ 64 كلهم.</p>
+<p>الآلة فوق في أول الصفحة هي SHA-256 الحقيقية جوه متصفحك. انت شغّلتها بإيدك خلاص.</p>
+<div class="note">البصمة الواحدة <strong>ببلاش</strong>. الآلة فوق بترد عليك لحظياً وانت بتكتب، وجهازك يقدر يعمل ملايين البصمات في الثانية. المعلومة دي هتلزمك، لأن سؤال "أمال فين المجهود؟" جاي في القسم الخامس وإجابته مفاجئة.</div>
+
+<figure class="fig" id="fig02">
+<svg viewBox="0 0 680 215" role="img" aria-label="خصائص دالة الهاش">
+<g data-step="1" data-note="ثابتة: نفس المدخل بيطلع نفس البصمة، على أي جهاز، مدى الحياة">
+<rect class="kb hl" x="18" y="8" width="140" height="26" rx="7" data-note="المدخل: أي طول"/>
+<text class="tm" x="88" y="25" text-anchor="middle">بيتكوين</text>
+<rect class="kb hl" x="18" y="40" width="140" height="26" rx="7"/>
+<text class="tm" x="88" y="57" text-anchor="middle">بيتكوين (تاني)</text>
+<path class="ks hl" d="M158 21 H258"/>
+<path class="kah" d="M258 21 l-9 -4 v8 z"/>
+<path class="ks hl" d="M158 53 C205 53 210 36 258 33"/>
+<path class="kah" d="M258 33 l-9 -3 3 8 z"/>
+<rect class="kb hl" x="262" y="10" width="152" height="42" rx="9" data-note="آلة البصمة: أي مدخل يطلع 64 خانة hex"/>
+<text class="tm" x="338" y="28" text-anchor="middle">SHA-256</text>
+<text class="txs" x="338" y="44" text-anchor="middle">أي طول يبقى 256 بت</text>
+<path class="ks hl" d="M414 31 H474"/>
+<path class="kah" d="M474 31 l-9 -4 v8 z"/>
+<rect class="kaf hl" x="478" y="13" width="184" height="36" rx="8"/>
+<text class="tma" x="570" y="35" text-anchor="middle">b1a9…c4e7</text>
+</g>
+<g data-step="2" data-note="باتجاه واحد: من البصمة مستحيل ترجع للكلام الأصلي">
+<rect class="kb hl" x="18" y="94" width="140" height="30" rx="7"/>
+<text class="tm" x="88" y="113" text-anchor="middle">كلام أصلي</text>
+<rect class="kb hl" x="262" y="94" width="152" height="34" rx="9"/>
+<text class="tm" x="338" y="115" text-anchor="middle">SHA-256</text>
+<rect class="kaf hl" x="478" y="94" width="184" height="30" rx="8"/>
+<text class="tma" x="570" y="113" text-anchor="middle">بصمة 64 خانة</text>
+<path class="ks hl" d="M158 104 C205 96 215 100 258 105"/>
+<path class="kah" d="M258 105 l-9 -3 3 8 z"/>
+<path class="kbad hl" d="M470 146 C420 160 320 160 300 134" data-note="الرجوع للخلف مستحيل - زي ما ترجع الفاكهة من العصير"/>
+<path class="kbh" d="M376 148 l16 16 m0 -16 l-16 16"/>
+<text class="tmb hl" x="384" y="176" text-anchor="middle">مفيش رجوع</text>
+</g>
+<g data-step="3" data-note="فوضوية (avalanche): حرف واحد يقلب البصمة كلها">
+<rect class="kb hl" x="18" y="158" width="140" height="24" rx="7"/>
+<text class="tm" x="88" y="174" text-anchor="middle">بيتكوين</text>
+<rect class="kb hl" x="18" y="186" width="140" height="24" rx="7" data-note="نفس الجملة + نقطة واحدة بس"/>
+<text class="tm" x="88" y="202" text-anchor="middle">بيتكوين.</text>
+<path class="ks hl" d="M158 170 H474"/>
+<path class="kah" d="M474 170 l-9 -4 v8 z"/>
+<path class="ks hl" d="M158 198 H474"/>
+<path class="kah" d="M474 198 l-9 -4 v8 z"/>
+<rect class="kb hl" x="478" y="158" width="184" height="24" rx="7"/>
+<text class="tm" x="570" y="174" text-anchor="middle">b1a9…c4e7</text>
+<rect class="kaf hl" x="478" y="186" width="184" height="24" rx="7" data-note="البصمة الجديدة ملهاش أي علاقة بالقديمة"/>
+<text class="tma" x="570" y="202" text-anchor="middle">7f02…9d11</text>
+</g>
+</svg>
+<figcaption><span class="figno">شكل ٢</span>التلات خصائص اللي بيتكوين مبني عليها: ثابتة، باتجاه واحد، وفوضوية.</figcaption>
+</figure>
+
+<h2 id="block"><span class="num">03</span> المعاملات والكارت الصغير جوّه البلوك</h2>
+<p>البلوك هو "صفحة" الدفتر. شنطة فيها آلاف الحوالات اللي كانت مستنية في طابور اسمه الـ <span class="num-ltr">mempool</span>. الماينر بيلمّها، وبيضيف في أولها معاملة خاصة اسمها <strong>coinbase</strong> بيدفع فيها لنفسه المكافأة. وهنا أول سؤال سألته، هو مش ممكن يكتب لنفسه أي مبلغ؟</p>
+<p>لأ. كتاب قواعد البروتوكول، اللي كل جهاز في الشبكة شغال بنسخة منه، بيحدد سقف الـ coinbase عند <strong>الدعم الحالي (3.125 بيتكوين، وبينصّف كل أربع سنين) زائد رسوم المعاملات</strong> اللي ضمّنها في البلوك. ساتوشي واحد فوق السقف والبلوك كله باطل. الشبكة مش بتزعل من حد. كل جهاز هيرمي البلوك أوتوماتيكياً، زي ما هنشوف في القسم الثامن.</p>
+<p>المفاجأة اللي صححتهالك في الكلام إن <strong>الشنطة نفسها مش هي اللي بتدخل آلة البصمة</strong>. اللي بيتطحن تريليونات المرات هو كارت تلخيص صغير اسمه الـ <strong>block header</strong>، حجمه 80 بايت بالظبط، أصغر من رسالة SMS. مكتوب عليه ست حاجات.</p>
+<table>
+<tr><th>الحقل</th><th>الحجم</th><th>يعني إيه</th></tr>
+<tr><td class="num-ltr">version</td><td>4 بايت</td><td>نسخة القواعد اللي البلوك ماشي عليها</td></tr>
+<tr><td class="num-ltr">prev block hash</td><td>32 بايت</td><td>بصمة كارت البلوك اللي فات، ودي اللي بتعمل "السلسلة"</td></tr>
+<tr><td class="num-ltr">merkle root</td><td>32 بايت</td><td>بصمة واحدة بتلخص كل المعاملات (القسم الجاي)</td></tr>
+<tr><td class="num-ltr">timestamp</td><td>4 بايت</td><td>ختم زمني: عدد الثواني من أول يناير 1970 (القسم السابع)</td></tr>
+<tr><td class="num-ltr">bits</td><td>4 بايت</td><td>الصعوبة المطلوبة: البصمة لازم تنزل تحت الرقم ده</td></tr>
+<tr><td class="num-ltr">nonce</td><td>4 بايت</td><td>العداد اللي بيتغير كل محاولة (القسم السادس)</td></tr>
+</table>
+<p>ومش هسيبك من غير الدليل. اللي تحت ده هو الـ 80 بايت <strong>الحقيقيين بالحرف</strong> بتوع أول بلوك في التاريخ، اللي ساتوشي عدّنه يوم 3 يناير 2009. دوس الزرار. متصفحك هيعمل عليهم SHA-256 مرتين (زي بيتكوين بالظبط) ويطلّعلك البصمة المسجلة في السلسلة من 17 سنة.</p>
+
+<div class="machine" data-state="idle" data-type="HASH" tabindex="0" aria-labelledby="lab2t">
+<div class="mhead"><span class="mlab">LAB 02</span><span class="mtitle" id="lab2t">بلوك الميلاد، Genesis Block</span><span class="chip">HASH</span></div>
+<div class="fieldrow" id="genrow"></div>
+<div class="legend"><span class="lg-ver">version</span><span class="lg-prev">prev hash (كله أصفار، مفيش بلوك قبله)</span><span class="lg-mrk">merkle root</span><span class="lg-time">timestamp</span><span class="lg-bits">bits</span><span class="lg-nonce">nonce</span></div>
+<div class="mrow"><button type="button" id="genbtn" data-run onclick="hashGenesis()">اعمل SHA-256 مرتين للـ 80 بايت دول</button></div>
+<div class="out" role="log" aria-live="polite"><span class="hx" id="genout">البصمة هتظهر هنا</span></div>
+<div class="dim" id="geninfo"></div>
+</div>
+
+<div class="note good">لو ظهرتلك بصمة بتبدأ بعشر أصفار، فمتصفحك لسه متحقق بنفسه من أول بلوك في بيتكوين، من غير ما يسأل حد. دي بالظبط الحركة اللي كل جهاز في الشبكة بيعملها مع كل بلوك جديد.</div>
+
+<figure class="fig" id="fig03">
+<svg viewBox="0 0 680 212" role="img" aria-label="الكارت الصغير 80 بايت">
+<text class="txs" x="340" y="24" text-anchor="middle">block header: 80 بايت بس - ودي بايتات بلوك الميلاد الحقيقية</text>
+<path class="ks" d="M40 44 V36 H640 V44"/>
+<rect class="kb" x="40" y="64" width="30" height="48" data-note="version: نسخة القواعد - 4 بايت" data-hl="stroke"/>
+<rect class="kb" x="70" y="64" width="240" height="48" data-note="prev hash: بصمة البلوك اللي فات - 32 بايت" data-hl="stroke"/>
+<rect class="kb" x="310" y="64" width="240" height="48" data-note="merkle root: ملخص كل المعاملات - 32 بايت" data-hl="stroke"/>
+<rect class="kb" x="550" y="64" width="30" height="48" data-note="timestamp: ثواني من 1970 - 4 بايت" data-hl="stroke"/>
+<rect class="kb" x="580" y="64" width="30" height="48" data-note="bits: الصعوبة - 4 بايت" data-hl="stroke"/>
+<rect class="kb" x="610" y="64" width="30" height="48" data-note="nonce: العداد الحر - 4 بايت" data-hl="stroke"/>
+<text class="tm" transform="rotate(-90 55 88)" x="55" y="88" text-anchor="middle" font-size="8">01000000</text>
+<text class="tm" x="190" y="91" text-anchor="middle" font-size="9">00000000000000000000000000000000</text>
+<text class="tm" x="430" y="91" text-anchor="middle" font-size="9">3ba3edfd…4b1e5e4a</text>
+<text class="tm" transform="rotate(-90 565 88)" x="565" y="88" text-anchor="middle" font-size="8">29ab5f49</text>
+<text class="tm" transform="rotate(-90 595 88)" x="595" y="88" text-anchor="middle" font-size="8">ffff001d</text>
+<text class="tm" transform="rotate(-90 625 88)" x="625" y="88" text-anchor="middle" font-size="8">1dac2b7c</text>
+<path class="ks" d="M55 112 V136 M190 112 V136 M430 112 V136 M565 112 V136 M595 112 V136 M625 112 V136"/>
+<g data-step="1" data-note="version (4 بايت): نسخة قواعد البروتوكول اللي البلوك ماشي عليها">
+<rect class="stepov" x="36" y="60" width="38" height="56" rx="5"/>
+<text class="hlf tm" x="55" y="150" text-anchor="middle">version</text>
+<text class="txs" x="55" y="164" text-anchor="middle">4B</text>
+</g>
+<g data-step="2" data-note="prev hash (32 بايت): بصمة الكارت اللي فات - دي اللي بتعمل السلسلة">
+<rect class="stepov" x="66" y="60" width="248" height="56" rx="5"/>
+<text class="hlf tm" x="190" y="150" text-anchor="middle">prev hash</text>
+<text class="txs" x="190" y="164" text-anchor="middle">32B</text>
+</g>
+<g data-step="3" data-note="merkle root (32 بايت): بصمة كل المعاملات ملخصة - شكل ٤">
+<rect class="stepov" x="306" y="60" width="248" height="56" rx="5"/>
+<text class="hlf tm" x="430" y="150" text-anchor="middle">merkle root</text>
+<text class="txs" x="430" y="164" text-anchor="middle">32B</text>
+</g>
+<g data-step="4" data-note="timestamp (4 بايت): ختم زمني بيتعاير عليه الصعوبة - قسم ٧">
+<rect class="stepov" x="546" y="60" width="38" height="56" rx="5"/>
+<text class="hlf tm" x="565" y="150" text-anchor="middle">time</text>
+<text class="txs" x="565" y="164" text-anchor="middle">4B</text>
+</g>
+<g data-step="5" data-note="bits (4 بايت): الصعوبة - البصمة لازم تنزل تحته">
+<rect class="stepov" x="576" y="60" width="38" height="56" rx="5"/>
+<text class="hlf tm" x="595" y="150" text-anchor="middle">bits</text>
+<text class="txs" x="595" y="164" text-anchor="middle">4B</text>
+</g>
+<g data-step="6" data-note="nonce (4 بايت): خانة العبث الحر اللي بتتقلب كل محاولة - قسم ٦">
+<rect class="stepov" x="606" y="60" width="38" height="56" rx="5"/>
+<text class="hlf tm" x="625" y="150" text-anchor="middle">nonce</text>
+<text class="txs" x="625" y="164" text-anchor="middle">4B</text>
+</g>
+<text class="txs" x="340" y="196" text-anchor="middle">المعاملات نفسها مش بتحسب هنا - ملخصها بس (الجذر)</text>
+</svg>
+<figcaption><span class="figno">شكل ٣</span>الكارت اللي بيتطحن تريليونات المرات: 80 بايت أصغر من رسالة SMS، وبالقيم الحقيقية بتاعة بلوك الميلاد.</figcaption>
+</figure>
+
+<h2 id="merkle"><span class="num">04</span> بصمة البصمات وشجرة الـ <span class="num-ltr">Merkle</span></h2>
+<p>طيب إزاي 32 بايت واحدة في الكارت بتمثل آلاف المعاملات؟ ببصمة البصمات. بتاخد بصمة كل معاملة لوحدها، بعدين تمسك كل بصمتين جنب بعض وتعملهم بصمة واحدة، وتكرر طبقة ورا طبقة لحد ما تفضل بصمة واحدة في القمة، ودي الـ <span class="num-ltr">Merkle root</span>.</p>
+<p>الآلة هنا بتطحن 80 بايت بس في كل محاولة، مش ميجابايت معاملات. والقفل جاي من تحت. أي تعديل في أي معاملة تحت <strong>بيتسلق الشجرة</strong>، بصمة المعاملة تتغير، فبصمة الزوج تتغير، فالجذر يتغير، فالكارت بقى كارت مختلف، فأي هاش كان الماينر لقاه على الكارت القديم بقى ملوش لازمة.</p>
+
+<div class="machine live" data-state="idle" data-type="HASH" tabindex="0" aria-labelledby="lab3t">
+<div class="mhead"><span class="mlab">LAB 03</span><span class="mtitle" id="lab3t">شجرة البصمات</span><span class="chip">HASH</span></div>
+<label for="tx0">أربع معاملات، غيّر أي حرف في أي واحدة</label>
+<input type="text" id="tx0" value="coinbase ← الماينر: 3.125">
+<input type="text" id="tx1" value="عمر ← أحمد: 5" style="margin-top:.4rem">
+<input type="text" id="tx2" value="سارة ← علي: 2" style="margin-top:.4rem">
+<input type="text" id="tx3" value="مصطفى ← منى: 1.5" style="margin-top:.4rem">
+<div class="tree" id="tree"></div>
+<div class="mrow"><button type="button" class="secondary" data-run onclick="sealRoot()">اقفل البلوك على الجذر الحالي</button></div>
+<div class="dim" id="sealmsg" aria-live="polite">لسه مقفلتش. اقفل، وبعدين عدّل أي معاملة وشوف.</div>
+<div class="dim">التجربة بتطبق قاعدة double SHA-256 بتاعة بيتكوين على أربع معاملات نصية للتوضيح. الـ node الحقيقية تبدأ من bytes المعاملات المتسلسلة، وبتتعامل مع ترتيب bytes في عرض txid.</div>
+</div>
+
+<figure class="fig" id="fig04">
+<svg viewBox="0 0 680 210" role="img" aria-label="شجرة Merkle">
+<g data-step="1" data-note="١) بصمة كل معاملة لوحدها - دي المدخل">
+<rect class="kb hl" x="30" y="148" width="140" height="46" rx="8" data-note="بصمة TX-1 (الـ coinbase)" data-hl="stroke"/>
+<text class="tm" x="100" y="166" text-anchor="middle">TX-1 coinbase</text>
+<text class="tm" x="100" y="182" text-anchor="middle" font-size="9">e3b0…44fc</text>
+<rect class="kb hl" x="195" y="148" width="140" height="46" rx="8" data-note="بصمة TX-2" data-hl="stroke"/>
+<text class="tm" x="265" y="166" text-anchor="middle">TX-2</text>
+<text class="tm" x="265" y="182" text-anchor="middle" font-size="9">aa11…7c02</text>
+<rect class="kb hl" x="360" y="148" width="140" height="46" rx="8" data-note="بصمة TX-3" data-hl="stroke"/>
+<text class="tm" x="430" y="166" text-anchor="middle">TX-3</text>
+<text class="tm" x="430" y="182" text-anchor="middle" font-size="9">7f9c…d1aa</text>
+<rect class="kb hl" x="525" y="148" width="140" height="46" rx="8" data-note="بصمة TX-4" data-hl="stroke"/>
+<text class="tm" x="595" y="166" text-anchor="middle">TX-4</text>
+<text class="tm" x="595" y="182" text-anchor="middle" font-size="9">c20d…9b3e</text>
+</g>
+<g data-step="2" data-note="٢) كل بصمتين جنب بعض يتعملهم بصمة واحدة">
+<path class="ks hl" d="M100 148 L172 124 M265 148 L192 124"/>
+<path class="ks hl" d="M430 148 L502 124 M595 148 L522 124"/>
+<rect class="kb hl" x="97" y="82" width="170" height="42" rx="8" data-note="هاش البصمتين الأولانيين مع بعض" data-hl="stroke"/>
+<text class="tm" x="182" y="100" text-anchor="middle">H(TX-1+TX-2)</text>
+<text class="tm" x="182" y="115" text-anchor="middle" font-size="9">9c1f…83aa</text>
+<rect class="kb hl" x="427" y="82" width="170" height="42" rx="8" data-note="هاش البصمتين التانيين مع بعض" data-hl="stroke"/>
+<text class="tm" x="512" y="100" text-anchor="middle">H(TX-3+TX-4)</text>
+<text class="tm" x="512" y="115" text-anchor="middle" font-size="9">d0a7…41c9</text>
+</g>
+<g data-step="3" data-note="٣) الجذر: 32 بايت بتتكتب في الكارت - وأي تغيير تحت بيتسلق لحد هنا">
+<path class="ka hl" d="M182 82 L312 58 M512 82 L368 58"/>
+<rect class="kaf hl" x="240" y="14" width="200" height="44" rx="8" data-note="merkle root: اللي بيتكتب في خانة merkle جوه الكارت" data-hl="stroke"/>
+<text class="tx" x="340" y="33" text-anchor="middle">merkle root</text>
+<text class="tma" x="340" y="50" text-anchor="middle">a1b2…c3d4</text>
+</g>
+</svg>
+<figcaption><span class="figno">شكل ٤</span>شجرة Merkle: آلاف الحوالات بتتلخص في 32 بايت، وأي تعديل تحت بيتسلق لحد الجذر.</figcaption>
+</figure>
+
+<h2 id="mining"><span class="num">05</span> فين المجهود في لعبة التعدين؟</h2>
+<p>السؤال الأذكى في الحوار لسه واقف. ما دام عمل البصمة ببلاش، والمحتوى معروف، إيه المجهود في كل ده؟</p>
+<p>المجهود مش في حساب البصمة. المطلوب <strong>معكوس</strong>. هاتلي نسخة من الكارت بصمتها تبدأ بعدد معين من الأصفار (تقنياً أقل من رقم اسمه الـ target، والأصفار في الأول هي شكل ده). صفات الآلة من القسم التاني زي ما هي، باتجاه واحد وفوضوية. مفيش معادلة تقولك "عشان تجيب أصفار حط كذا". الآلة مبتاخدش طلبات. بصمة فيها 4 أصفار مبتعلمكش أي حاجة عن إزاي تجيب 5. كل محاولة قرعة جديدة من الصفر.</p>
+<p>الاستراتيجية الوحيدة الموجودة في الكون هي إنك تغيّر العداد وتجرّب، وتغيّر وتجرّب تاني. <strong>المحاولة الواحدة ببلاش، لكن المحاولة الكسبانة نادرة بشكل فلكي.</strong> المجهود هو عدد المحاولات. الواحدة فيهم رخيصة.</p>
+
+<div class="machine" id="minerbox" data-state="idle" data-type="MINE" tabindex="0" aria-labelledby="minertitle">
+<div class="mhead"><span class="mlab">LAB 04</span><span class="mtitle" id="minertitle">منجم الجيب</span><span class="chip">MINE</span><span class="mtick" id="mtick" hidden></span><span class="melapsed" id="melapsed" hidden></span></div>
+<label for="zsel">عايز البصمة تبدأ بكام صفر؟ (كل صفر زيادة بيضاعف الشغل 16 مرة في المتوسط)</label>
+<select id="zsel">
+<option value="1">صفر واحد، متوسط 16 محاولة</option>
+<option value="2">صفرين، متوسط 256</option>
+<option value="3" selected>3 أصفار، متوسط 4,096</option>
+<option value="4">4 أصفار، متوسط 65,536</option>
+<option value="5">5 أصفار، متوسط 1,048,576 (استنى شوية)</option>
+</select>
+<div class="mrow">
+<button type="button" id="minebtn" data-run onclick="startMine()">شغّل المنجم</button>
+<button type="button" class="secondary" id="stopbtn" data-stop onclick="stopMine()" disabled>وقّف</button>
+</div>
+<div class="stats">
+<div class="stat"><span class="v" id="s-att">0</span><span class="k">محاولة</span></div>
+<div class="stat"><span class="v" id="s-rate">0</span><span class="k">محاولة/ثانية</span></div>
+<div class="stat"><span class="v" id="s-time">0.0s</span><span class="k">الوقت</span></div>
+<div class="stat"><span class="v" id="s-nonce">-</span><span class="k">آخر nonce</span></div>
+</div>
+<div class="out" role="log" aria-live="polite"><span class="hx" id="s-hash">…</span></div>
+<div class="dim" id="s-msg" aria-live="polite"></div>
+</div>
+
+<p>على نفس عدد الأصفار في التجربة، عدد المحاولات بيتغير كل مرة. ساعات ضربة حظ بدري، وساعات انتظار طويل. كل صفر hex إضافي يضاعف الشغل المتوقع 16 مرة. بيتكوين الحقيقية مش بتطلب عدد أصفار ثابت. بتقارن رقم الهاش بهدف رقمي بيتعاير كل 2016 بلوك عشان المتوسط يفضل قريب من 10 دقايق. وفيه مدرسة تانية بتحل اختيار المقترح بالحصة بدل إثبات العمل، ليها مقال لوحدها <a href="proof-of-stake.html">إثبات الحصة <span dir="ltr">(EN)</span></a>.</p>
+<div class="note">اللغز معمول من غير اختصار معروف. الماينر يجرّب headers كتير، وأي node تتأكد من إثبات العمل بعملية double SHA-256 واحدة، وبعدها تفحص المعاملات وباقي قواعد الإجماع.</div>
+
+<figure class="fig" id="fig05">
+<svg viewBox="0 0 680 200" role="img" aria-label="التعدين يانصيب">
+<rect class="kaf" x="470" y="10" width="192" height="26" rx="7" data-note="التجربة بتستخدم 3 أصفار للتبسيط. بيتكوين تقارن رقم الهاش بهدف رقمي" data-hl="stroke"/>
+<text class="tma" x="566" y="27" text-anchor="middle">target: 000…</text>
+<g data-step="1" data-note="المحاولة ببلاش وبصمة عادية - مفيش أصفار">
+<rect class="kb hl" x="20" y="46" width="130" height="34" rx="8"/>
+<text class="tm" x="85" y="67" text-anchor="middle">nonce = 1</text>
+<path class="ks hl" d="M150 63 H236"/>
+<path class="kah" d="M236 63 l-9 -4 v8 z"/>
+<rect class="kb hl" x="240" y="46" width="220" height="34" rx="8"/>
+<text class="tm" x="350" y="67" text-anchor="middle">f3a9c27d8b12e4f5</text>
+<text class="txs hl" x="566" y="67" text-anchor="middle">فوق الهدف</text>
+</g>
+<g data-step="2" data-note="برضه عادي: مفيش معادلة توصلك للأصفار - كل محاولة قرعة جديدة من الصفر">
+<rect class="kb hl" x="20" y="100" width="130" height="34" rx="8"/>
+<text class="tm" x="85" y="121" text-anchor="middle">nonce = 2047</text>
+<path class="ks hl" d="M150 117 H236"/>
+<path class="kah" d="M236 117 l-9 -4 v8 z"/>
+<rect class="kb hl" x="240" y="100" width="220" height="34" rx="8"/>
+<text class="tm" x="350" y="121" text-anchor="middle">91bd04ea77c2f8d1</text>
+<text class="txs hl" x="566" y="121" text-anchor="middle">فوق الهدف</text>
+</g>
+<g data-step="3" data-note="أصفار! التجربة نجحت. بيتكوين تتحقق من إثبات العمل بعملية double SHA-256">
+<rect class="kb hl" x="20" y="154" width="130" height="34" rx="8"/>
+<text class="tm" x="85" y="175" text-anchor="middle">nonce = 4096</text>
+<path class="ka hl" d="M150 171 H236"/>
+<path class="kaha" d="M236 171 l-9 -4 v8 z"/>
+<rect class="kaf hl" x="240" y="154" width="220" height="34" rx="8" data-hl="stroke"/>
+<text class="tma" x="350" y="175" text-anchor="middle">000e4a71c2…</text>
+<text class="tmg hl" x="566" y="175" text-anchor="middle">تحت الهدف - فوز</text>
+</g>
+</svg>
+<figcaption><span class="figno">شكل ٥</span>التعدين يانصيب: المحاولة الواحدة ببلاش والفايزة نادرة: المجهود هو عدد المحاولات.</figcaption>
+</figure>
+
+<h2 id="nonce"><span class="num">06</span> الـ <span class="num-ltr">nonce</span> وخانة العبث الحر</h2>
+<p>خلفيتك الأمنية كانت معطلاك هنا. الاسم جاي من عالمك، والوظيفة مختلفة. في البروتوكولات اللي انت متعود عليها، الـ nonce شغلته منع إعادة الاستخدام، تمنع الـ replay. في بيتكوين الحكاية أنزل بكتير. <strong>خانة فاضية ملهاش أي معنى</strong>. أربع بايت في آخر الكارت. الرقم المكتوب فيهم مش بيمثل حاجة خالص.</p>
+<p>الموجودة ليه؟ الماينر محتاج يغيّر محتوى الكارت بين كل محاولة والتانية، وإلا هتطلعله نفس البصمة. الـ nonce أسرع حقل يتغيّر، لكنه مش الوحيد. الماينر يقدر يغيّر الوقت، version bits، المعاملات، أو extraNonce جوه coinbase فيتغيّر Merkle root. تجربة nonce = 500 مرتين على نفس الـ header تضييع شغل، لأن النتيجة هتتكرر.</p>
+<p>تفصيلة هتعجبك. 4 بايت يعني <span class="num-ltr">4,294,967,296</span> قيمة بس. جهاز تعدين حديث بيعمل مئات التريليونات من المحاولات في الثانية، بيحرق مساحة الـ nonce كلها في جزء من الثانية غالباً من غير فايز. يعمل إيه؟ يغيّر حاجة تانية عشان يولّد كارت جديد بمساحة nonce نضيفة. يا إما يزوّد الختم الزمني ثانية، يا إما (وهي الحركة الأساسية) يلعب في رقم جوه خانة حرة في معاملة الـ coinbase نفسها اسمه <span class="num-ltr">extraNonce</span>. وافتكر شجرة القسم الرابع. أي تغيير في الـ coinbase بيتسلق ويغيّر الجذر، فالكارت بقى كارت جديد، ومعاه 4.3 مليار تذكرة تانيين.</p>
+<div class="note">الخانة الحرة دي في الـ coinbase بتاعة بلوك الميلاد ساتوشي كتب فيها عنوان جورنال التايمز بتاع اليوم ده: <span class="num-ltr" style="font-size:.9em">"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"</span>، إثبات إن البلوك متعدنش قبل التاريخ ده، ورسالة عن سبب المشروع كله. رقم اليانصيب اللي كسب بيه البلوك ده: nonce = <span class="num-ltr">2,083,236,893</span>.</div>
+
+<figure class="fig" id="fig06">
+<svg viewBox="0 0 680 200" role="img" aria-label="دورة الـ nonce و extraNonce">
+<g data-step="1" data-note="الـ nonce خانة عبث حر: بيتقلب كل محاولة عشان بصمة الكارت تتغير - الآلة ثابتة">
+<rect class="kb hl" x="26" y="22" width="320" height="74" rx="10" data-note="الكارت: باقي الخانات مش حر فيها الماينر" data-hl="stroke"/>
+<text class="tm" x="46" y="46">prev hash …</text>
+<text class="tm" x="46" y="66">merkle root …</text>
+<rect class="kaf hl" x="170" y="32" width="160" height="32" rx="7" data-hl="stroke" data-note="الخانة الحرة الوحيدة في الكارت"/>
+<text class="tma" x="250" y="52" text-anchor="middle">nonce: 0-1-2-…</text>
+<text class="txs" x="186" y="88">بيتقلب كل محاولة</text>
+<path class="ka hl" d="M332 48 a11 11 0 1 1 -4 18"/>
+<path class="kaha" d="M328 66 l-2 -8 8 3 z"/>
+</g>
+<g data-step="2" data-note="4 بايت = 4,294,967,296 قيمة بس، وبتخلص في جزء من الثانية">
+<text class="txs hl" x="520" y="26" text-anchor="middle">مساحة الـ nonce كلها</text>
+<rect class="kaf hl" x="400" y="34" width="240" height="16" rx="4" data-hl="stroke"/>
+<text class="tmb hl" x="520" y="70" text-anchor="middle">خلصت - نفس البصمة هتتكرر</text>
+<text class="tm" x="520" y="88" text-anchor="middle">4,294,967,296 values</text>
+</g>
+<g data-step="3" data-note="extraNonce جوه الـ coinbase يغيّر الجذر، فيتجدد الكارت كله ومساحة nonce نضيفة">
+<rect class="kb hl" x="26" y="124" width="180" height="56" rx="8" data-note="معاملة الـ coinbase فيها خانة حرة" data-hl="stroke"/>
+<text class="tm" x="116" y="147" text-anchor="middle">coinbase</text>
+<text class="tma" x="116" y="166" text-anchor="middle">extraNonce+1</text>
+<path class="ks hl" d="M206 152 H246"/>
+<path class="kah" d="M246 152 l-9 -4 v8 z"/>
+<rect class="kaf hl" x="250" y="130" width="170" height="44" rx="8" data-note="الجذر بيتغير - الشجرة كلها بتتسلق (شكل ٤)" data-hl="stroke"/>
+<text class="tm" x="335" y="148" text-anchor="middle">merkle root</text>
+<text class="tma" x="335" y="165" text-anchor="middle">جذر جديد</text>
+<path class="ks hl" d="M420 152 H460"/>
+<path class="kah" d="M460 152 l-9 -4 v8 z"/>
+<rect class="kb hl" x="464" y="124" width="196" height="56" rx="8" data-note="كارت جديد بمساحة nonce من الأول" data-hl="stroke"/>
+<text class="tx" x="562" y="147" text-anchor="middle">كارت جديد</text>
+<text class="tm" x="562" y="166" text-anchor="middle">nonce = 0 تاني</text>
+</g>
+</svg>
+<figcaption><span class="figno">شكل ٦</span>لما مساحة الـ nonce تخلص: extraNonce بيغيّر الـ coinbase، فيتغير الجذر، فيتجدد الكارت كله.</figcaption>
+</figure>
+
+<h2 id="time"><span class="num">07</span> ساعة الشبكة</h2>
+<p>الختم الزمني رقم بيقول "الكارت ده اتبنى إمتى". متخزن كعدد ثواني من أول يناير 1970. في تجربة بلوك الميلاد فوق، الحقل الأصفر ده بيفك لتاريخ 3 يناير 2009 الساعة 18:15.</p>
+<p>وسبب وجوده عملي. <strong>الشبكة محتاجة ساعة تتعاير عليها الصعوبة</strong>. البروتوكول عايز البلوك ياخد 10 دقايق في المتوسط، بس الأجهزة بتتطور والماينرز بيزيدوا. هيعرف منين إن البلوكات بقت بتيجي أسرع؟ من الأختام. كل <span class="num-ltr">2016</span> بلوك (أسبوعين تقريباً) بيتحسب الوقت الفعلي من الفرق بين الأختام. طلع أقل من أسبوعين؟ الصعوبة تزيد. أكتر؟ تقل. من غير ختم جوه كل بلوك، مفيش مرجع زمني متفق عليه أصلاً.</p>
+<p>سؤالك الأمني الطبيعي معروف. الختم ده الماينر بيكتبه بنفسه، أثق فيه ليه؟ متثقش. القواعد محاصراه من الناحيتين. لازم يكون <strong>أكبر من الوسيط (median) بتاع آخر 11 بلوك</strong>، و<strong>أقل من ساعة الجهاز المتحقق زائد ساعتين</strong>. الساعة تقريبية. ممكن تلاقي بلوك ختمه أقدم من اللي قبله بدقيقة وده مقبول. التلاعب الكبير، اللي يأثر على حسبة الصعوبة، مقفول.</p>
+
+<figure class="fig" id="fig07">
+<svg viewBox="0 0 680 200" role="img" aria-label="ساعة الشبكة وتعاير الصعوبة">
+<g data-step="1" data-note="الختم الزمني جوه كل بلوك: عدد ثواني من أول 1970">
+<path class="ks hl" d="M40 66 H636"/>
+<path class="kah" d="M636 66 l-9 -4 v8 z"/>
+<rect class="kb hl" x="64" y="54" width="14" height="14" data-note="الختم الأول: 1231006505 = بلوك الميلاد، 3 يناير 2009" data-hl="stroke"/>
+<rect class="kb hl" x="124" y="54" width="14" height="14" data-hl="stroke"/>
+<rect class="kb hl" x="184" y="54" width="14" height="14" data-hl="stroke"/>
+<rect class="kb hl" x="244" y="54" width="14" height="14" data-hl="stroke"/>
+<rect class="kb hl" x="304" y="54" width="14" height="14" data-hl="stroke"/>
+<rect class="kb hl" x="364" y="54" width="14" height="14" data-hl="stroke"/>
+<text class="tm" x="71" y="92" text-anchor="middle" font-size="8.5">1231006505</text>
+<text class="tm" x="131" y="92" text-anchor="middle" font-size="8.5">+598s</text>
+<text class="tm" x="191" y="92" text-anchor="middle" font-size="8.5">+604s</text>
+<text class="tm" x="251" y="92" text-anchor="middle" font-size="8.5">+591s</text>
+<text class="tm" x="311" y="92" text-anchor="middle" font-size="8.5">+612s</text>
+<text class="tm" x="371" y="92" text-anchor="middle" font-size="8.5">+600s</text>
+</g>
+<g data-step="2" data-note="الحدود: أكبر من وسيط آخر 11 بلوك، وأقل من ساعة المتحقق + ساعتين">
+<rect class="ka hl" x="110" y="26" width="332" height="46" rx="8" fill="none"/>
+<text class="tma" x="276" y="20" text-anchor="middle">وسيط آخر 11 بلوك</text>
+<rect class="kb hl" x="560" y="48" width="104" height="30" rx="7" data-note="البلوك الجديد لازم يقع جوه الحدود" data-hl="stroke"/>
+<text class="tm" x="612" y="67" text-anchor="middle">بلوك جديد</text>
+<text class="txs hl" x="612" y="102" text-anchor="middle">أكبر من الوسيط</text>
+<text class="txs hl" x="612" y="118" text-anchor="middle">وأقل من ساعتين</text>
+</g>
+<g data-step="3" data-note="كل 2016 بلوك: الفرق بين الأختام بيحدد الصعوبة الجاية">
+<rect class="kb hl" x="250" y="140" width="180" height="30" rx="8" data-hl="stroke"/>
+<text class="tx" x="340" y="159" text-anchor="middle">كل 2016 بلوك</text>
+<path class="ka hl" d="M430 155 H520"/>
+<path class="kaha" d="M520 155 l-9 -4 v8 z"/>
+<text class="txs hl" x="526" y="152">جت أسرع من أسبوعين: صعوبة أعلى</text>
+<path class="ks hl" d="M250 155 H160"/>
+<path class="kah" d="M160 155 l9 -4 v8 z"/>
+<text class="txs hl" x="154" y="152" text-anchor="end">أبطأ: صعوبة أقل</text>
+<text class="txs" x="340" y="192" text-anchor="middle">من غير أختام، مفيش مرجع زمني متفق عليه أصلاً</text>
+</g>
+</svg>
+<figcaption><span class="figno">شكل ٧</span>ساعة الشبكة: ختم محصور بوسيط آخر 11 بلوك، وكل أسبوعين الصعوبة بتتعاير من فرق الأختام.</figcaption>
+</figure>
+
+<h2 id="trust"><span class="num">08</span> مين بيصدق مين؟</h2>
+<p>ورجعنا لأول سؤال سألته من الأساس: طب ما الفايز ممكن يحط اللي هو عايزه، والناس هتصدقه ليه؟ مش هيصدقوه. <strong>محدش بيصدق حد، ولا محتاج</strong>. لما الماينر يعلن بلوكه، كل جهاز (node) في الشبكة بياخد نسخة وبيعيد الفحص بنفسه، عنده محلياً، من غير ما يسأل حد:</p>
+<p>ناتج double SHA-256 للكارت فعلاً تحت الـ target؟ كل معاملة عليها توقيع رقمي سليم؟ مفيش فلوس اتصرفت مرتين؟ الـ coinbase جوه السقف (3.125 + الرسوم)؟ الختم الزمني جوه الحدود؟ الحجم والصيغة مظبوطين؟ فحص إثبات العمل سريع، لكن قبول البلوك محتاج كل الفحوص دي.</p>
+<p>أي قاعدة واحدة تتكسر، الجهاز <strong>بيرمي البلوك ومبيمررهوش لحد</strong>. مفيش شكوى بتتقدم لحد. البلوك يتشال من الطريق وخلاص. والماينر ساعتها خسر شهور كهربا على الفاضي. عشان كده الغش مش "ممنوع"، الغش <strong>خسران اقتصادياً</strong>: أغلى طريقة في الوجود تحرق بيها فلوسك.</p>
+<p>وده بيجاوب على تساؤلك التاني: ينفع يبعت بلوك من غير أي حوالات خالص؟ آه ينفع. القواعد بتقبله عادي. بيحصل فعلاً في الثواني اللي بعد وصول بلوك جديد، لما المعدّنين يبدأوا شغل على القمة الجديدة قبل ما يجهزوا قالب فيه معاملات. الخسران الوحيد هو الماينر نفسه: ساب رسوم المعاملات، البقشيش، على الترابيزة، والحوالات المستنية بتتأكد في البلوك اللي بعده.</p>
+<div class="note good">بالمصطلحات بتاعتك: الـ proof of work مش authorization على المحتوى. هو rate limiting مكلف بيحل الـ Sybil ويختار مين "دوره" يقترح البلوك. الصلاحية نفسها (validity) بتتفرض بالـ validation المستقل عند كل node. الكاتب بتطلّعه القرعة، والكتابة بتحكم عليها القواعد.</div>
+
+<figure class="fig" id="fig08">
+<svg viewBox="0 0 680 210" role="img" aria-label="التحقق المستقل عند كل جهاز" data-la="رجوع للبلوك السليم" data-lb="شوف البلوك الغلط">
+<g class="sa">
+<rect class="kb" x="516" y="82" width="140" height="46" rx="8" data-note="بلوك جديد معلن من الماينر الفايز" data-hl="stroke"/>
+<text class="tx" x="586" y="102" text-anchor="middle">بلوك جديد</text>
+<text class="tmg" x="586" y="119" text-anchor="middle">hash 000abc…</text>
+<path class="ks" d="M512 105 H470"/>
+<path class="kah" d="M470 105 l9 -4 v8 z"/>
+<rect class="kb" x="276" y="58" width="188" height="98" rx="10" data-note="كل جهاز (node) بيفحص بنفسه محلياً - مش بيسأل حد" data-hl="stroke"/>
+<text class="tx" x="370" y="80" text-anchor="middle">أي جهاز node</text>
+<path class="kg" d="M296 96 l5 5 9 -10"/>
+<text class="txs" x="316" y="104">بصمة تحت الـ target</text>
+<path class="kg" d="M296 118 l5 5 9 -10"/>
+<text class="txs" x="316" y="126">تواقيع كل المعاملات سليمة</text>
+<path class="kg" d="M296 140 l5 5 9 -10"/>
+<text class="txs" x="316" y="148">coinbase جوه السقف</text>
+<path class="ks" d="M272 105 H228"/>
+<path class="kah" d="M228 105 l9 -4 v8 z"/>
+<rect class="kgd" x="20" y="82" width="202" height="46" rx="8" data-note="يتقبله، يبني عليه، ويمرره لجيرانه" data-hl="stroke"/>
+<text class="tx" x="121" y="102" text-anchor="middle">بلوك مقبول</text>
+<text class="tmg" x="121" y="119" text-anchor="middle">بيتبني عليه</text>
+</g>
+<g class="sb">
+<rect class="kbdd" x="516" y="82" width="140" height="46" rx="8" data-note="نفس الماينر، بس جشع" data-hl="stroke"/>
+<text class="tx" x="586" y="102" text-anchor="middle">بلوك جديد</text>
+<text class="tmb" x="586" y="119" text-anchor="middle">coinbase = 100</text>
+<path class="ks" d="M512 105 H470"/>
+<path class="kah" d="M470 105 l9 -4 v8 z"/>
+<rect class="kb" x="276" y="58" width="188" height="98" rx="10"/>
+<text class="tx" x="370" y="80" text-anchor="middle">أي جهاز node</text>
+<path class="kg" d="M296 96 l5 5 9 -10"/>
+<text class="txs" x="316" y="104">بصمة تحت الـ target</text>
+<path class="kg" d="M296 118 l5 5 9 -10"/>
+<text class="txs" x="316" y="126">تواقيع كل المعاملات سليمة</text>
+<path class="kbad" d="M297 136 l12 12 M309 136 l-12 12"/>
+<text class="txs" x="322" y="148" data-note="السقف: 3.125 + الرسوم - ساتوشي واحد زيادة والبلوك يترمي" data-hl="fill">coinbase فوق السقف</text>
+<path class="kbad" d="M272 105 H228"/>
+<path class="kbh" d="M228 105 l9 -4 v8 z"/>
+<rect class="kbdd" x="20" y="82" width="202" height="46" rx="8" data-note="مفيش شكوى ولا محاكمة - البلوك بيترمي فوراً" data-hl="stroke"/>
+<path class="kbad" d="M34 90 l20 20 M54 90 l-20 20"/>
+<text class="tx" x="130" y="104" text-anchor="middle">مرفوض</text>
+<text class="tmb" x="130" y="120" text-anchor="middle">والماينر خسر القرعة</text>
+</g>
+</svg>
+<figcaption><span class="figno">شكل ٨</span>محدش بيصدق حد: كل جهاز بيعيد الفحص بنفسه، وأي قاعدة تتكسر البلوك بيترمي في أقل من ثانية.</figcaption>
+</figure>
+
+<h2 id="chain"><span class="num">09</span> ليه التاريخ بيتقفل؟</h2>
+<p>افتكر إن أول حقل مهم في الكارت هو <strong>بصمة كارت البلوك اللي فات</strong>. كل بلوك ماسك في اللي قبله بالبصمة. غيّر حوالة في بلوك قديم، Merkle root يتغيّر، فبصمة الـ header تتغيّر وحقل prev في البلوك اللي بعده يبقى غلط. إعادة كتابة التاريخ تحتاج إعادة إثبات العمل من نقطة التعديل، وفي نفس الوقت السلسلة السليمة بتكمل نمو.</p>
+<p>السلسلة اللي تحت دي مصغّرة (الصعوبة 3 أصفار بس عشان جهازك يعدّنها في ثواني). كل بلوك أخضر يعني: بصمته بأصفار، وحقل الـ prev بتاعه مطابق. دلوقتي <strong>روح للبلوك الأول وعدّل أي حرف في حوالاته</strong>، واتفرج على الكسر وهو بينتشر لقدام. لو حاولت "تصلّح" بإنك تعيد تعدين البلوكات بالترتيب، هتلاحظ إنك اضطريت تعيد شغل كل حاجة بعد التعديل:</p>
+
+<div class="machine" data-state="idle" data-type="FORK" tabindex="0" aria-labelledby="lab5t">
+<div class="mhead"><span class="mlab">LAB 05</span><span class="mtitle" id="lab5t">سلسلة تلات بلوكات، جرّب تزوّر</span><span class="chip">FORK</span></div>
+<div class="blocks" id="blocks"></div>
+<div class="dim">في الشبكة الحقيقية، وانت بتعيد التعدين ده، باقي العالم كان ضاف بلوكات جديدة فوق النسخة السليمة، فانت بتجري ورا قطر مش هتلحقه غير لو معاك أكتر من نص كهربا الكوكب المخصصة للتعدين.</div>
+</div>
+
+<figure class="fig" id="fig09">
+<svg viewBox="0 0 680 200" role="img" aria-label="تزوير بلوك قديم يكسر السلسلة" data-la="رجوع للسلسلة السليمة" data-lb="عدّل بلوك قديم">
+<g class="sa">
+<rect class="kgd" x="30" y="52" width="190" height="92" rx="9" data-note="بلوك 1: بصمته بأصفار، و-prev بتاعه أصفار (مفيش قبله)" data-hl="stroke"/>
+<text class="tx" x="125" y="76" text-anchor="middle">بلوك 1</text>
+<text class="tmg" x="125" y="97" text-anchor="middle">hash 000a91…</text>
+<text class="tm" x="125" y="114" text-anchor="middle" font-size="9">prev 000…0</text>
+<text class="tm" x="125" y="131" text-anchor="middle" font-size="9">tx: لعمر 5</text>
+<path class="kg" d="M220 98 H252"/>
+<path class="kgh" d="M252 98 l-9 -4 v8 z"/>
+<text class="tm" x="236" y="88" text-anchor="middle" font-size="8.5">prev</text>
+<rect class="kgd" x="254" y="52" width="190" height="92" rx="9" data-note="بلوك 2 ماسك في بصمة بلوك 1" data-hl="stroke"/>
+<text class="tx" x="349" y="76" text-anchor="middle">بلوك 2</text>
+<text class="tmg" x="349" y="97" text-anchor="middle">hash 000c3f…</text>
+<text class="tm" x="349" y="114" text-anchor="middle" font-size="9">prev 000a91…</text>
+<text class="tm" x="349" y="131" text-anchor="middle" font-size="9">tx: لعلي 2</text>
+<path class="kg" d="M444 98 H476"/>
+<path class="kgh" d="M476 98 l-9 -4 v8 z"/>
+<rect class="kgd" x="478" y="52" width="190" height="92" rx="9" data-note="بلوك 3 - وكل بلوك جاي بيبني فوق ده" data-hl="stroke"/>
+<text class="tx" x="573" y="76" text-anchor="middle">بلوك 3</text>
+<text class="tmg" x="573" y="97" text-anchor="middle">hash 000e77…</text>
+<text class="tm" x="573" y="114" text-anchor="middle" font-size="9">prev 000c3f…</text>
+<text class="tm" x="573" y="131" text-anchor="middle" font-size="9">tx: لمنى 1.5</text>
+<text class="txs" x="340" y="172" text-anchor="middle">كل بلوك ماسك في اللي قبله - السلسلة مقفولة</text>
+</g>
+<g class="sb">
+<rect class="kbdd" x="30" y="52" width="190" height="92" rx="9" data-note="اتعدلت حوالة قديمة" data-hl="stroke"/>
+<text class="tx" x="125" y="76" text-anchor="middle">بلوك 1 (اتعدل)</text>
+<text class="tmb" x="125" y="97" text-anchor="middle">hash f7e29b…</text>
+<text class="tm" x="125" y="114" text-anchor="middle" font-size="9">prev 000…0</text>
+<text class="tmb" x="125" y="131" text-anchor="middle" font-size="9">tx: لعمر 500 !</text>
+<path class="kbad" d="M226 88 l16 16 M242 88 l-16 16"/>
+<text class="tmb" x="237" y="80" text-anchor="middle" font-size="8.5">prev غلط</text>
+<rect class="kbdd" x="254" y="52" width="190" height="92" rx="9" data-note="لازم يتعدن من الأول - وبصمة الـ prev مش لاقية البلوك القديم" data-hl="stroke"/>
+<path class="kbad" d="M415 60 l7 9 -5 7 9 11"/>
+<text class="tx" x="349" y="76" text-anchor="middle">بلوك 2</text>
+<text class="tm" x="349" y="97" text-anchor="middle">hash 000c3f…</text>
+<text class="tm" x="349" y="114" text-anchor="middle" font-size="9">prev 000a91… مش موجود</text>
+<rect class="kbdd" x="478" y="52" width="190" height="92" rx="9" data-note="واللي بعده كمان - وانت بتسابق العالم" data-hl="stroke"/>
+<path class="kbad" d="M639 60 l7 9 -5 7 9 11"/>
+<text class="tx" x="573" y="76" text-anchor="middle">بلوك 3</text>
+<text class="tm" x="573" y="97" text-anchor="middle">hash 000e77…</text>
+<text class="tm" x="573" y="114" text-anchor="middle" font-size="9">prev 000c3f…</text>
+<text class="txs" x="340" y="172" text-anchor="middle">الكسر بينتشر لقدام: لازم تعيد تعدين كل حاجة بعد التعديل</text>
+</g>
+</svg>
+<figcaption><span class="figno">شكل ٩</span>ليه التاريخ بيتقفل: تعديل بلوك قديم بيكسر كل اللي بعده، وإعادة البناء أغلى من أي مكسب.</figcaption>
+</figure>
+
+<h2 id="faq"><span class="num">10</span> أسئلة بتسألهالك</h2>
+<h3>"ممكن ميحطش أي حوالة والناس هتصدقه عادي؟"</h3>
+<p>البلوك الفاضي (coinbase بس) صحيح قانوناً والشبكة بتقبله. صاحبه خسر رسوم المعاملات، فهو بيضر نفسه بس. الناس هتصدقه؟ الحكاية دي مش موجودة. كل جهاز بيعيد فحص كل قاعدة بنفسه (القسم ٨).</p>
+<h3>"ليه ميكتبش لنفسه الكمية اللي هو عايزها؟"</h3>
+<p>يكتب براحته. كل جهاز في الشبكة هيرمي البلوك في أقل من ثانية لأن الـ coinbase عدّت السقف (3.125 + الرسوم). كهربا القرعة كلها راحت هدر (القسمين ٣ و٨).</p>
+<h3>"المايننج بيفيد في إيه أصلاً؟"</h3>
+<p>التخمين نفسه ملوش معنى للتطبيق. إثبات العمل بيخلّي اقتراح البلوك مكلف، وبيوزن السباق بالشغل الفعلي بدل هويات رخيصة. التعدين ممكن يتركز في pools، فمينفعش نسميه غير قابل للاحتكار. المكافأة بتدفع للماينرز مقابل الشغل ده.</p>
+<h3>"ما دام الحاجة معروفة، إيه المجهود في الهاش؟"</h3>
+<p>البصمة الواحدة فعلاً ببلاش. الغالي هو العكس. تلاقي نسخة من الكارت بصمتها بأصفار. والآلة فوضوية باتجاه واحد فمفيش أي طريق غير التجربة. الفوز نادر فلكياً. المجهود = عدد المحاولات، مش صعوبة الواحدة (القسم ٥، وجرّبها في المنجم).</p>
+<h3>"هو إيه اللي بيتعمله هاش بالظبط؟"</h3>
+<p>كارت الـ block header، 80 بايت. فيهم بصمة البلوك اللي فات، وبصمة ملخصة لكل المعاملات (Merkle root)، والوقت، والصعوبة، والـ nonce. المعاملات نفسها بتتلخص مرة واحدة في الجذر، والكارت الصغير هو اللي بيتطحن (القسمين ٣ و٤، وشغّلت الـ 80 بايت بتوع ساتوشي بنفسك).</p>
+<h3>"الوقت بيبقى إيه؟"</h3>
+<p>ختم زمني. بيخلّي عند الشبكة ساعة مشتركة تتعاير عليها الصعوبة كل 2016 بلوك عشان البلوك يفضل ياخد 10 دقايق. ومش موثوق فيه على الفاضي. محصور بين وسيط آخر 11 بلوك وساعة المتحقق + ساعتين (القسم ٧).</p>
+<h3>"مش الـ nonce معناها number used once؟"</h3>
+<p>الاسم مستلف بس الوظيفة مختلفة عن أداة منع replay زي البروتوكولات الأمنية. مجرد خانة عبث حر 4 بايت بيقلّب فيها الماينر عشان يغيّر الكارت بين المحاولات. الـ "مرة واحدة" هنا معناها إن تكرار نفس القيمة على نفس الكارت تضييع كهربا لأن الآلة ثابتة. العداد خلّص. extraNonce جوه الـ coinbase يجدد المساحة عن طريق تغيير الجذر (القسم ٦).</p>
+
+<figure class="fig" id="fig10">
+<svg viewBox="0 0 680 190" role="img" aria-label="خريطة الإجابات">
+<rect class="kb" x="20" y="62" width="116" height="48" rx="9" data-note="أي كلام، أي طول" data-hl="stroke"/>
+<text class="tx" x="78" y="90" text-anchor="middle">أي كلام</text>
+<path class="ks" d="M136 86 H153"/>
+<path class="kah" d="M153 86 l-9 -4 v8 z"/>
+<rect class="kb" x="155" y="62" width="116" height="48" rx="9" data-note="64 خانة hex دايماً" data-hl="stroke"/>
+<text class="tm" x="213" y="90" text-anchor="middle">بصمة 64</text>
+<path class="ks" d="M271 86 H288"/>
+<path class="kah" d="M288 86 l-9 -4 v8 z"/>
+<rect class="kb" x="290" y="62" width="116" height="48" rx="9" data-note="الكارت الصغير اللي بيتطحن" data-hl="stroke"/>
+<text class="tm" x="348" y="90" text-anchor="middle">كارت 80 بايت</text>
+<path class="ks" d="M406 86 H423"/>
+<path class="kah" d="M423 86 l-9 -4 v8 z"/>
+<rect class="kb" x="425" y="62" width="116" height="48" rx="9" data-note="المجهود عدد المحاولات" data-hl="stroke"/>
+<text class="tx" x="483" y="90" text-anchor="middle">قرعة الأصفار</text>
+<path class="ks" d="M541 86 H558"/>
+<path class="kah" d="M558 86 l-9 -4 v8 z"/>
+<rect class="kb" x="560" y="62" width="110" height="48" rx="9" data-note="كل بلوك ماسك في اللي قبله" data-hl="stroke"/>
+<text class="tx" x="615" y="90" text-anchor="middle">سلسلة مقفولة</text>
+<g data-step="1" data-note="القسم ٢: الهاش - ثابتة، باتجاه واحد، فوضوية">
+<rect class="stepov" x="16" y="58" width="259" height="56" rx="9"/>
+<text class="hlf txs" x="146" y="140" text-anchor="middle">١. الهاش</text>
+</g>
+<g data-step="2" data-note="القسم ٣: 80 بايت بس هم اللي بيدخلوا الآلة">
+<rect class="stepov" x="286" y="58" width="124" height="56" rx="9"/>
+<text class="hlf txs" x="348" y="140" text-anchor="middle">٢. الكارت</text>
+</g>
+<g data-step="3" data-note="القسم ٥: يانصيب - المحاولة ببلاش والفايزة نادرة">
+<rect class="stepov" x="421" y="58" width="124" height="56" rx="9"/>
+<text class="hlf txs" x="483" y="140" text-anchor="middle">٣. القرعة</text>
+</g>
+<g data-step="4" data-note="القسم ٩: التاريخ بيتقفل ومحدش يعيد كتابته">
+<rect class="stepov" x="556" y="58" width="118" height="56" rx="9"/>
+<text class="hlf txs" x="615" y="140" text-anchor="middle">٤. القفل</text>
+</g>
+<text class="txs" x="340" y="170" text-anchor="middle">كل سؤال في القسم ده بيرجع لواحدة من الحاجات الأربعة دي</text>
+</svg>
+<figcaption><span class="figno">شكل ١٠</span>الصفحة كلها في أربع حركات: هاش، كارت، قرعة، قفل.</figcaption>
+</figure>
+
+<p class="facts">كل الأرقام والتجارب في الصفحة دي حقيقية: SHA-256 بتاع متصفحك هو نفسه بتاع بيتكوين، وبايتات بلوك الميلاد هي المسجلة في السلسلة من يناير 2009. المكافأة الحالية 3.125 بيتكوين وبتتنصّف كل حوالي أربع سنين.</p>
+
+</main>
+</div>
+</div>
+<footer class="band foot">
+<nav class="pn" aria-label="Guide navigation"><a href="crypto-summary-ar.html" rel="prev"><small>السابق</small><strong>الصورة الكاملة</strong></a><a href="monero-from-zero-ar.html" rel="next"><small>التالي</small><strong>مونيرو</strong></a></nav>
+<p class="colophon">كتبه <a href="https://moamenbasel.com">مؤمن باسل</a>، مهندس أمن في <a href="https://greycorelabs.com">Grey Core Labs</a>. مؤمن باسل، 2026، الأرقام صحيحة حتى سبتمبر 2026. <a href="index.html">الفهرس</a></p>
+</footer>
+
+<script>
+const enc = new TextEncoder();
+async function sha256hex(str){
+  const d = await crypto.subtle.digest('SHA-256', enc.encode(str));
+  return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function hexToBytes(h){const a=new Uint8Array(h.length/2);for(let i=0;i<a.length;i++)a[i]=parseInt(h.substr(i*2,2),16);return a;}
+function markZeros(h){const m=h.match(/^0*/)[0];return '<span class="zeros">'+m+'</span>'+h.slice(m.length);}
+
+/* ---- 1) hasher ---- */
+let lastHash = null;
+const hin=document.getElementById('hin'), hout=document.getElementById('hout'), hprev=document.getElementById('hprev');
+async function updateHash(){
+  const h = await sha256hex(hin.value);
+  if(lastHash && lastHash!==h){ hprev.textContent = 'البصمة اللي فاتت: ' + lastHash.slice(0,24) + '… قارن بنفسك: مفيش علاقة ظاهرة.'; }
+  lastHash = h; hout.textContent = h;
+}
+function setH(v){ hin.value=v; updateHash(); }
+hin.addEventListener('input', updateHash);
+updateHash();
+
+/* ---- 2) genesis ---- */
+const GEN = {
+  ver:'01000000',
+  prev:'0000000000000000000000000000000000000000000000000000000000000000',
+  mrk:'3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a',
+  time:'29ab5f49', bits:'ffff001d', nonce:'1dac2b7c'
+};
+document.getElementById('genrow').innerHTML =
+  '<span class="f f-ver">'+GEN.ver+'</span><span class="f f-prev">'+GEN.prev+'</span><span class="f f-mrk">'+GEN.mrk+'</span><span class="f f-time">'+GEN.time+'</span><span class="f f-bits">'+GEN.bits+'</span><span class="f f-nonce">'+GEN.nonce+'</span>';
+async function hashGenesis(){
+  const bytes = hexToBytes(GEN.ver+GEN.prev+GEN.mrk+GEN.time+GEN.bits+GEN.nonce);
+  const d1 = await crypto.subtle.digest('SHA-256', bytes);
+  const d2 = new Uint8Array(await crypto.subtle.digest('SHA-256', d1));
+  const hash = [...d2].reverse().map(b=>b.toString(16).padStart(2,'0')).join('');
+  document.getElementById('genout').innerHTML = markZeros(hash);
+  const dv = new DataView(hexToBytes(GEN.time).buffer);
+  const ts = dv.getUint32(0, true);
+  const nv = new DataView(hexToBytes(GEN.nonce).buffer).getUint32(0, true);
+  document.getElementById('geninfo').textContent =
+    'الختم الزمني بيفك لـ ' + new Date(ts*1000).toUTCString() + '. الـ nonce الكسبان: ' + nv.toLocaleString('en-US');
+}
+
+/* ---- 3) merkle ---- */
+const txEls=[0,1,2,3].map(i=>document.getElementById('tx'+i));
+let sealed=null;
+function tn(id,lbl){return '<div class="tnode" id="'+id+'"><span class="lbl">'+lbl+'</span><span class="hv">…</span></div>';}
+document.getElementById('tree').innerHTML =
+  '<div class="tier">'+tn('nroot','Merkle root')+'</div>'+
+  '<div class="tier">'+tn('n01','h(1+2)')+tn('n23','h(3+4)')+'</div>'+
+  '<div class="tier">'+tn('n0','h(tx1)')+tn('n1','h(tx2)')+tn('n2','h(tx3)')+tn('n3','h(tx4)')+'</div>';
+let prevVals={};
+async function merkleHash(bytes){
+  const first=await crypto.subtle.digest('SHA-256',bytes);
+  const second=await crypto.subtle.digest('SHA-256',first);
+  return [...new Uint8Array(second)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function merklePair(left,right){
+  const bytes=new Uint8Array(64);
+  bytes.set(hexToBytes(left));bytes.set(hexToBytes(right),32);
+  return merkleHash(bytes);
+}
+async function updateTree(){
+  const l=[]; for(const el of txEls) l.push(await merkleHash(enc.encode(el.value)));
+  const p01=await merklePair(l[0],l[1]), p23=await merklePair(l[2],l[3]);
+  const root=await merklePair(p01,p23);
+  const vals={n0:l[0],n1:l[1],n2:l[2],n3:l[3],n01:p01,n23:p23,nroot:root};
+  for(const k in vals){
+    const el=document.getElementById(k), short=vals[k].slice(0,10)+'…';
+    const hv=el.querySelector('.hv');
+    if(prevVals[k] && prevVals[k]!==vals[k]){el.classList.add('hot');setTimeout(()=>el.classList.remove('hot'),900);}
+    hv.textContent=short;
+  }
+  prevVals=vals;
+  const msg=document.getElementById('sealmsg');
+  if(sealed){
+    if(root===sealed){msg.textContent='البلوك مقفول والجذر مطابق. الهاش اللي اتعدّن عليه لسه صالح.';msg.style.color='var(--good)';}
+    else{msg.textContent='الجذر اتغيّر ← الكارت بقى كارت تاني ← الهاش القديم بطل، وترجع تعدّن من الصفر.';msg.style.color='var(--bad)';}
+  }
+}
+function sealRoot(){ sealed=prevVals.nroot; updateTree(); }
+txEls.forEach(el=>el.addEventListener('input',updateTree));
+updateTree();
+
+/* ---- 4) miner ---- */
+let mining=false;
+const BATCH=384;
+function fmt(n){return n.toLocaleString('en-US');}
+async function startMine(){
+  if(mining) return;
+  mining=true;
+  document.getElementById('minebtn').disabled=true;
+  document.getElementById('stopbtn').disabled=false;
+  document.getElementById('minerbox').classList.add('mining');
+  const z=+document.getElementById('zsel').value, target='0'.repeat(z);
+  const data='block: عمر←أحمد 5, سارة←علي 2, coinbase 3.125 | nonce=';
+  const salt=Math.floor(Math.random()*1e9)+':';
+  let n=0, t0=performance.now(), found=null, lastUi=0;
+  document.getElementById('s-msg').textContent='';
+  while(mining && !found){
+    const ps=[], ns=[];
+    for(let i=0;i<BATCH;i++){ns.push(n);ps.push(sha256hex(data+salt+n));n++;}
+    const hs=await Promise.all(ps);
+    for(let i=0;i<hs.length;i++){ if(hs[i].startsWith(target)){found={n:ns[i],h:hs[i]};break;} }
+    const now=performance.now();
+    if(now-lastUi>90 || found){
+      lastUi=now;
+      const sec=(now-t0)/1000;
+      document.getElementById('s-att').textContent=fmt(n);
+      document.getElementById('s-rate').textContent=fmt(Math.round(n/Math.max(sec,.01)));
+      document.getElementById('s-time').textContent=sec.toFixed(1)+'s';
+      document.getElementById('s-nonce').textContent=fmt(found?found.n:n-1);
+      document.getElementById('s-hash').innerHTML=found?markZeros(found.h):hs[hs.length-1];
+      await new Promise(r=>setTimeout(r,0));
+    }
+  }
+  if(found){
+    document.getElementById('s-msg').textContent='لقيتها! الـ nonce الكسبان: '+fmt(found.n)+'. أي جهاز يقدر يتأكد من إثبات التجربة بهاش واحد.';
+  } else {
+    document.getElementById('s-msg').textContent='وقّفت المنجم قبل ما يلاقي.';
+  }
+  mining=false;
+  document.getElementById('minebtn').disabled=false;
+  document.getElementById('stopbtn').disabled=true;
+  document.getElementById('minerbox').classList.remove('mining');
+}
+function stopMine(){mining=false;}
+
+/* ---- 5) chain ---- */
+const DIFF='000';
+const chain=[
+  {data:'عمر ← أحمد: 5 بيتكوين', nonce:0, hash:''},
+  {data:'سارة ← علي: 2 بيتكوين', nonce:0, hash:''},
+  {data:'مصطفى ← منى: 1.5 بيتكوين', nonce:0, hash:''}
+];
+function blkHtml(i){
+  return '<div class="blk" id="blk'+i+'">'+
+    '<div class="b-head"><span>بلوك '+(i+1)+'</span><span class="b-state" id="bs'+i+'"></span></div>'+
+    '<label for="bd'+i+'">الحوالات</label>'+
+    '<div class="row2"><textarea id="bd'+i+'" rows="1"></textarea>'+
+    '<div><label for="bn'+i+'">nonce</label><input type="number" id="bn'+i+'" min="0"></div></div>'+
+    '<label>بصمة البلوك اللي فات (prev)</label><div class="out"><span class="hx" id="bp'+i+'"></span></div>'+
+    '<label>بصمة البلوك ده</label><div class="out"><span class="hx" id="bh'+i+'"></span></div>'+
+    '<button type="button" class="secondary" onclick="mineBlk('+i+')" id="bm'+i+'">عيد تعدين البلوك ده</button>'+
+  '</div>';
+}
+document.getElementById('blocks').innerHTML = chain.map((_,i)=>blkHtml(i)).join('');
+chain.forEach((b,i)=>{
+  const d=document.getElementById('bd'+i), nn=document.getElementById('bn'+i);
+  d.value=b.data; nn.value=b.nonce;
+  d.addEventListener('input',()=>{b.data=d.value;recompute();});
+  nn.addEventListener('input',()=>{b.nonce=+nn.value||0;recompute();});
+});
+function prevOf(i){return i===0 ? '0'.repeat(64) : chain[i-1].hash;}
+async function recompute(){
+  for(let i=0;i<chain.length;i++){
+    chain[i].hash = await sha256hex(i + prevOf(i) + chain[i].data + chain[i].nonce);
+  }
+  for(let i=0;i<chain.length;i++){
+    const ok = chain[i].hash.startsWith(DIFF);
+    document.getElementById('bp'+i).textContent=prevOf(i).slice(0,24)+'…';
+    document.getElementById('bh'+i).innerHTML=markZeros(chain[i].hash);
+    document.getElementById('blk'+i).classList.toggle('broken',!ok);
+    document.getElementById('bs'+i).textContent = ok ? 'سليم' : 'مكسور: البصمة مش بأصفار';
+  }
+}
+async function mineBlk(i){
+  const btn=document.getElementById('bm'+i); btn.disabled=true; btn.textContent='بيعدّن…';
+  const prev=prevOf(i); let n=0;
+  while(true){
+    const batch=[]; const ns=[];
+    for(let k=0;k<256;k++){ns.push(n);batch.push(sha256hex(i+prev+chain[i].data+n));n++;}
+    const hs=await Promise.all(batch);
+    let hit=-1;
+    for(let k=0;k<hs.length;k++) if(hs[k].startsWith(DIFF)){hit=k;break;}
+    if(hit>=0){chain[i].nonce=ns[hit];break;}
+    await new Promise(r=>setTimeout(r,0));
+  }
+  document.getElementById('bn'+i).value=chain[i].nonce;
+  await recompute();
+  btn.disabled=false; btn.textContent='عيد تعدين البلوك ده';
+}
+(async()=>{ for(let i=0;i<chain.length;i++) await mineBlk(i); })();
+</script>
+<script>
+(function(){
+var d=document,root=d.documentElement;
+function label(v){return v==='dark'?'غامق':'فاتح';}
+function applyTheme(v){root.setAttribute('data-theme',v);var n=d.getElementById('themenow'),g=d.getElementById('themego');if(n)n.textContent=label(v);if(g)g.textContent=label(v==='dark'?'light':'dark');}
+var saved=null;try{saved=localStorage.getItem('cln-theme');}catch(e){}
+applyTheme(saved||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+var tg=d.getElementById('themego');
+if(tg)tg.addEventListener('click',function(){var v=root.getAttribute('data-theme')==='dark'?'light':'dark';try{localStorage.setItem('cln-theme',v);}catch(e){}applyTheme(v);});
+var pr=d.getElementById('progress');
+function onProg(){if(!pr)return;var max=root.scrollHeight-window.innerHeight,y=window.scrollY||0;pr.style.opacity=y>8?'1':'0';pr.style.transform='scaleX('+(max>0?Math.min(1,y/max):0)+')';}
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches&&'onscrollend'in window){addEventListener('scrollend',onProg);}else{addEventListener('scroll',onProg,{passive:true});}
+onProg();
+var swap=d.getElementById('langswap');
+if(swap&&location.hash)swap.setAttribute('href',swap.getAttribute('href').split('#')[0]+location.hash);
+var tocLinks={};
+Array.prototype.forEach.call(d.querySelectorAll('.toc a[href^="#"]'),function(a){tocLinks[a.getAttribute('href').slice(1)]=a;});
+if('IntersectionObserver'in window){
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var a=tocLinks[e.target.id];if(!a)return;Array.prototype.forEach.call(d.querySelectorAll('.toc a.on'),function(x){x.classList.remove('on');});a.classList.add('on');});},{rootMargin:'0px 0px -72% 0px'});
+Array.prototype.forEach.call(d.querySelectorAll('main h2[id]'),function(h){io.observe(h);});
+}
+function setState(m,s){if(m&&m.getAttribute('data-state')!==s)m.setAttribute('data-state',s);}
+var miner=d.getElementById('minerbox');
+if(miner&&'MutationObserver'in window){
+var syncRun=function(){setState(miner,miner.classList.contains('mining')?'running':'idle');};
+new MutationObserver(syncRun).observe(miner,{attributes:true,attributeFilter:['class']});
+var msg=d.getElementById('s-msg');
+if(msg)new MutationObserver(function(){if(!miner.classList.contains('mining'))setState(miner,msg.textContent.indexOf('لقيتها')>-1?'done':'idle');}).observe(msg,{childList:true,characterData:true,subtree:true});
+var mt=d.getElementById('mtick'),att=d.getElementById('s-att');
+if(mt&&att)new MutationObserver(function(){mt.hidden=false;mt.textContent=att.textContent;}).observe(att,{childList:true,characterData:true,subtree:true});
+var me=d.getElementById('melapsed'),st=d.getElementById('s-time');
+if(me&&st)new MutationObserver(function(){me.hidden=false;me.textContent=st.textContent;}).observe(st,{childList:true,characterData:true,subtree:true});
+}
+Array.prototype.forEach.call(d.querySelectorAll('.machine'),function(m){
+m.addEventListener('keydown',function(ev){
+var tag=(ev.target.tagName||'').toLowerCase();
+var inField=tag==='input'||tag==='textarea'||tag==='select';
+if(ev.key==='Escape'){var sp=m.querySelector('button[data-stop]');if(sp&&!sp.disabled){sp.click();}else{m.blur();}return;}
+if(inField&&!((ev.ctrlKey||ev.metaKey)&&ev.key==='Enter'))return;
+if(ev.key==='Enter'){ev.preventDefault();var run=m.querySelector('button[data-run]');if(run&&!run.disabled)run.click();}
+});
+});
+Array.prototype.forEach.call(d.querySelectorAll('button[data-run]'),function(b){
+b.addEventListener('click',function(){
+var m=b.closest?b.closest('.machine'):null;if(!m)return;
+if(m.classList.contains('mining')){setState(m,'running');return;}
+setState(m,'done');clearTimeout(m._dt);
+m._dt=setTimeout(function(){if(m.getAttribute('data-state')==='done')setState(m,'idle');},1200);
+});
+});
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var COARSE=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
+var st=document.createElement('style');
+st.textContent='figure.fig{position:relative}figure.fig text{user-select:none}figure.fig [data-note]{cursor:pointer;transition:stroke .15s ease,fill .15s ease}.figctl{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.85rem}.figctl button{font-family:var(--mono);font-size:11px;line-height:1.4;border:1px solid var(--border2);border-radius:8px;padding:4px 10px;background:transparent;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s}.figctl button:hover{border-color:var(--accent);color:var(--ink)}.figctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.fignote{position:absolute;top:8px;left:8px;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:12px;line-height:1.6;color:var(--muted);padding:6px 10px;pointer-events:none;opacity:0;transition:opacity .12s;z-index:5;direction:rtl;text-align:start}.fignote.on{opacity:1}figure.fig [data-step]{transition:opacity .3s ease}figure.fig [data-step].dim{opacity:.25}figure.fig [data-step].cur{animation:fgpulse 1.2s ease-in-out infinite}figure.fig .hl{transition:stroke .3s ease,fill .3s ease}figure.fig [data-step].cur .hl{stroke:var(--accent)}figure.fig [data-step].cur .hlf{fill:var(--accent)}figure.fig .stepov{opacity:0;transition:opacity .3s ease}figure.fig [data-step].cur .stepov{opacity:1}figure.fig svg .sa,figure.fig svg .sb{transition:opacity .25s ease,transform .25s ease}figure.fig svg.fa .sb,figure.fig svg.fb .sa{opacity:0;transform:translateY(8px);pointer-events:none}@keyframes fgpulse{0%,100%{opacity:1}50%{opacity:.5}}@media(prefers-reduced-motion:reduce){figure.fig [data-step]{transition:none}figure.fig [data-step].cur{animation:none}figure.fig svg .sa,figure.fig svg .sb{transition:none}}.ks{stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.kb{fill:var(--surface2);stroke:currentColor;stroke-width:1.4}.kbf{fill:var(--surface);stroke:currentColor;stroke-width:1.4}.ka{stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round}.kaf{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}.kg{stroke:var(--good);fill:none;stroke-width:1.8;stroke-linecap:round}.kgd{fill:var(--surface);stroke:var(--good);stroke-width:1.6}.kbad{stroke:var(--bad);fill:none;stroke-width:1.8;stroke-linecap:round}.kbdd{fill:var(--surface);stroke:var(--bad);stroke-width:1.6}.kah{fill:currentColor}.kgh{fill:var(--good)}.kbh{fill:var(--bad)}.kaha{fill:var(--accent)}.tx{font-family:var(--sans);font-size:13px;fill:var(--ink)}.txs{font-family:var(--sans);font-size:11.5px;fill:var(--muted)}.tm{font-family:var(--mono);font-size:11px;fill:var(--muted)}.tma{font-family:var(--mono);font-size:11px;fill:var(--accent)}.tmg{font-family:var(--mono);font-size:10px;fill:var(--good)}.tmb{font-family:var(--mono);font-size:10px;fill:var(--bad)}';
+document.head.appendChild(st);
+function all(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))}
+function btn(t,fn){var b=document.createElement('button');b.type='button';b.textContent=t;b.addEventListener('click',fn);return b}
+function setNote(fig,txt){
+if(!fig._note){fig._note=document.createElement('div');fig._note.className='fignote';fig.appendChild(fig._note)}
+if(txt){fig._note.textContent=txt;fig._note.classList.add('on')}else{fig._note.classList.remove('on')}
+}
+function glow(el,on){var m=el.getAttribute('data-hl')||'stroke';el.style[m]=on?'var(--accent)':''}
+function settle(fig){
+clearTimeout(fig._st);
+fig._st=setTimeout(function(){
+var i;
+for(i=0;i<fig._parts.length;i++)fig._parts[i][0].style.transition='';
+for(i=0;i<fig._labs.length;i++)fig._labs[i].style.transition='';
+},1400);
+}
+function start(fig){
+var i;
+clearTimeout(fig._st);
+for(i=0;i<fig._parts.length;i++){fig._parts[i][0].style.transition='none';fig._parts[i][0].style.strokeDasharray=fig._parts[i][1];fig._parts[i][0].style.strokeDashoffset=fig._parts[i][1]}
+for(i=0;i<fig._labs.length;i++){fig._labs[i].style.transition='none';fig._labs[i].style.opacity='0';fig._labs[i].style.transform='translateY(7px)'}
+}
+function play(fig){
+var i,p,d,dl;
+for(i=0;i<fig._parts.length;i++){
+p=fig._parts[i];d=Math.min(620,170+p[1]/2.4);dl=Math.min(360,i*34);
+p[0].style.transition='stroke-dashoffset '+d+'ms cubic-bezier(.25,.8,.35,1) '+dl+'ms';
+p[0].style.strokeDashoffset='0';
+}
+for(i=0;i<fig._labs.length;i++){
+dl=Math.min(780,220+i*60);
+fig._labs[i].style.transition='opacity 300ms cubic-bezier(.25,.8,.35,1) '+dl+'ms,transform 300ms cubic-bezier(.25,.8,.35,1) '+dl+'ms';
+fig._labs[i].style.opacity='1';fig._labs[i].style.transform='translateY(0)';
+}
+settle(fig);
+}
+function stopAuto(fig){if(fig._auto){clearInterval(fig._auto);fig._auto=null}}
+function showStep(fig){
+var gs=fig._steps,i,g;
+for(i=0;i<gs.length;i++){g=gs[i];g.classList.toggle('dim',i<fig._si);g.classList.toggle('cur',i===fig._si)}
+fig._pin=gs[fig._si].getAttribute('data-note')||'';
+setNote(fig,fig._pin||null);
+}
+function stepOn(fig){stopAuto(fig);fig._si=(fig._si+1)%fig._steps.length;showStep(fig)}
+function replay(fig){
+stopAuto(fig);
+if(fig._steps){fig._si=0;showStep(fig)}
+if(fig._toggleReset)fig._toggleReset();
+if(RM)return;
+start(fig);void fig.offsetWidth;setTimeout(function(){play(fig)},50);
+}
+function wireSteps(fig){
+var gs=all('g[data-step]',fig._svg);
+if(!gs.length)return false;
+gs.sort(function(a,b){return+a.getAttribute('data-step')-+b.getAttribute('data-step')});
+fig._steps=gs;fig._si=0;
+fig._ctl.appendChild(btn('خطوة',function(){stepOn(fig)}));
+showStep(fig);
+return true;
+}
+function wireToggle(fig){
+var svg=fig._svg;
+if(!svg.querySelector('.sa')||!svg.querySelector('.sb'))return false;
+svg.classList.add('fa');
+var la=svg.getAttribute('data-la')||'الحالة الأولى',lb=svg.getAttribute('data-lb')||'الحالة التانية';
+var b=btn(lb,function(){
+stopAuto(fig);
+var toB=svg.classList.toggle('fb');
+svg.classList.toggle('fa',!toB);
+this.textContent=toB?la:lb;
+});
+fig._ctl.appendChild(b);
+fig._toggleReset=function(){svg.classList.add('fa');svg.classList.remove('fb');b.textContent=lb};
+return true;
+}
+function wireNotes(fig){
+all('[data-note]',fig._svg).forEach(function(el){
+var txt=el.getAttribute('data-note');
+if(COARSE){
+el.addEventListener('click',function(ev){
+ev.stopPropagation();
+if(fig._tap===el){fig._tap=null;glow(el,false);setNote(fig,fig._pin||null)}
+else{if(fig._tap)glow(fig._tap,false);fig._tap=el;glow(el,true);setNote(fig,txt)}
+});
+}else{
+el.addEventListener('pointerenter',function(){glow(el,true);setNote(fig,txt)});
+el.addEventListener('pointerleave',function(){glow(el,false);setNote(fig,fig._pin||null)});
+}
+});
+}
+function reveal(fig){
+if(fig._seen)return;
+fig._seen=true;
+if(io)io.unobserve(fig);
+if(!RM){start(fig);void fig.offsetWidth;setTimeout(function(){play(fig)},50)}
+if(fig._steps&&!RM){
+var k=0;
+fig._auto=setInterval(function(){
+fig._si=(fig._si+1)%fig._steps.length;showStep(fig);
+if(++k>=fig._steps.length)stopAuto(fig);
+},900);
+}
+}
+var figs=all('figure.fig');
+var io=('IntersectionObserver'in window)?new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting)reveal(en.target)})},{threshold:.12}):null;
+figs.forEach(function(fig){
+var svg=fig.querySelector('svg');
+if(!svg)return;
+fig._svg=svg;
+var els=svg.querySelectorAll('path,line,polyline,circle,rect,ellipse,text'),i,e,L,parts=[],labs=[];
+for(i=0;i<els.length;i++){
+e=els[i];L=0;
+if(e.tagName.toLowerCase()!=='text'){try{L=e.getTotalLength()}catch(x){L=0}}
+if(L>1)parts.push([e,L]);else labs.push(e);
+}
+fig._parts=parts;fig._labs=labs;
+var ctl=document.createElement('div');ctl.className='figctl';fig._ctl=ctl;
+ctl.appendChild(btn('إعادة',function(){replay(fig)}));
+if(!wireSteps(fig))wireToggle(fig);
+var cap=fig.querySelector('figcaption');
+if(cap)fig.insertBefore(ctl,cap);else fig.appendChild(ctl);
+wireNotes(fig);
+if(io)io.observe(fig);else reveal(fig);
+});
+})();
+</script>
+</body>
+</html>
