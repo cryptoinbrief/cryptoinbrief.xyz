@@ -9,12 +9,17 @@ The labs use a mix of browser cryptography and deliberately small teaching model
 Start with [the illustrated overview](crypto-summary.html), then follow the essays in this order:
 
 1. [Bitcoin from zero](bitcoin-from-zero.html)
-2. [Proof of stake from zero](proof-of-stake.html)
-3. [Solana from zero](solana.html)
-4. [Sui from zero](sui.html)
-5. [Monero under the hood](monero-under-the-hood.html)
-6. [Zcash from zero](zcash.html)
-7. [Zero knowledge from zero](zero-knowledge-from-zero.html)
+2. [The Bitcoin white paper](bitcoin-whitepaper.html)
+3. [Proof of stake from zero](proof-of-stake.html)
+4. [Solana from zero](solana.html)
+5. [Sui from zero](sui.html)
+6. [Monero under the hood](monero-under-the-hood.html)
+7. [How to get Monero](getting-monero.html)
+8. [Bitcoin and Monero white papers compared](bitcoin-vs-monero-whitepapers.html)
+9. [Zcash from zero](zcash.html)
+10. [Zero knowledge from zero](zero-knowledge-from-zero.html)
+
+Developers can optionally follow a transaction through the verified source references in [Inside the Bitcoin Core codebase](bitcoin-codebase.html).
 
 Arabic editions are available for the [illustrated overview](crypto-summary-ar.html), [Bitcoin](bitcoin-from-zero-ar.html), and [Monero](monero-from-zero-ar.html).
 
@@ -59,6 +64,12 @@ Then run these in another:
 ```console
 pnpm test:stories
 pnpm test:figures
+pnpm test:support
+pnpm test:acquisition
+pnpm test:monero-figures
+pnpm test:summary-figures
+pnpm test:zcash-colors
+pnpm test:bitcoin-guides
 pnpm test:ui
 ```
 

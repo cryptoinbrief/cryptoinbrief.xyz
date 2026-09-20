@@ -303,6 +303,7 @@ html[lang="ar"] .bay h1{letter-spacing:0}
 <meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
 <link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
 <link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+<link rel="stylesheet" href="assets/support.css"><script defer src="assets/support.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to content</a>
@@ -356,21 +357,37 @@ html[lang="ar"] .bay h1{letter-spacing:0}
 </figure></section>
 
 <h2 id="s1"><span class="num">01</span>مين يكتب الصفحة الجاية؟</h2>
-<p>البيتكوين دفتر واحد بيتوزّع بين ملايين غرباء. مفيش بنك. مفيش مدير. المشكلة: مين يكتب الصفحة الجاية؟ سيّبنا أي حد يكتب، هيحصل <strong>صرف مزدوج</strong> (أبعت نفس الفلوس لاتنين). حوّلناها لتصويت، هيتعمل ملايين حسابات وهمية (<span class="en">Sybil</span>). الحل: حق الكتابة يتكسب بقرعة تمنها كهربا، صوت لكل وات مش لكل شخص.</p>
+<p>بعيداً عن الأسعار، بيتكوين دفتر واحد ماسكه ملايين الغرباء. أول مشكلة هي الترتيب. تخيّل <span class="en">output</span> قيمته 1 BTC. صاحبه وقّع حوالتين بيصرفوا نفس الـ <span class="en">output</span>، واحدة لبوب وواحدة لكارول. عقدة في القاهرة وصلها تحويل بوب الأول، وعقدة في طوكيو وصلها تحويل كارول الأول. التوقيعين صحيحين. مفيش ساعة عالمية موثوقة ولا دفتر مركزي يقرر أنهي رسالة وصلت الأول. التوقيع يثبت إن المالك أذن بالصرف، لكنه مش بيمنعه يوقّع صرفتين متعارضتين.</p>
+<p>كل عقدة في بيتكوين بتفحص القواعد، وبعدها الشبكة بتستقر على السلسلة الصحيحة صاحبة أكبر <span class="en">proof of work</span> تراكمي. لما تحويل بوب يدخل التاريخ المشترك ده، تحويل كارول يبقى بيحاول يصرف <span class="en">output</span> اتصرف فعلاً، فيترفض. الـ <span class="en">timestamps</span> بتساعد في تنظيم البلوكات، لكنها مش ساعة حكم عالمية ومش بتحل الصرف المزدوج لوحدها. <a href="https://bitcoin.org/bitcoin.pdf">ورقة بيتكوين الأصلية</a> بتوصف الشبكة إنها بتحط المعاملات في سلسلة <span class="en">proof of work</span> علنية تثبت الترتيب اللي الشبكة شافته.</p>
 <figure>
-<svg viewBox="0 0 680 200" role="img"><title>ثلاث محاولات لاختيار كاتب الصفحة</title><desc>كتاب مفتوح ينتهي بصرف مزدوج، وتصويت ينتهي بحسابات وهمية، وقرعة بالكهربا تنجح</desc>
+<svg viewBox="0 0 680 230" role="img"><title>ليه الفلوس الموزعة محتاجة ترتيب مشترك</title><desc>توقيعان صحيحان يصرفان نفس المخرج، والعقد تستقبلهما بترتيب مختلف، وإثبات العمل التراكمي يثبت تاريخاً مشتركاً واحداً</desc>
 <defs><marker id="a1b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
-<rect data-step="1" data-note="الحل الساذج: الباب مفتوح لأي حد" x="30" y="18" width="250" height="40" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/><text class="ts" data-step="1" x="155" y="42" text-anchor="middle" direction="rtl">أي حد يكتب الصفحة</text>
-<line data-step="1" x1="284" y1="38" x2="326" y2="38" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1b)"/>
-<rect data-step="1" x="330" y="18" width="320" height="40" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/><text class="ts" data-step="1" x="490" y="42" text-anchor="middle" direction="rtl">نفس الفلوس تروح لاتنين: صرف مزدوج ✗</text>
-<rect data-step="2" data-note="لما نحسب الرؤوس، الحساب الوهمي ببلاش" x="30" y="78" width="250" height="40" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/><text class="ts" data-step="2" x="155" y="102" text-anchor="middle" direction="rtl">تصويت: كل شخص صوت</text>
-<line data-step="2" x1="284" y1="98" x2="326" y2="98" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1b)"/>
-<rect data-step="2" x="330" y="78" width="320" height="40" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/><text class="ts" data-step="2" x="490" y="102" text-anchor="middle" direction="rtl">ملايين حسابات وهمية (Sybil) ✗</text>
-<rect data-step="3" data-note="الحل اللي اشتغل: الكهربا هي تذكرة القرعة" x="30" y="138" width="250" height="40" fill="var(--q-mrk-soft)" stroke="var(--q-mrk)" stroke-width="1.5"/><text class="ts" data-step="3" x="155" y="162" text-anchor="middle" direction="rtl">قرعة تمنها كهربا</text>
-<line data-step="3" x1="284" y1="158" x2="326" y2="158" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1b)"/>
-<rect data-step="3" x="330" y="138" width="320" height="40" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/><text class="ts" data-step="3" x="490" y="162" text-anchor="middle" direction="rtl">صوت لكل وات، والتزوير غالي ✓</text>
+<g data-step="1" data-note="مالك واحد وقّع حوالتين بيصرفوا UTXO رقم 7. التوقيعين صحيحين، لكن مستحيل الاتنين يدخلوا نفس التاريخ الصحيح.">
+<rect x="20" y="18" width="190" height="42" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text class="tl" x="115" y="44" text-anchor="middle">UTXO 7 · 1 BTC</text>
+<line x1="82" y1="62" x2="62" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1b)"/>
+<line x1="148" y1="62" x2="168" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1b)"/>
+<rect x="10" y="92" width="105" height="56" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="62" y="116" text-anchor="middle" direction="rtl">صرف موقّع</text><text class="ts" x="62" y="135" text-anchor="middle" direction="rtl">ادفع لبوب</text>
+<rect x="125" y="92" width="105" height="56" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="177" y="116" text-anchor="middle" direction="rtl">صرف موقّع</text><text class="ts" x="177" y="135" text-anchor="middle" direction="rtl">ادفع لكارول</text>
+</g>
+<g data-step="2" data-note="الرسائل بتعدّي في الشبكة بسرعات مختلفة. القاهرة شافت بوب الأول وطوكيو شافت كارول الأول. وقت الوصول المحلي وساعات الأجهزة مش ترتيب عالمي موثوق.">
+<rect x="250" y="30" width="180" height="60" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text class="tl" x="340" y="54" text-anchor="middle" direction="rtl">عقدة القاهرة</text><text class="ts" x="340" y="75" text-anchor="middle" direction="rtl">بوب الأول · كارول التانية</text>
+<rect x="250" y="106" width="180" height="60" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text class="tl" x="340" y="130" text-anchor="middle" direction="rtl">عقدة طوكيو</text><text class="ts" x="340" y="151" text-anchor="middle" direction="rtl">كارول الأولى · بوب التاني</text>
+</g>
+<g data-step="3" data-note="العقد بتتبع السلسلة الصحيحة صاحبة أكبر إثبات عمل تراكمي. صرف واحد يدخل التاريخ المشترك، والتاني يلاقي المخرج اتصرف فيفشل التحقق.">
+<rect x="470" y="18" width="190" height="58" fill="var(--q-mrk-soft)" stroke="var(--q-mrk)" stroke-width="1.5"/>
+<text class="tl" x="565" y="42" text-anchor="middle" direction="rtl">السلسلة الصحيحة</text><text class="ts" x="565" y="62" text-anchor="middle" direction="rtl">أكبر عمل تراكمي</text>
+<line x1="565" y1="78" x2="565" y2="98" stroke="var(--muted)" stroke-width="1" marker-end="url(#a1b)"/>
+<rect x="470" y="102" width="190" height="72" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+<text class="ts" x="565" y="126" text-anchor="middle" direction="rtl">تحويل بوب دخل التاريخ</text><text class="ts" x="565" y="147" text-anchor="middle" direction="rtl">تحويل كارول صرف حاجة</text><text class="ts" x="565" y="164" text-anchor="middle" direction="rtl">اتصرفت، فيترفض</text>
+</g>
+<text class="ts" x="340" y="212" text-anchor="middle" direction="rtl">التوقيع يأذن. سلسلة إثبات العمل تثبت الترتيب المشترك.</text>
 </svg>
-<figcaption><span class="figno">شكل 1.2</span>محاولتان لاختيار كاتب الصفحة بتفشلان، والقرعة اللي تمنها كهربا هي اللي بتشتغل.</figcaption>
+<figcaption><span class="figno">شكل 1.2</span>صرفان صحيحا التوقيع ممكن يوصلوا للعقد بترتيب معاكس. السلسلة الصحيحة صاحبة أكبر عمل تراكمي تدي الكل تاريخاً مشتركاً واحداً.</figcaption>
 </figure>
 
 <details class="toc m">
@@ -683,8 +700,8 @@ st.textContent='figure{position:relative}'
 +'figure svg [data-note]{cursor:crosshair;transition:stroke .15s,fill .15s}'
 +TR+'{transition:opacity .25s ease,transform .25s ease,fill .25s ease,stroke .25s ease}'
 +'figure svg .dim{opacity:.28}'
-+'figure svg .fa-only{opacity:0}figure svg.fa .fa-only{opacity:1}figure svg.fa .fb-only{opacity:0}'
-+'figure svg.fa .sb,figure svg.fb .sa{opacity:.22}'
++'figure svg:not(.fa):not(.fb) .fa-only,figure svg.fa .fb-only,figure svg.fb .fa-only{display:none!important;opacity:0!important;visibility:hidden}'
++'figure svg.fa .sb,figure svg.fb .sa{opacity:.22!important;transition:none!important}'
 +'figure svg.fa .tbrk{fill:var(--card);stroke:var(--border)}'
 +'figure svg.fa :is(.tlnk,.wa2){stroke:var(--muted)}'
 +'figure svg.fa .wa{fill:var(--card);stroke:var(--border)}'

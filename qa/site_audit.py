@@ -18,11 +18,15 @@ PAGES = {
     "crypto-summary-ar.html": ("ar", f"{BASE_URL}/crypto-summary-ar.html"),
     "bitcoin-from-zero.html": ("en", f"{BASE_URL}/bitcoin-from-zero.html"),
     "bitcoin-from-zero-ar.html": ("ar", f"{BASE_URL}/bitcoin-from-zero-ar.html"),
+    "bitcoin-whitepaper.html": ("en", f"{BASE_URL}/bitcoin-whitepaper.html"),
+    "bitcoin-codebase.html": ("en", f"{BASE_URL}/bitcoin-codebase.html"),
+    "bitcoin-vs-monero-whitepapers.html": ("en", f"{BASE_URL}/bitcoin-vs-monero-whitepapers.html"),
     "proof-of-stake.html": ("en", f"{BASE_URL}/proof-of-stake.html"),
     "solana.html": ("en", f"{BASE_URL}/solana.html"),
     "sui.html": ("en", f"{BASE_URL}/sui.html"),
     "monero-under-the-hood.html": ("en", f"{BASE_URL}/monero-under-the-hood.html"),
     "monero-from-zero-ar.html": ("ar", f"{BASE_URL}/monero-from-zero-ar.html"),
+    "getting-monero.html": ("en", f"{BASE_URL}/getting-monero.html"),
     "zcash.html": ("en", f"{BASE_URL}/zcash.html"),
     "zero-knowledge-from-zero.html": ("en", f"{BASE_URL}/zero-knowledge-from-zero.html"),
 }
@@ -152,8 +156,8 @@ def check_json_ld(file_name, parser, canonical, lang, errors):
         if document.get("@type") != "WebSite" or document.get("url") != canonical:
             error(errors, file_name, "JSON-LD must describe the canonical WebSite")
     else:
-        if document.get("@type") != "Article":
-            error(errors, file_name, "JSON-LD type must be Article")
+        if document.get("@type") not in {"Article", "TechArticle"}:
+            error(errors, file_name, "JSON-LD type must be Article or TechArticle")
         if document.get("mainEntityOfPage") != canonical:
             error(errors, file_name, f"JSON-LD mainEntityOfPage must be {canonical}")
         if document.get("inLanguage") != lang:

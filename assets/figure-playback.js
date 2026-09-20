@@ -161,6 +161,44 @@
     }
   }
 
+  function currentNarrative(state) {
+    if (state.pinnedNarrative) return state.pinnedNarrative;
+    if (state.stepIndex >= 0 && state.steps[state.stepIndex]) {
+      return state.steps[state.stepIndex].note || state.caption;
+    }
+    return state.caption;
+  }
+
+  function noteTarget(target, figure) {
+    if (!target || !target.closest) return null;
+    var note = target.closest('[data-note]');
+    return note && figure.contains(note) ? note : null;
+  }
+
+  function wireInlineNotes(state) {
+    state.figure.addEventListener('pointerover', function (event) {
+      var note = noteTarget(event.target, state.figure);
+      if (!note) return;
+      setNarrative(state, note.getAttribute('data-note'), false);
+    });
+    state.figure.addEventListener('pointerout', function (event) {
+      var note = noteTarget(event.target, state.figure);
+      if (!note) return;
+      if (noteTarget(event.relatedTarget, state.figure) === note) return;
+      setNarrative(state, currentNarrative(state), false);
+    });
+    state.figure.addEventListener('focusin', function (event) {
+      var note = noteTarget(event.target, state.figure);
+      if (note) setNarrative(state, note.getAttribute('data-note'), true);
+    });
+    state.figure.addEventListener('focusout', function (event) {
+      var note = noteTarget(event.target, state.figure);
+      if (!note) return;
+      if (noteTarget(event.relatedTarget, state.figure) === note) return;
+      setNarrative(state, currentNarrative(state), false);
+    });
+  }
+
   function setPlaying(state, playing) {
     state.playing = playing;
     state.figure.classList.toggle('fp-playing', playing);
@@ -202,13 +240,28 @@
     state.internalClicks--;
   }
 
+  function nativeStepIndex(state) {
+    var selected = state.figure.querySelector('[data-step].cur, [data-step].fg-cur, [data-step].figcur, [data-step].fpulse, [data-step].fs-cur, [data-step].fx-cur');
+    if (!selected) return -1;
+    var key = selected.getAttribute('data-step');
+    for (var i = 0; i < state.steps.length; i++) {
+      if (state.steps[i].key === key) return i;
+    }
+    return -1;
+  }
+
   function advance(state) {
     if (!state.playing || active !== state || document.hidden) return;
+    state.pinnedNarrative = '';
     haltNative(state);
     var next = controlByRole(state.figure, 'next');
-    if (next && !next.disabled) clickNative(state, next);
+    var nativeIndex = nativeStepIndex(state);
+    if (next && !next.disabled && (nativeIndex < 0 || nativeIndex === state.stepIndex)) {
+      clickNative(state, next);
+      nativeIndex = nativeStepIndex(state);
+    }
     if (state.steps.length) {
-      state.stepIndex = (state.stepIndex + 1) % state.steps.length;
+      state.stepIndex = nativeIndex >= 0 ? nativeIndex : (state.stepIndex + 1) % state.steps.length;
       var step = state.steps[state.stepIndex];
       highlight(state, step);
       setNarrative(state, step.note || state.caption, false);
@@ -226,6 +279,7 @@
     if (active && active !== state) stop(active, false);
     active = state;
     state.userPaused = false;
+    state.pinnedNarrative = '';
     state.stepIndex = -1;
     clearSchedule(state);
     haltNative(state);
@@ -234,7 +288,8 @@
     setNarrative(state, state.caption, manual);
     state.progress.style.setProperty('--fp-progress', '0%');
     var replay = controlByRole(state.figure, 'replay');
-    if (!reduced && replay && !replay.disabled) clickNative(state, replay);
+    if (state.figure._figsteps && state.figure._figsteps.clear) state.figure._figsteps.clear();
+    else if (!reduced && replay && !replay.disabled) clickNative(state, replay);
     state.guardTimer = setInterval(function () { haltNative(state); }, 220);
     state.replayTimer = setTimeout(function () { advance(state); }, reduced ? 180 : 1700);
   }
@@ -324,11 +379,13 @@
       internalClicks: 0,
       userPaused: false,
       playing: false,
-      highlighted: null
+      highlighted: null,
+      pinnedNarrative: ''
     };
     setNarrative(state, state.caption, false);
     counter.textContent = state.steps.length ? '0 / ' + state.steps.length : '';
     setPlaying(state, false);
+    wireInlineNotes(state);
 
     button.addEventListener('click', function (event) {
       event.stopPropagation();
@@ -343,7 +400,8 @@
       if (event.target.closest('button, input, select, textarea, [data-note]')) {
         stop(state, true);
         var note = event.target.closest('[data-note]');
-        setNarrative(state, note && note.getAttribute('data-note'), true);
+        if (note) state.pinnedNarrative = compact(note.getAttribute('data-note'), 190);
+        setNarrative(state, state.pinnedNarrative || currentNarrative(state), true);
       }
     }, true);
     return state;

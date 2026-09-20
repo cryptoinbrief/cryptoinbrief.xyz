@@ -26,6 +26,33 @@
       <description>Hashing, blocks, Merkle trees, mining, signatures, forks, finality, and transaction ordering with browser labs.</description>
     </item>
     <item>
+      <title>The Bitcoin white paper, explained</title>
+      <link>https://cryptoinbrief.xyz/bitcoin-whitepaper.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/bitcoin-whitepaper.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Explains the 2008 Bitcoin paper section by section and distinguishes its original proposal from Bitcoin today.</description>
+    </item>
+    <item>
+      <title>Inside the Bitcoin Core codebase</title>
+      <link>https://cryptoinbrief.xyz/bitcoin-codebase.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/bitcoin-codebase.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Follows a transaction through Bitcoin Core with direct references to parsing, validation, mempool, mining, and block connection code.</description>
+    </item>
+    <item>
+      <title>Bitcoin and Monero white papers compared</title>
+      <link>https://cryptoinbrief.xyz/bitcoin-vs-monero-whitepapers.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/bitcoin-vs-monero-whitepapers.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Compares the 2008 Bitcoin paper with the 2013 CryptoNote paper and explains how present-day Monero differs from CryptoNote's original design.</description>
+    </item>
+    <item>
       <title>Proof of stake from zero</title>
       <link>https://cryptoinbrief.xyz/proof-of-stake.html</link>
       <guid isPermaLink="true">https://cryptoinbrief.xyz/proof-of-stake.html</guid>
@@ -60,6 +87,15 @@
       <dc:creator>Moamen Basel</dc:creator>
       <dc:language>en</dc:language>
       <description>Stealth addresses, ring signatures, key images, RingCT, network privacy, and the limits of toy cryptographic models.</description>
+    </item>
+    <item>
+      <title>How to get Monero: swaps, P2P and exchanges</title>
+      <link>https://cryptoinbrief.xyz/getting-monero.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/getting-monero.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Compares atomic swaps, Haveno P2P, instant swappers, and exchanges by custody, privacy, liquidity, fees, and trust, with preference and referral disclosures.</description>
     </item>
     <item>
       <title>Zcash from zero</title>

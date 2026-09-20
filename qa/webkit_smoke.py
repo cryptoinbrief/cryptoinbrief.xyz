@@ -16,11 +16,15 @@ PAGES = [
     "crypto-summary-ar.html",
     "bitcoin-from-zero.html",
     "bitcoin-from-zero-ar.html",
+    "bitcoin-whitepaper.html",
+    "bitcoin-codebase.html",
+    "bitcoin-vs-monero-whitepapers.html",
     "proof-of-stake.html",
     "solana.html",
     "sui.html",
     "monero-under-the-hood.html",
     "monero-from-zero-ar.html",
+    "getting-monero.html",
     "zcash.html",
     "zero-knowledge-from-zero.html",
 ]
@@ -85,6 +89,20 @@ def verify_diagram_zoom(page):
     require(page.locator("main .expand-diagram").count() > 0, "diagram did not return to the article")
 
 
+def verify_support(page):
+    trigger = page.locator(".support-trigger")
+    require(trigger.count() == 1, "missing support trigger")
+    trigger.click()
+    require(page.locator("dialog.support-dialog[open]").count() == 1, "support dialog did not open")
+    require(page.locator(".support-tab").count() == 7, "support currency list is incomplete")
+    referrals = page.locator(".support-referral-links a")
+    require(referrals.count() == 2, "support referral links are incomplete")
+    for index in range(referrals.count()):
+        require("sponsored" in (referrals.nth(index).get_attribute("rel") or "").split(), "referral link lacks sponsored disclosure")
+    page.keyboard.press("Escape")
+    require(page.locator("dialog.support-dialog[open]").count() == 0, "support dialog did not close")
+
+
 def verify_homepage(page):
     demo = page.locator("#payment-demo")
     tamper = page.locator("#demo-tamper")
@@ -112,12 +130,12 @@ def verify_homepage(page):
     page.locator("[data-network='solana']").click()
     require("leader" in page.locator("#step-title").inner_text().lower(), "Solana network control failed")
     page.locator("[data-filter='privacy']").click()
-    require(page.locator(".topic:visible").count() == 3, "privacy filter returned the wrong guides")
+    require(page.locator(".topic:visible").count() == 5, "privacy filter returned the wrong guides")
     page.locator("#topic-search").fill("zcash")
     require(page.locator(".topic:visible").count() == 1, "topic search did not narrow to Zcash")
     page.locator("#topic-search").fill("")
     page.locator("[data-filter='all']").click()
-    require(page.locator(".topic:visible").count() == 8, "all-guides filter did not restore the library")
+    require(page.locator(".topic:visible").count() == 12, "all-guides filter did not restore the library")
 
 
 def verify_bitcoin_hash(page):
@@ -177,6 +195,7 @@ def run():
                 require(not metrics["brokenImages"], f"broken images: {metrics['brokenImages']}")
                 require(not runtime_errors, f"runtime errors: {runtime_errors}")
                 require(not failed_resources, f"failed resources: {failed_resources}")
+                verify_support(page)
                 if name == "index.html":
                     verify_homepage(page)
                     verify_theme(page, "#theme-toggle")

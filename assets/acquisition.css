@@ -1,0 +1,73 @@
+.route-lab { margin-block: 36px; }
+.acq-explorer {
+  --acq-orange: #f36e36;
+  --acq-orange-soft: color-mix(in srgb, var(--acq-orange) 13%, var(--surface));
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: linear-gradient(145deg, var(--surface), color-mix(in srgb, var(--surface) 92%, var(--acq-orange) 8%));
+  color: var(--ink);
+}
+.acq-head { display: flex; align-items: center; gap: 14px; }
+.acq-logo { width: 58px; height: 58px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 14px; background: #fff; border: 1px solid color-mix(in srgb, var(--acq-orange) 42%, var(--line)); }
+.acq-logo img { width: 44px; height: 44px; }
+.acq-kicker { margin: 0 0 3px; color: var(--accent); font: 600 12px/1.3 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+.acq-head strong { display: block; font: 600 22px/1.2 var(--sans); letter-spacing: -.02em; }
+.acq-routes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 14px; }
+.acq-routes button, .acq-controls button { min-height: 40px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: 600 12px/1.3 var(--sans); cursor: pointer; }
+.acq-routes button:hover, .acq-controls button:hover { border-color: var(--acq-orange); }
+.acq-routes button:focus-visible, .acq-controls button:focus-visible { outline: 2px solid var(--acq-orange); outline-offset: 2px; }
+.acq-routes button[aria-selected="true"] { border-color: var(--acq-orange); background: var(--acq-orange-soft); color: var(--ink); box-shadow: inset 0 -3px var(--acq-orange); }
+.acq-route-copy { margin: 12px 0 9px; }
+.acq-route-copy strong { font: 600 16px/1.4 var(--sans); }
+.acq-route-copy p { margin: 4px 0 0; color: var(--muted); font: 14px/1.55 var(--sans); }
+.acq-narrator { min-height: 92px; display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; gap: 12px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--acq-orange) 35%, var(--line)); border-radius: 9px; background: color-mix(in srgb, var(--surface) 88%, transparent); }
+.acq-stage-number { color: var(--accent); font: 600 12px/1.4 var(--mono); }
+.acq-narrator div strong { display: block; font: 600 15px/1.4 var(--sans); }
+.acq-narrator div p { margin: 3px 0 0; color: var(--muted); font: 14px/1.5 var(--sans); }
+.acq-progress { display: flex; gap: 4px; padding-top: 6px; }
+.acq-progress i { width: 14px; height: 3px; border-radius: 3px; background: var(--line); }
+.acq-progress i.is-active { background: var(--acq-orange); }
+.acq-figure { margin: 12px 0 0 !important; padding: 12px !important; overflow: hidden !important; background: color-mix(in srgb, var(--page) 74%, var(--surface)) !important; }
+.acq-map { display: block; width: 100%; height: auto; }
+.acq-map text { fill: var(--ink); font: 600 13px/1 var(--sans); }
+.acq-boundary { fill: color-mix(in srgb, var(--acq-orange) 6%, transparent); stroke: color-mix(in srgb, var(--acq-orange) 62%, var(--line)); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.acq-boundary-label { fill: var(--accent) !important; font: 600 12px/1 var(--mono) !important; }
+.acq-links path { fill: none; stroke: var(--line); stroke-width: 2; marker-end: url(#acq-arrow); transition: stroke 300ms ease; }
+.acq-links path.is-reached { stroke: var(--acq-orange); }
+.acq-node rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; transition: stroke 300ms ease, fill 300ms ease; }
+.acq-node.is-reached rect { stroke: color-mix(in srgb, var(--acq-orange) 70%, var(--line)); }
+.acq-node.is-current rect { fill: var(--acq-orange-soft); stroke: var(--acq-orange); stroke-width: 2.5; }
+.acq-icon { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.acq-fill { fill: var(--ink); stroke: none; }
+.acq-logo-disc { fill: #fff; stroke: color-mix(in srgb, var(--acq-orange) 40%, var(--line)); }
+.acq-marker { transform-box: view-box; transform-origin: 0 0; transition: transform 700ms cubic-bezier(.2, .8, .2, 1); }
+.acq-marker circle { fill: var(--acq-orange); stroke: var(--surface); stroke-width: 3; filter: drop-shadow(0 4px 7px color-mix(in srgb, var(--ink) 20%, transparent)); }
+.acq-marker text { fill: #fff; font: 700 13px/1 var(--mono); }
+.acq-trust { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; align-items: start; margin-top: 12px; padding: 13px 15px; border-inline-start: 3px solid var(--acq-orange); background: var(--acq-orange-soft); }
+.acq-trust strong { font: 600 12px/1.4 var(--mono); color: var(--accent); }
+.acq-trust p { margin: 0; color: var(--muted); font: 14px/1.5 var(--sans); }
+.acq-controls { display: flex; justify-content: flex-end; gap: 7px; margin-top: 9px; }
+.acq-controls button:first-child { margin-inline-end: auto; }
+@media (max-width: 600px) {
+  .acq-explorer { padding: 14px; }
+  .acq-head { align-items: flex-start; }
+  .acq-logo { width: 50px; height: 50px; border-radius: 11px; }
+  .acq-logo img { width: 38px; height: 38px; }
+  .acq-head strong { font-size: 18px; }
+  .acq-routes { grid-template-columns: 1fr; }
+  .acq-routes button { min-height: 38px; }
+  .acq-narrator { min-height: 132px; grid-template-columns: 32px minmax(0, 1fr); padding: 12px; }
+  .acq-progress { grid-column: 2; }
+  .acq-figure { padding: 7px !important; }
+  .acq-boundary-label { display: none; }
+  .acq-trust { grid-template-columns: 1fr; gap: 4px; }
+  .acq-controls { display: grid; grid-template-columns: 1fr 1fr; }
+  .acq-controls button:first-child { margin: 0; }
+  .acq-replay { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acq-marker, .acq-links path, .acq-node rect { transition: none; }
+}

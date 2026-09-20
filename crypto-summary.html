@@ -235,6 +235,7 @@ nav.rail .leaders{display:none}
 <meta property="og:image:alt" content="Crypto in Brief. Illustrated guides and interactive experiments.">
 <link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><script src="assets/article.js" defer></script>
 <link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
+<link rel="stylesheet" href="assets/support.css"><script defer src="assets/support.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to content</a>
@@ -308,37 +309,45 @@ nav.rail .leaders{display:none}
 </details>
 
 <h2 id="s1"><span class="num">01</span> Who writes the next page</h2>
-<p>Strip the price charts and Bitcoin's one shared ledger kept by millions of strangers. No bank. No manager. The whole problem is on the next page. Who gets to write it? Let anyone write and you get <strong>double spends</strong>, the same coins paid to two people. Hold a vote instead and someone manufactures a million fake accounts. That's the Sybil problem. So the write right's sold in a lottery priced in electricity. A vote per watt, not a vote per person. Proof of stake bids for that same job with money instead of watts (<a href="proof-of-stake.html">the full essay</a>).</p>
+<p>Strip away the price charts and Bitcoin is one shared ledger kept by millions of strangers. Its first problem is order. Imagine one output worth 1 BTC. Its owner signs two transactions that spend that same output, one paying Bob and one paying Carol. A node in Cairo hears about Bob first while a node in Tokyo hears about Carol first. Both signatures are valid. There is no trusted global clock or central record that can declare which message arrived first. A signature proves authorization, but it does not stop an owner from authorizing two conflicting spends.</p>
+<p>Bitcoin makes every node check the rules, then settle on the valid chain with the greatest cumulative proof of work. When Bob's spend enters that shared history, Carol's conflicting transaction tries to reuse an output that is already spent, so nodes reject it. Timestamps help organize blocks, but they are not a trusted stopwatch and do not solve double spending by themselves. The <a href="https://bitcoin.org/bitcoin.pdf">original Bitcoin paper</a> describes the network as publicly timestamping transactions into a proof of work chain that provides evidence of their order. Proof of stake bids for the same ordering job with money instead of watts (<a href="proof-of-stake.html">the full essay</a>).</p>
 
 <figure data-kind="seq">
-<svg viewBox="0 0 680 200" role="img"><title>Three ways to hand out the write right</title><desc>Open writes fail to double spends, votes fail to fake accounts, work priced in electricity holds</desc>
+<svg viewBox="0 0 680 230" role="img"><title>Why distributed money needs a shared order</title><desc>Two valid signatures spend the same output, different nodes receive them in different orders, and cumulative proof of work establishes one shared history</desc>
 <defs><marker id="m1n" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--muted)" stroke-width="1.5"/></marker></defs>
-<g class="fstep" data-step="1" data-note="Open the ledger to anyone and the same coins get paid to two people in the same breath. This is the double spend, and it kills the money.">
-<rect x="30" y="30" width="180" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
-<text class="tl" x="120" y="57" text-anchor="middle">Anyone writes</text>
-<line x1="120" y1="76" x2="120" y2="96" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
-<rect x="30" y="100" width="180" height="64" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
-<text class="ts" x="120" y="126" text-anchor="middle">the same coins</text>
-<text class="ts" x="120" y="146" text-anchor="middle">paid twice</text>
+<g class="fstep" data-step="1" data-note="One owner signs two transactions that both spend UTXO 7. Each signature is valid, but both transactions cannot be part of one valid history.">
+<rect x="20" y="18" width="190" height="42" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="115" y="44" text-anchor="middle">UTXO 7 · 1 BTC</text>
+<line x1="82" y1="62" x2="62" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
+<line x1="148" y1="62" x2="168" y2="88" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
+<rect x="10" y="92" width="105" height="56" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="62" y="116" text-anchor="middle">signed spend</text>
+<text class="ts" x="62" y="135" text-anchor="middle">pay Bob</text>
+<rect x="125" y="92" width="105" height="56" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
+<text class="ts" x="177" y="116" text-anchor="middle">signed spend</text>
+<text class="ts" x="177" y="135" text-anchor="middle">pay Carol</text>
 </g>
-<g class="fstep" data-step="2" data-note="One vote per account instead, and someone manufactures a million of them overnight. The Sybil problem: identity is free to fake.">
-<rect x="250" y="30" width="180" height="44" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
-<text class="tl" x="340" y="57" text-anchor="middle">One vote per account</text>
-<line x1="340" y1="76" x2="340" y2="96" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
-<rect x="250" y="100" width="180" height="64" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.5"/>
-<text class="ts" x="340" y="126" text-anchor="middle">a million fake</text>
-<text class="ts" x="340" y="146" text-anchor="middle">accounts vote</text>
+<g class="fstep" data-step="2" data-note="Messages cross the network at different speeds. Cairo sees Bob first while Tokyo sees Carol first. Local arrival time and wall clocks cannot provide a trusted global order.">
+<rect x="250" y="30" width="180" height="60" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="340" y="54" text-anchor="middle">Cairo node</text>
+<text class="ts" x="340" y="75" text-anchor="middle">Bob first · Carol second</text>
+<rect x="250" y="106" width="180" height="60" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+<text class="tl" x="340" y="130" text-anchor="middle">Tokyo node</text>
+<text class="ts" x="340" y="151" text-anchor="middle">Carol first · Bob second</text>
 </g>
-<g class="fstep" data-step="3" data-note="Sell the write right in a lottery priced in electricity. A vote per watt, not per person: writing costs real work, so spam prices itself out. This one holds.">
-<rect x="470" y="30" width="180" height="44" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
-<text class="tl" x="560" y="57" text-anchor="middle">A vote per watt</text>
-<line x1="560" y1="76" x2="560" y2="96" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
-<rect x="470" y="100" width="180" height="64" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
-<text class="ts" x="560" y="126" text-anchor="middle">writing costs real work,</text>
-<text class="ts" x="560" y="146" text-anchor="middle">so spam prices itself out</text>
+<g class="fstep" data-step="3" data-note="Nodes follow the valid chain with the greatest cumulative proof of work. One spend enters that shared history; the other now references an output already spent and fails validation.">
+<rect x="470" y="18" width="190" height="58" fill="var(--stamp-soft)" stroke="var(--stamp)" stroke-width="1.5"/>
+<text class="tl" x="565" y="42" text-anchor="middle">valid chain</text>
+<text class="ts" x="565" y="62" text-anchor="middle">greatest cumulative work</text>
+<line x1="565" y1="78" x2="565" y2="98" stroke="var(--muted)" stroke-width="1" marker-end="url(#m1n)"/>
+<rect x="470" y="102" width="190" height="72" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.5"/>
+<text class="ts" x="565" y="126" text-anchor="middle">Bob counts in history</text>
+<text class="ts" x="565" y="147" text-anchor="middle">Carol reuses spent output</text>
+<text class="ts" x="565" y="164" text-anchor="middle">rejected</text>
 </g>
+<text class="ts" x="340" y="212" text-anchor="middle">Signatures authorize. The proof of work chain establishes shared order.</text>
 </svg>
-<figcaption><span class="figno">Fig. 1.2</span> Two ways to hand out the write right fail, each to its own attack. The third, work priced in electricity, is the one Bitcoin runs on.</figcaption>
+<figcaption><span class="figno">Fig. 1.2</span> Two valid signed spends can reach honest nodes in opposite orders. Bitcoin's valid chain with the greatest cumulative work gives them one shared history.</figcaption>
 </figure>
 
 <h2 id="s2"><span class="num">02</span> The hash is a fingerprint machine</h2>
@@ -829,7 +838,7 @@ document.querySelectorAll('main h2[id]').forEach(function(h){io.observe(h)});
 (function(){
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var st=document.createElement('style');
-st.textContent='figure{position:relative}.figctl{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}.figctl button{font-family:var(--mono);font-size:11px;line-height:1.2;padding:4px 10px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;transition:border-color .15s ease,color .15s ease}.figctl button:hover{border-color:var(--accent);color:var(--ink)}.figctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.figcap{position:absolute;top:.6rem;left:.6rem;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.45rem .65rem;font-family:var(--sans);font-size:12px;line-height:1.5;color:var(--muted);pointer-events:none;opacity:0;transform:translateY(2px);transition:opacity .12s ease,transform .12s ease;z-index:4;box-shadow:0 4px 14px rgba(0,0,0,.08)}.figcap.on{opacity:1;transform:none}figure svg [data-note]{cursor:help}figure svg [data-note] rect,figure svg [data-note] path,figure svg [data-note] line{transition:stroke .15s ease}[data-note].hi:is(rect,path,line),[data-note].hi rect,[data-note].hi path,[data-note].hi line{stroke:var(--accent)!important}[data-note].hi text{fill:var(--accent)!important}.stA,.stB{transition:opacity .25s var(--ease),transform .25s var(--ease)}svg.fa .stB{opacity:0;transform:translateY(6px);pointer-events:none}svg.fb .stA{opacity:0;transform:translateY(6px);pointer-events:none}.fstep{transition:opacity .25s var(--ease)}.fstep.dim{opacity:.22}.fstep.cur{animation:figpulse 1.3s ease-in-out infinite}@keyframes figpulse{0%,100%{opacity:1}50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.fstep.cur{animation:none}.stA,.stB,.fstep{transition:none}}';
+st.textContent='figure{position:relative}.figctl{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}.figctl button{font-family:var(--mono);font-size:11px;line-height:1.2;padding:4px 10px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;transition:border-color .15s ease,color .15s ease}.figctl button:hover{border-color:var(--accent);color:var(--ink)}.figctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.figcap{position:absolute;top:.6rem;left:.6rem;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.45rem .65rem;font-family:var(--sans);font-size:12px;line-height:1.5;color:var(--muted);pointer-events:none;opacity:0;transform:translateY(2px);transition:opacity .12s ease,transform .12s ease;z-index:4;box-shadow:0 4px 14px rgba(0,0,0,.08)}.figcap.on{opacity:1;transform:none}figure svg [data-note]{cursor:help}figure svg [data-note] rect,figure svg [data-note] path,figure svg [data-note] line{transition:stroke .15s ease}[data-note].hi:is(rect,path,line),[data-note].hi rect,[data-note].hi path,[data-note].hi line{stroke:var(--accent)!important}[data-note].hi text{fill:var(--accent)!important}.stA,.stB{transition:opacity .25s var(--ease),transform .25s var(--ease)}svg.fa .stB,svg.fb .stA{display:none!important;opacity:0!important;visibility:hidden;pointer-events:none}.fstep{transition:opacity .25s var(--ease)}.fstep.dim{opacity:.22}.fstep.cur{animation:figpulse 1.3s ease-in-out infinite}@keyframes figpulse{0%,100%{opacity:1}50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.fstep.cur{animation:none}.stA,.stB,.fstep{transition:none}}';
 document.head.appendChild(st);
 var GEOM={rect:1,circle:1,ellipse:1,line:1,polyline:1,polygon:1,path:1};
 function clean(el){el.style.transition='';el.style.opacity='';el.style.transform='';el.style.strokeDasharray='';el.style.strokeDashoffset=''}

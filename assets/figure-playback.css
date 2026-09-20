@@ -96,20 +96,6 @@ figure[data-figure-playback="ready"] {
   font: 550 0.66rem/1 var(--mono, ui-monospace, monospace);
 }
 
-.fp-status::before {
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: var(--faint, var(--muted));
-  content: "";
-}
-
-.fp-playing .fp-status::before {
-  background: var(--accent);
-  box-shadow: 0 0 0 0.24rem color-mix(in srgb, var(--accent) 16%, transparent);
-  animation: fp-status-pulse 1.8s ease-in-out infinite;
-}
-
 .fp-lesson {
   position: relative;
   display: grid;
@@ -176,25 +162,15 @@ figure[data-figure-playback="ready"] {
   outline-offset: 2px;
 }
 
-figure [data-note].fp-focus,
-figure [data-step].fp-focus {
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 0.32rem color-mix(in srgb, var(--accent) 52%, transparent));
+figure[data-figure-playback="ready"] > .fignote,
+figure[data-figure-playback="ready"] > .fignote-pop,
+figure[data-figure-playback="ready"] > .figcap,
+figure[data-figure-playback="ready"] > .fx-note {
+  display: none !important;
 }
 
-figure g[data-step].fp-focus {
-  opacity: 1 !important;
-}
-
-figure.fp-playing [data-note].fp-muted,
-figure.fp-playing [data-step].fp-muted {
-  opacity: 0.24;
-  transition: opacity 320ms ease, filter 320ms ease;
-}
-
-@keyframes fp-status-pulse {
-  0%, 100% { transform: scale(0.88); opacity: 0.72; }
-  50% { transform: scale(1); opacity: 1; }
+figure[data-figure-playback="ready"] svg [data-note]:hover {
+  filter: none !important;
 }
 
 @media (max-width: 560px) {
@@ -217,16 +193,8 @@ figure.fp-playing [data-step].fp-muted {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fp-playing .fp-status::before {
-    animation: none;
-  }
-
   .fp-progress,
-  .fp-toggle,
-  figure [data-note].fp-focus,
-  figure [data-step].fp-focus,
-  figure.fp-playing [data-note].fp-muted,
-  figure.fp-playing [data-step].fp-muted {
+  .fp-toggle {
     transition: none;
   }
 }

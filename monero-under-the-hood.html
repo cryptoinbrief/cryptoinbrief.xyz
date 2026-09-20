@@ -91,6 +91,8 @@ strong{font-weight:650}
 figure{margin:2.5rem auto;width:min(72rem,calc(100vw - 2rem));transform:translateX(0);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:1.5rem 1.5rem 1.1rem;box-shadow:0 1px 2px rgba(0,0,0,.03)}
 [dir="rtl"] figure{margin-inline:auto}
 figure svg{width:100%;height:auto;display:block}
+.compact-layout{display:none}
+@media(max-width:560px){.responsive-figure .wide-layout{display:none}.responsive-figure .compact-layout{display:block}.responsive-figure .compact-layout text{font-size:14px!important}}
 figcaption{font-family:var(--sans);font-size:.8125rem;line-height:1.5;color:var(--muted);margin-top:.9rem}
 figcaption .figno{font-family:var(--mono);color:var(--accent);margin-inline-end:.55em;font-size:.95em}
 .figbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:inherit;border-radius:var(--r-card)}
@@ -316,6 +318,7 @@ aside.note{background:var(--surface)}
 <link rel="stylesheet" href="assets/figure-playback.css"><script defer src="assets/figure-playback.js"></script>
 <link rel="stylesheet" href="assets/privacy-story.css">
 <script defer src="assets/privacy-story.js"></script>
+<link rel="stylesheet" href="assets/support.css"><script defer src="assets/support.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to content</a>
@@ -350,6 +353,7 @@ aside.note{background:var(--surface)}
 <span class="coinbadge"><img src="assets/coins/monero.svg" alt="Monero" width="34" height="34"></span><h1>Monero under the hood</h1>
 <p class="byline">By <a href="https://moamenbasel.com">Moamen Basel</a>, September 2026, 3 labs, ~16 min read</p>
 <p class="lead">Bitcoin's ledger is public. Every payment and every amount stay there forever. Monero treats that as the bug. This page takes its privacy machinery apart, equation by equation. Three labs model the core ideas in a tiny group you can inspect in the browser.</p>
+<p class="related-guide">Ready to get XMR? <a href="getting-monero.html">Compare atomic swaps, Haveno P2P and exchanges</a> in the practical Monero guide.</p>
 
 <div class="machine" data-state="idle" tabindex="0" aria-labelledby="lab1t">
 <div class="m-head">
@@ -604,9 +608,10 @@ aside.note{background:var(--surface)}
 <h2 id="keyimage"><span class="num">06</span>Key images</h2>
 <p>If you followed part one, an alarm should be ringing. Bitcoin prevents double spending by <em>seeing</em> spends: the coin is publicly marked spent. If nobody can tell which ring member actually spent, what stops me from spending the same output in ten different rings? Double spend protection still has to work. That's the <strong>key image</strong>.</p>
 <p>Every ring signature must also publish <code>I = x · H_p(P)</code>, a value deterministically derived from the real output's key, but through a one way path, so it exposes nothing about which <code>P</code> in the ring produced it. The signature math (you just ran it) forces <code>I</code> to be well formed. A signer cannot fake a different one. The trap is <strong>the same output always yields the same key image, no matter which decoys surround it</strong>. Every node keeps a ledger of all key images ever seen. Spend an output once and its <code>I</code> gets recorded. Spend it again in a different ring, with a different message, even years later, and the same <code>I</code> pops out. The ledger matches. The transaction dies. The network enforces "once and only once" while never learning "who":</p>
-<figure>
-<svg viewBox="0 0 680 240" role="img" aria-labelledby="figD-t" class="fig2 fa" data-la="1st: accepted" data-lb="2nd: rejected">
+<figure data-figure-id="key-image-en">
+<svg viewBox="0 0 680 240" data-wide-viewbox="0 0 680 240" data-mobile-viewbox="0 0 360 390" role="img" aria-labelledby="figD-t" class="fig2 fa responsive-figure" data-la="1st: accepted" data-lb="2nd: rejected">
 <title id="figD-t">Two different rings spending the same output produce the same key image; the second is rejected</title>
+<g class="wide-layout">
 <g class="fa-on" data-note="Ring A, first spend of the output: a well-formed key image I is computed and recorded on the network ledger. Signer still unknown.">
 <ellipse cx="200" cy="80" rx="150" ry="52" fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4"/>
 <text x="200" y="24" text-anchor="middle" fill="var(--muted)" font-size="12">ring A, 16 members</text>
@@ -632,6 +637,30 @@ aside.note{background:var(--surface)}
 <text x="340" y="188" text-anchor="middle" fill="var(--ink)" font-size="12" font-family="monospace">key image I = 1102</text>
 </g>
 <text x="340" y="222" text-anchor="middle" fill="var(--muted)" font-size="12">the ledger learned "again" without ever learning "who"</text>
+</g>
+<g class="compact-layout">
+<g class="fa-on">
+<ellipse cx="180" cy="92" rx="150" ry="62" fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4"/>
+<text x="180" y="24" text-anchor="middle" fill="var(--muted)" font-size="12">ring A, first spend</text>
+<circle cx="80" cy="92" r="8" fill="none" stroke="var(--muted)"/><circle cx="125" cy="62" r="8" fill="none" stroke="var(--muted)"/><circle cx="255" cy="70" r="8" fill="none" stroke="var(--muted)"/>
+<text x="180" y="300" text-anchor="middle" fill="var(--good)" font-size="12" font-weight="700">first spend: recorded ✓</text>
+</g>
+<g class="fb-on">
+<ellipse cx="180" cy="92" rx="150" ry="62" fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4"/>
+<text x="180" y="24" text-anchor="middle" fill="var(--muted)" font-size="12">ring B, different decoys</text>
+<circle cx="95" cy="65" r="8" fill="none" stroke="var(--muted)"/><circle cx="235" cy="62" r="8" fill="none" stroke="var(--muted)"/><circle cx="285" cy="105" r="8" fill="none" stroke="var(--muted)"/>
+<text x="180" y="300" text-anchor="middle" fill="var(--bad)" font-size="12" font-weight="700">second spend: rejected</text>
+</g>
+<circle cx="180" cy="92" r="10" fill="var(--q-nonce)" stroke="none"/>
+<text x="180" y="176" text-anchor="middle" fill="var(--q-nonce)" font-size="12" font-weight="500">same output in either ring</text>
+<line x1="120" y1="145" x2="155" y2="208" stroke="var(--ink)" stroke-width="1"/>
+<line x1="240" y1="145" x2="205" y2="208" stroke="var(--ink)" stroke-width="1"/>
+<g>
+<rect x="95" y="210" width="170" height="42" rx="0" fill="none" stroke="var(--ink)" stroke-width="1"/>
+<text x="180" y="237" text-anchor="middle" fill="var(--ink)" font-size="12" font-family="monospace">key image I = 1102</text>
+</g>
+<text x="180" y="356" text-anchor="middle" fill="var(--muted)" font-size="12">learned "again", never learned "who"</text>
+</g>
 </svg>
 <figcaption><span class="figno">Fig. 6.1</span>Same secret, different crowds. Identical fingerprint of the spend. Double spending caught blind.</figcaption>
 </figure>
@@ -1064,7 +1093,7 @@ var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches
 var NOHOV=window.matchMedia&&matchMedia('(hover: none)').matches;
 var EASE='cubic-bezier(.25,.8,.35,1)';
 var st=document.createElement('style');
-st.textContent="figure{position:relative}.figctl{display:flex;flex-wrap:wrap;gap:6px;margin:.85rem 0 0}.figctl button{font:500 11px/1 var(--mono);letter-spacing:.03em;color:var(--muted);background:transparent;border:1px solid var(--border2);border-radius:8px;padding:4px 10px;cursor:pointer;transition:border-color .15s,color .15s}.figctl button:hover{border-color:var(--accent);color:var(--ink)}.figctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.fignote{position:absolute;top:10px;left:10px;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font:400 12px/1.5 var(--sans);color:var(--muted);pointer-events:none;opacity:0;transition:opacity .12s;z-index:4}.fignote.on{opacity:1}figure svg [data-note]{cursor:help}figure svg [data-note],figure svg [data-note] *{transition:stroke .15s,fill .15s}.figdim{opacity:.22;transition:opacity .3s}.figcur{animation:figpulse 1.15s ease-in-out infinite}@keyframes figpulse{0%,100%{opacity:1}50%{opacity:.4}}svg.fig2 .fa-on,svg.fig2 .fb-on{transition:opacity .25s var(--ease),transform .25s var(--ease)}svg.fig2.fa .fb-on{opacity:.12;transform:translateY(4px)}svg.fig2.fb .fa-on{opacity:.12;transform:translateY(4px)}@media(prefers-reduced-motion:reduce){.figcur{animation:none}.figdim{transition:none}svg.fig2 .fa-on,svg.fig2 .fb-on{transition:none}}";
+st.textContent="figure{position:relative}.figctl{display:flex;flex-wrap:wrap;gap:6px;margin:.85rem 0 0}.figctl button{font:500 11px/1 var(--mono);letter-spacing:.03em;color:var(--muted);background:transparent;border:1px solid var(--border2);border-radius:8px;padding:4px 10px;cursor:pointer;transition:border-color .15s,color .15s}.figctl button:hover{border-color:var(--accent);color:var(--ink)}.figctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.fignote{position:absolute;top:10px;left:10px;max-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font:400 12px/1.5 var(--sans);color:var(--muted);pointer-events:none;opacity:0;transition:opacity .12s;z-index:4}.fignote.on{opacity:1}figure svg [data-note]{cursor:help}figure svg [data-note],figure svg [data-note] *{transition:stroke .15s,fill .15s}.figdim{opacity:.22;transition:opacity .3s}.figcur{animation:figpulse 1.15s ease-in-out infinite}@keyframes figpulse{0%,100%{opacity:1}50%{opacity:.4}}svg.fig2 .fa-on,svg.fig2 .fb-on{transition:opacity .25s var(--ease),transform .25s var(--ease)}svg.fig2.fa .fa-on,svg.fig2.fb .fb-on{opacity:1;transform:none;pointer-events:auto}svg.fig2.fa .fb-on,svg.fig2.fb .fa-on{opacity:0;transform:translateY(4px);pointer-events:none}@media(prefers-reduced-motion:reduce){.figcur{animation:none}.figdim{transition:none}svg.fig2 .fa-on,svg.fig2 .fb-on{transition:none}}";
 document.head.appendChild(st);
 function qsa(r,s){return [].slice.call(r.querySelectorAll(s))}
 function setHL(el,on){
@@ -1202,6 +1231,14 @@ if('IntersectionObserver' in window){
 }else{
   wired.forEach(function(r){if(r){r.start();}});
 }
+})();
+</script>
+<script>
+(function(){
+var media=matchMedia('(max-width:560px)');
+function sync(){document.querySelectorAll('svg[data-mobile-viewbox]').forEach(function(svg){svg.setAttribute('viewBox',media.matches?svg.dataset.mobileViewbox:svg.dataset.wideViewbox);});}
+if(media.addEventListener)media.addEventListener('change',sync);else media.addListener(sync);
+sync();
 })();
 </script>
 </body>

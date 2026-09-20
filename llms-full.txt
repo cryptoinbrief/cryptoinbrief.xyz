@@ -26,6 +26,9 @@ The site uses two kinds of browser labs. Some call standard browser cryptography
 ## Bitcoin
 
 - [Bitcoin from zero](https://cryptoinbrief.xyz/bitcoin-from-zero.html): Introduces hashing, the contents of a block, Merkle trees, proof of work, the nonce, node verification, public key signatures, transaction outputs, forks, finality, and transaction ordering. Labs include browser hashing and constrained mining exercises. Production security depends on the full Bitcoin network and is not reproduced by a local demonstration.
+- [The Bitcoin white paper, explained](https://cryptoinbrief.xyz/bitcoin-whitepaper.html): Reads the 2008 paper section by section, explains its claims for a public audience, and separates the original proposal from the way Bitcoin operates today. Published 20 September 2026.
+- [Inside the Bitcoin Core codebase](https://cryptoinbrief.xyz/bitcoin-codebase.html): Follows a transaction through parsing, contextual checks, mempool admission, mining selection, and block connection. Its developer notes cite the relevant upstream source and tests rather than treating repository structure as stable prose. Published 20 September 2026.
+- [Bitcoin and Monero white papers compared](https://cryptoinbrief.xyz/bitcoin-vs-monero-whitepapers.html): Compares the 2008 Bitcoin paper with the 2013 CryptoNote paper across transaction history, privacy, consensus, and trust assumptions. CryptoNote is treated as Monero's starting design, not as a complete description of current Monero. Published 20 September 2026.
 - [البيتكوين من الصفر](https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html): Arabic explanation of hashes, blocks, Merkle trees, mining, the nonce, and independent verification with browser exercises.
 
 ## Proof of stake
@@ -43,6 +46,7 @@ The site uses two kinds of browser labs. Some call standard browser cryptography
 ## Monero
 
 - [Monero under the hood](https://cryptoinbrief.xyz/monero-under-the-hood.html): Explains stealth addresses, ring signatures, key images, RingCT, network layer privacy, proof of work, and current protocol tradeoffs. Cryptographic equations are demonstrated in deliberately small groups. Those numbers are unsuitable for real security.
+- [How to get Monero](https://cryptoinbrief.xyz/getting-monero.html): Compares atomic swaps, Haveno peer to peer trading, instant swap services, and centralized exchanges across custody, privacy, liquidity, fees, availability, and counterparty trust. It separates the author's preferred route from the comparison and discloses referral relationships. No route is presented as guaranteeing asset provenance or eliminating counterparty, compliance, liquidity, or execution risk. Information is dated 20 September 2026.
 - [مونيرو من الصفر](https://cryptoinbrief.xyz/monero-from-zero-ar.html): Arabic explanation of how Monero obscures receiver, sender, and amount using stealth addresses, ring signatures, key images, and confidential transactions.
 
 ## Zcash
@@ -55,7 +59,7 @@ The site uses two kinds of browser labs. Some call standard browser cryptography
 
 ## Languages and editions
 
-- English is the primary language for the seven detailed topic essays and the illustrated overview.
+- English is the primary language for the eleven detailed topic essays and the illustrated overview.
 - Arabic editions are available for the illustrated overview, Bitcoin, and Monero.
 - Arabic pages use their own canonical URLs and are listed as language alternatives in the sitemap.
 

@@ -7,15 +7,31 @@ from playwright.sync_api import sync_playwright
 
 PAGES = [
     "index.html", "crypto-summary.html", "crypto-summary-ar.html",
-    "bitcoin-from-zero.html", "bitcoin-from-zero-ar.html", "proof-of-stake.html",
-    "solana.html", "sui.html", "monero-under-the-hood.html",
-    "monero-from-zero-ar.html", "zcash.html", "zero-knowledge-from-zero.html",
+    "bitcoin-from-zero.html", "bitcoin-from-zero-ar.html",
+    "bitcoin-whitepaper.html", "bitcoin-codebase.html", "bitcoin-vs-monero-whitepapers.html",
+    "proof-of-stake.html", "solana.html", "sui.html", "monero-under-the-hood.html",
+    "monero-from-zero-ar.html", "getting-monero.html", "zcash.html",
+    "zero-knowledge-from-zero.html",
 ]
 
 
 def check(condition, message):
     if not condition:
         raise AssertionError(message)
+
+
+def verify_support(page, name):
+    trigger = page.locator(".support-trigger")
+    check(trigger.count() == 1, f"{name}: missing support trigger")
+    trigger.click()
+    check(page.locator("dialog.support-dialog[open]").count() == 1, f"{name}: support dialog did not open")
+    check(page.locator(".support-tab").count() == 7, f"{name}: support currency list is incomplete")
+    referrals = page.locator(".support-referral-links a")
+    check(referrals.count() == 2, f"{name}: support referral links are incomplete")
+    for index in range(referrals.count()):
+        check("sponsored" in (referrals.nth(index).get_attribute("rel") or "").split(), f"{name}: referral link lacks sponsored disclosure")
+    page.keyboard.press("Escape")
+    check(page.locator("dialog.support-dialog[open]").count() == 0, f"{name}: support dialog did not close")
 
 
 def run(base_url, output):
@@ -50,6 +66,7 @@ def run(base_url, output):
                     check(not metrics["broken"], f"{name}: broken images {metrics['broken']}")
                     check(not errors, f"{name}: JavaScript errors {errors}")
                     check(not failed, f"{name}: failed local resources {failed}")
+                    verify_support(page, name)
                     if name != "index.html":
                         expand = page.locator(".expand-diagram").first
                         check(expand.count() > 0, f"{name}: missing diagram zoom")
@@ -57,6 +74,7 @@ def run(base_url, output):
                         check(page.locator("dialog[open] figure").count() == 1, f"{name}: diagram did not open")
                         page.keyboard.press("Escape")
                         check(page.locator("dialog[open]").count() == 0, f"{name}: diagram did not close")
+                        page.locator("main .expand-diagram").first.wait_for(state="attached")
                         check(page.locator("main .expand-diagram").count() > 0, f"{name}: diagram not restored")
                     if output and name in ("index.html", "bitcoin-from-zero.html", "solana.html", "crypto-summary-ar.html", "zero-knowledge-from-zero.html"):
                         page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
@@ -100,14 +118,14 @@ def run(base_url, output):
         check(page.locator("#payment-demo").get_attribute("data-step") == "1", "Walkthrough playback failed")
         page.locator("#demo-play").click()
         page.locator("[data-filter='privacy']").click()
-        check(page.locator(".topic:visible").count() == 3, "Privacy filter incorrect")
+        check(page.locator(".topic:visible").count() == 5, "Privacy filter incorrect")
         page.locator("#topic-search").fill("zcash")
         check(page.locator(".topic:visible").count() == 1, "Search did not narrow results")
         page.locator("#topic-search").fill("no-matching-guide")
         check(page.locator("#empty-topics").is_visible(), "Missing empty state")
         page.locator("#topic-search").fill("")
         page.locator("[data-filter='all']").click()
-        check(page.locator(".topic:visible").count() == 8, "All guides did not restore")
+        check(page.locator(".topic:visible").count() == 12, "All guides did not restore")
         page.locator("#theme-toggle").click()
         check(page.locator("html").get_attribute("data-theme") == "dark", "Theme switch failed")
         page.reload()

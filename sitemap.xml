@@ -29,6 +29,18 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/bitcoin-from-zero-ar.html"/>
   </url>
   <url>
+    <loc>https://cryptoinbrief.xyz/bitcoin-whitepaper.html</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/bitcoin-codebase.html</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/bitcoin-vs-monero-whitepapers.html</loc>
+    <lastmod>2026-09-20</lastmod>
+  </url>
+  <url>
     <loc>https://cryptoinbrief.xyz/proof-of-stake.html</loc>
     <lastmod>2026-09-20</lastmod>
   </url>
@@ -51,6 +63,10 @@
     <lastmod>2026-09-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://cryptoinbrief.xyz/monero-under-the-hood.html"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://cryptoinbrief.xyz/monero-from-zero-ar.html"/>
+  </url>
+  <url>
+    <loc>https://cryptoinbrief.xyz/getting-monero.html</loc>
+    <lastmod>2026-09-20</lastmod>
   </url>
   <url>
     <loc>https://cryptoinbrief.xyz/zcash.html</loc>

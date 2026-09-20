@@ -10,10 +10,14 @@
 ## English essays
 
 - [Bitcoin from zero](https://cryptoinbrief.xyz/bitcoin-from-zero.html): Hashing, blocks, Merkle trees, mining, nodes, signatures, forks, finality, and transaction ordering with browser labs.
+- [The Bitcoin white paper, explained](https://cryptoinbrief.xyz/bitcoin-whitepaper.html): A section-by-section public explanation of the 2008 paper that distinguishes the original proposal from Bitcoin today. Published 20 September 2026.
+- [Inside the Bitcoin Core codebase](https://cryptoinbrief.xyz/bitcoin-codebase.html): A developer guide to transaction parsing, validation, mempool admission, mining selection, block connection, and tests, with direct source references. Published 20 September 2026.
+- [Bitcoin and Monero white papers compared](https://cryptoinbrief.xyz/bitcoin-vs-monero-whitepapers.html): Compares the 2008 Bitcoin paper with the 2013 CryptoNote paper and explains that current Monero is not identical to CryptoNote's original design. Published 20 September 2026.
 - [Proof of stake from zero](https://cryptoinbrief.xyz/proof-of-stake.html): Validators, proposer selection, attestations, fork choice, slashing, and economic finality through Ethereum examples and simulations.
 - [Solana from zero](https://cryptoinbrief.xyz/solana.html): Proof of history, slots, Tower BFT, validator voting, and parallel execution with three interactive labs.
 - [Sui from zero](https://cryptoinbrief.xyz/sui.html): Sui's object model, owned and shared transactions, Mysticeti consensus, Move types, and zkLogin.
 - [Monero under the hood](https://cryptoinbrief.xyz/monero-under-the-hood.html): Stealth addresses, ring signatures, key images, RingCT, network privacy, and the limits of toy cryptographic models.
+- [How to get Monero](https://cryptoinbrief.xyz/getting-monero.html): Compares atomic swaps, Haveno P2P, instant swappers, and exchanges by custody, privacy, liquidity, fees, and trust, with preference and referral disclosures.
 - [Zcash from zero](https://cryptoinbrief.xyz/zcash.html): Shielded notes, nullifiers, viewing keys, optional privacy, and the documented lineage from Israeli and American research to a coin launched by a US company.
 - [Zero knowledge from zero](https://cryptoinbrief.xyz/zero-knowledge-from-zero.html): Interactive proofs, Fiat Shamir, SNARKs, STARKs, selective disclosure, and privacy preserving identity.
 
