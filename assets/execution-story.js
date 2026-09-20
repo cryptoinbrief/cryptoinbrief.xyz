@@ -185,27 +185,26 @@
     const cards = [...story.querySelectorAll('.est-tx')];
     cards.forEach((card, index) => {
       const transaction = schedule[index];
-      const desktopLane = [18, 50, 82][transaction.lane] || 50;
-      const resultLane = [18, 50, 82][index];
-      const mobileLane = [18, 50, 82][index];
-      let x = 15;
-      let y = desktopLane;
+      const rows = [18, 50, 82];
+      const mobileLane = rows[index];
+      let x = 14;
+      let y = rows[index];
       let mobileX = mobileLane;
       let mobileY = 14;
       let state = 'waiting';
       if (stage === 1) {
-        x = 30;
+        x = 25;
         mobileY = 36;
         state = 'resources declared';
       }
       if (stage === 2) {
-        x = transaction.wave === 0 ? 62 : 84;
+        x = transaction.wave === 0 ? 71 : 25;
+        y = rows[transaction.lane] || y;
         mobileY = transaction.wave === 0 ? 64 : 72;
         state = transaction.wave === 0 ? 'executing' : 'queued';
       }
       if (stage === 3) {
-        x = 85;
-        y = resultLane;
+        x = 86;
         mobileY = 86;
         state = 'applied';
       }

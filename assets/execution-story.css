@@ -178,10 +178,10 @@
 .est-gate span { max-width: 62px; color: var(--muted); font: 12px/1.15 var(--mono); }
 
 .est-tx {
-  width: 200px;
+  width: min(200px, 27%);
   min-height: 118px;
   position: absolute;
-  left: var(--dx);
+  left: clamp(min(100px, 13.5%), var(--dx), calc(100% - min(100px, 13.5%)));
   top: var(--dy);
   z-index: 4;
   padding: 8px;
@@ -234,14 +234,14 @@
 
 .est-collision {
   position: absolute;
-  left: 74%;
-  top: 18%;
+  left: 50%;
+  top: 82%;
   z-index: 3;
   display: flex;
   align-items: center;
   gap: 7px;
   opacity: 0;
-  transform: translate(-50%, -34px);
+  transform: translate(-50%, -50%);
   transition: opacity 240ms ease;
 }
 

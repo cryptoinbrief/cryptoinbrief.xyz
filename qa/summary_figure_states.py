@@ -90,6 +90,35 @@ def screenshot(figure, directory, name):
     return False
 
 
+def verify_narration_sync(page):
+    figures = page.locator("figure[data-kind='toggle']")
+    figure = figures.nth(figures.count() - 1)
+    figure.scroll_into_view_if_needed()
+    seen = set()
+    for _ in range(9):
+        page.wait_for_timeout(1500)
+        reading = figure.evaluate("""node => {
+            const a = node.querySelector('.stA');
+            const b = node.querySelector('.stB');
+            const narrative = node.querySelector('.fp-narrative');
+            if (!a || !b || !narrative) return null;
+            const drawn = getComputedStyle(a).display !== 'none' ? 'stA' : 'stB';
+            const text = (narrative.textContent || '').trim();
+            let says = 'caption';
+            if (text && a.getAttribute('data-note').startsWith(text.slice(0, 30))) says = 'stA';
+            if (text && b.getAttribute('data-note').startsWith(text.slice(0, 30))) says = 'stB';
+            return {drawn, says};
+        }""")
+        if not reading or reading["says"] == "caption":
+            continue
+        seen.add(reading["says"])
+        require(
+            reading["drawn"] == reading["says"],
+            f"automatic playback narrates {reading['says']} while {reading['drawn']} is drawn",
+        )
+    require(len(seen) == 2, f"automatic playback never narrated both states, saw {sorted(seen)}")
+
+
 def verify_english(page, directory, suffix):
     figures = page.locator("figure[data-kind='toggle']")
     require(figures.count() == 5, f"English summary: expected 5 toggles, found {figures.count()}")
@@ -186,6 +215,8 @@ def run(engine, screenshot_dir):
                             require(page.locator("html").get_attribute("data-theme") == theme, f"{case}: wrong theme")
                             suffix = f"{engine}-{width}-{theme}-{motion}"
                             if name == "crypto-summary.html":
+                                if motion == "no-preference" and width == WIDTHS[0]:
+                                    verify_narration_sync(page)
                                 verify_english(page, screenshot_dir, suffix)
                             else:
                                 verify_arabic(page, screenshot_dir, suffix)

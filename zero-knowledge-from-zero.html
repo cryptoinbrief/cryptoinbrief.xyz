@@ -379,7 +379,7 @@ aside.note{background:var(--surface)}
 </figure>
 <p>One round, two provers, the same call. Toggle the figure. Knowing the word answers any call. Not knowing it survives only when the call happens to name the occupied fork, one chance in two, and that is where the halving starts.</p>
 <figure data-fig="toggle" data-tgl="knows the word|bluffing" aria-labelledby="fig22cap">
-<svg viewBox="0 0 680 190" role="img" aria-label="One cave round under two provers with the same call: the one who knows the word passes through the door, the bluffer is trapped on the far fork.">
+<svg data-exclusive viewBox="0 0 680 190" role="img" aria-label="One cave round under two provers with the same call: the one who knows the word passes through the door, the bluffer is trapped on the far fork.">
 <text x="340" y="22" class="figlbl" text-anchor="middle">one round: you enter the RIGHT fork, Victor calls: come out LEFT</text>
 <path d="M340 168 L340 112 L340 66 L212 66" fill="none" stroke="currentColor" stroke-width="1.5"/>
 <path d="M340 112 L340 66 L468 66" fill="none" stroke="currentColor" stroke-width="1.5"/>
@@ -431,8 +431,8 @@ aside.note{background:var(--surface)}
 <g data-step="3" data-note="Challenge bits fall out: uniform, unpredictable before the hash runs, identical in distribution to Victor's coin flips.">
 <text x="20" y="192" class="figlbl">2. challenges = hash bits</text>
 <text x="200" y="192" class="figmono" fill="var(--accent)" data-note="R L R R L L R L R R ... twenty letters, one per round, as uniform as coin flips">R L R R L L R L R R ...</text>
-<text x="478" y="145" class="figdim">3. one message,</text>
-<text x="478" y="161" class="figdim">checkable forever</text>
+<text x="478" y="176" class="figdim">3. one message,</text>
+<text x="478" y="192" class="figdim">checkable forever</text>
 </g>
 <g data-step="4" data-note="No live verifier. Anyone recomputes the hash later and checks the answers against it. That is the non-interactive N in SNARK.">
 <rect x="478" y="108" width="176" height="44" fill="none" stroke="var(--good)" stroke-width="1.5" data-note="the proof object: commitments plus answers, verified by recomputing the hash"/>
@@ -845,7 +845,7 @@ el('themego').addEventListener('click',function(){setTheme(document.documentElem
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const EZ = 'cubic-bezier(.25,.8,.35,1)';
 const st = document.createElement('style');
-st.textContent = '.fx{position:relative}.fx-strip{display:flex;flex-wrap:wrap;gap:8px;margin:.8rem 0 0}.fx-b{font-family:var(--mono);font-size:11px;border:1px solid var(--border2);border-radius:8px;padding:4px 10px;background:transparent;color:var(--ink);cursor:pointer;transition:border-color .15s}.fx-b:hover{border-color:var(--accent)}.fx-b:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.fx-note{position:absolute;top:10px;left:10px;max-width:240px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:12px;line-height:1.5;color:var(--muted);pointer-events:none;opacity:0;transition:opacity .12s;z-index:5}.fx-note.on{opacity:1}.fx-sel{pointer-events:all;transition:stroke .15s ease,fill .15s ease}.fx-hi{stroke:var(--accent)!important}.fx-hit{fill:var(--accent)!important}.fx [data-step]{transition:opacity .25s ease}.fx-dim{opacity:.25!important}.fx-cur{animation:fxpu 1.8s ease-in-out infinite}.fx-cur rect,.fx-cur line,.fx-cur path,.fx-cur circle,.fx-cur polyline,.fx-cur polygon{stroke:var(--accent)}.fx-cur text{fill:var(--accent)}@keyframes fxpu{0%,100%{opacity:1}50%{opacity:.5}}.fx2 .sa,.fx2 .sb{transition:opacity .25s ease,transform .25s ease}.fx2 .sb{opacity:0;transform:translateY(6px)}.fx2.fb .sb{opacity:1;transform:none}.fx2.fb .sa{opacity:0;transform:translateY(-6px)}@media(prefers-reduced-motion:reduce){.fx-cur{animation:none}.fx *{transition-duration:0s!important}}';
+st.textContent = '.fx{position:relative}.fx-strip{display:flex;flex-wrap:wrap;gap:8px;margin:.8rem 0 0}.fx-b{font-family:var(--mono);font-size:11px;border:1px solid var(--border2);border-radius:8px;padding:4px 10px;background:transparent;color:var(--ink);cursor:pointer;transition:border-color .15s}.fx-b:hover{border-color:var(--accent)}.fx-b:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.fx-note{position:absolute;top:10px;left:10px;max-width:240px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:12px;line-height:1.5;color:var(--muted);pointer-events:none;opacity:0;transition:opacity .12s;z-index:5}.fx-note.on{opacity:1}.fx-sel{pointer-events:all;transition:stroke .15s ease,fill .15s ease}.fx-hi{stroke:var(--accent)!important}.fx-hit{fill:var(--accent)!important}.fx [data-step]{transition:opacity .25s ease}.fx-dim{opacity:.25!important}.fx-cur{animation:fxpu 1.8s ease-in-out infinite}.fx-cur rect,.fx-cur line,.fx-cur path,.fx-cur circle,.fx-cur polyline,.fx-cur polygon{stroke:var(--accent)}.fx-cur text{fill:var(--accent)}@keyframes fxpu{0%,100%{opacity:1}50%{opacity:.5}}svg[data-exclusive] .sa,svg[data-exclusive] .sb{transition:opacity .25s ease,transform .25s ease}svg[data-exclusive] .sb{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px)}svg[data-exclusive].fb .sb{opacity:1;visibility:visible;pointer-events:auto;transform:none}svg[data-exclusive].fb .sa{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-6px)}@media(prefers-reduced-motion:reduce){.fx-cur{animation:none}.fx *{transition-duration:0s!important}}';
 document.head.appendChild(st);
 function wire(fig){
 if(fig.dataset.fxDone) return;

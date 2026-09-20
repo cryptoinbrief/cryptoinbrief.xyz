@@ -50,7 +50,8 @@
       code: 'LTC',
       name: 'Litecoin',
       network: 'Litecoin network',
-      address: 'ltc1qrvecg74m4elgm9j2el78zgau5a4l3x245jwqmj'
+      address: 'ltc1qrvecg74m4elgm9j2el78zgau5a4l3x245jwqmj',
+      image: 'assets/coins/litecoin.svg'
     },
     {
       code: 'ZEC',
@@ -63,7 +64,8 @@
       code: 'DASH',
       name: 'Dash',
       network: 'Dash network',
-      address: 'XjZo388Ct5tssNwC9BDbzXqC52YXqyUPsz'
+      address: 'XjZo388Ct5tssNwC9BDbzXqC52YXqyUPsz',
+      image: 'assets/coins/dash.svg'
     },
     {
       code: 'ETH',
@@ -199,7 +201,8 @@
   referralSection.appendChild(make('h3', '', labels.referrals));
   var referralLinks = make('div', 'support-referral-links');
   referrals.forEach(function (referral) {
-    var link = make('a', '', referral[0] + ' ' + labels.open);
+    var link = make('a', '', referral[0]);
+    link.setAttribute('aria-label', referral[0] + ' ' + labels.open);
     link.href = referral[1];
     link.target = '_blank';
     link.rel = 'sponsored noopener noreferrer';

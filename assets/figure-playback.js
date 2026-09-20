@@ -240,9 +240,20 @@
     state.internalClicks--;
   }
 
+  function renderedStepIndex(state) {
+    var shown = -1;
+    var hidden = 0;
+    for (var i = 0; i < state.steps.length; i++) {
+      var style = getComputedStyle(state.steps[i].el);
+      if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') hidden++;
+      else if (shown < 0) shown = i;
+    }
+    return hidden > 0 ? shown : -1;
+  }
+
   function nativeStepIndex(state) {
     var selected = state.figure.querySelector('[data-step].cur, [data-step].fg-cur, [data-step].figcur, [data-step].fpulse, [data-step].fs-cur, [data-step].fx-cur');
-    if (!selected) return -1;
+    if (!selected) return renderedStepIndex(state);
     var key = selected.getAttribute('data-step');
     for (var i = 0; i < state.steps.length; i++) {
       if (state.steps[i].key === key) return i;
