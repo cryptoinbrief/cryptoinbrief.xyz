@@ -70,7 +70,7 @@ class ZkInteractions(unittest.TestCase):
         page.on(
             "console",
             lambda message: errors.append(f"console: {message.text}")
-            if message.type == "error"
+            if message.type == "error" and "cloudflareinsights" not in message.text
             else None,
         )
         page.on(

@@ -737,5 +737,6 @@ var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es
 Array.prototype.forEach.call(document.querySelectorAll('figure'),function(fig){var svg=fig.querySelector('svg');if(!svg)return;fig.style.position='relative';wireNotes(fig,svg);var steps=null,tog=null,kind=svg.getAttribute('data-fig');if(kind==='step')steps=wireSteps(fig,svg);else if(kind==='toggle')tog=wireToggle(svg);controls(fig,svg,steps,tog);fig._figsteps=steps;if(io)io.observe(fig);else{drawIn(fig);if(steps)setTimeout(steps.auto,1600)}});
 })();
 </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "190f466f82e24b918d3febe41efba2fe"}'></script>
 </body>
 </html>

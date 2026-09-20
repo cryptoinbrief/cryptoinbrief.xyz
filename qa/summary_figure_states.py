@@ -206,7 +206,7 @@ def run(engine, screenshot_dir):
                         page = context.new_page()
                         errors = []
                         page.on("pageerror", lambda error: errors.append(str(error)))
-                        page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
+                        page.on("console", lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in message.text else None)
                         page.add_init_script(f"localStorage.setItem('cib-theme', {json.dumps(theme)})")
                         case = f"{name}:{width}:{theme}:{motion}"
                         try:

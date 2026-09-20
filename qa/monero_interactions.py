@@ -54,7 +54,7 @@ class MoneroInteractions(unittest.TestCase):
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on(
             "console",
-            lambda message: errors.append(message.text) if message.type == "error" else None,
+            lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in message.text else None,
         )
         page.goto(f"{self.base}/{name}", wait_until="domcontentloaded")
         page.wait_for_timeout(200)

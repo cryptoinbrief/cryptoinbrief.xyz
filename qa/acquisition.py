@@ -56,7 +56,7 @@ class AcquisitionRoutes(unittest.TestCase):
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on(
             "console",
-            lambda message: errors.append(message.text) if message.type == "error" else None,
+            lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in message.text else None,
         )
         page.on(
             "response",

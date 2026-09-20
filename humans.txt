@@ -4,7 +4,7 @@ URL: https://cryptoinbrief.xyz
 Purpose: Illustrated cryptocurrency explainers with interactive browser labs
 Languages: English and Arabic
 Technology: Static HTML, CSS, SVG, and JavaScript
-Analytics: No analytics or advertising scripts
+Analytics: Cloudflare Web Analytics, privacy first, no cookies and no advertising scripts
 
 /* AUTHOR */
 Author: Moamen Basel

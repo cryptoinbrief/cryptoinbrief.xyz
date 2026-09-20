@@ -66,7 +66,7 @@ class ExecutionStory(unittest.TestCase):
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on(
             "console",
-            lambda message: errors.append(message.text) if message.type == "error" else None,
+            lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in message.text else None,
         )
         response = page.goto(f"{self.base}/{name}", wait_until="networkidle")
         self.assertEqual(response.status, 200)

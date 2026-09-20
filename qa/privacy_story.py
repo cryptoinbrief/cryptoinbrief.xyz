@@ -24,7 +24,7 @@ def open_story(browser, base_url, name, reduced_motion="no-preference", width=14
     page = context.new_page()
     errors = []
     page.on("pageerror", lambda error: errors.append(str(error)))
-    page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
+    page.on("console", lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in message.text else None)
     response = page.goto(f"{base_url}/{name}", wait_until="networkidle")
     check(response.status == 200, f"{name}: HTTP {response.status}")
     page.wait_for_selector(".privacy-story")

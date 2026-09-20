@@ -27,6 +27,9 @@ PAGES = [
     "getting-monero.html",
     "zcash.html",
     "zero-knowledge-from-zero.html",
+    "crypto-terms.html",
+    "starting-with-crypto.html",
+    "dollar-yield.html",
 ]
 
 
@@ -135,7 +138,7 @@ def verify_homepage(page):
     require(page.locator(".topic:visible").count() == 1, "topic search did not narrow to Zcash")
     page.locator("#topic-search").fill("")
     page.locator("[data-filter='all']").click()
-    require(page.locator(".topic:visible").count() == 12, "all-guides filter did not restore the library")
+    require(page.locator(".topic:visible").count() == 15, "all-guides filter did not restore the library")
 
 
 def verify_bitcoin_hash(page):
@@ -169,7 +172,7 @@ def run():
             page.on(
                 "console",
                 lambda message: runtime_errors.append(f"console: {message.text}")
-                if message.type == "error"
+                if message.type == "error" and "cloudflareinsights" not in message.text
                 else None,
             )
             page.on(

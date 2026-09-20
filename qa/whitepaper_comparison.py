@@ -29,7 +29,7 @@ class WhitepaperComparisonTest(unittest.TestCase):
         context.add_init_script(f"localStorage.setItem('cib-theme', '{theme}')")
         page = context.new_page()
         errors = []
-        page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
+        page.on("console", lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in message.text else None)
         page.goto(URL, wait_until="networkidle")
         lab = page.locator("#paper-payment-lab")
         lab.scroll_into_view_if_needed()
