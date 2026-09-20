@@ -7,7 +7,7 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = {
     "crypto-terms.html": {
-        "needles": ["confirmation time"],
+        "needles": ["confirmation time", "staking", "restaking", "stETH"],
         "hrefs": [],
         "codes": [],
     },
