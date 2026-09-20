@@ -179,14 +179,16 @@ def run():
                 "requestfailed",
                 lambda request: failed_resources.append(
                     f"{request.url}: {request.failure or 'request failed'}"
-                ),
+                )
+                if "cloudflareinsights" not in request.url
+                else None,
             )
             page.on(
                 "response",
                 lambda response: failed_resources.append(
                     f"{response.url}: HTTP {response.status}"
                 )
-                if response.status >= 400
+                if response.status >= 400 and "cloudflareinsights" not in response.url
                 else None,
             )
             try:

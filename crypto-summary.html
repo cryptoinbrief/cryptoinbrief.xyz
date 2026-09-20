@@ -265,6 +265,7 @@ nav.rail .leaders{display:none}
 <li><a href="#s11"><span class="num">11</span><span class="t">The blockchain is not a data structure</span><span class="leaders"></span></a></li>
 <li><a href="#s12"><span class="num">12</span><span class="t">Monero makes privacy mandatory</span><span class="leaders"></span></a></li>
 <li><a href="#s13"><span class="num">13</span><span class="t">MEV, the dark side of ordering</span><span class="leaders"></span></a></li>
+<li><a href="#s14"><span class="num">14</span><span class="t">The trilemma is a budget</span><span class="leaders"></span></a></li>
 </ol>
 </nav>
 
@@ -305,6 +306,7 @@ nav.rail .leaders{display:none}
 <li><a href="#s11"><span class="num">11</span><span class="t">The blockchain is not a data structure</span><span class="leaders"></span></a></li>
 <li><a href="#s12"><span class="num">12</span><span class="t">Monero makes privacy mandatory</span><span class="leaders"></span></a></li>
 <li><a href="#s13"><span class="num">13</span><span class="t">MEV, the dark side of ordering</span><span class="leaders"></span></a></li>
+<li><a href="#s14"><span class="num">14</span><span class="t">The trilemma is a budget</span><span class="leaders"></span></a></li>
 </ol>
 </details>
 
@@ -768,6 +770,38 @@ nav.rail .leaders{display:none}
 </svg>
 <figcaption><span class="figno">Fig. 13.1</span> The builder's buy lands before the victim and his sell right after; the profit is the price gap he created.</figcaption>
 </figure>
+
+<h2 id="s14"><span class="num">14</span> The trilemma is a budget, not a law</h2>
+<p>Every chain in this series is answering the same question with different money. The <strong>blockchain trilemma</strong> is the popular shorthand for that question: a public chain wants to be decentralized, secure and scalable at once, and pushing hard on two tends to charge the third. It is a design heuristic that came out of the Ethereum research community, not a proven theorem, and you should treat anyone who claims to have deleted the tradeoff with suspicion. The useful version is narrower: name the three costs, then ask which one a design is paying.</p>
+<p><strong>Decentralization</strong> is how cheap it is to verify the chain yourself and how many independent parties decide what happened. The honest measure is the cost of running a full node on ordinary hardware, not the number of tokens in circulation. <strong>Security</strong> is what an attacker must spend to rewrite or censor history, whether that is energy under proof of work or stake that gets destroyed under proof of stake. <strong>Scalability</strong> is throughput and cost per transaction at the point where ordinary people actually use it.</p>
+
+<figure data-kind="seq">
+<svg viewBox="0 0 680 276" role="img"><title>The blockchain trilemma</title><desc>A triangle with decentralization at the top and security and scalability at the lower corners. Each step rings one corner and names the cost a design pays when it pushes hardest on the other two.</desc>
+<path d="M340 66 L152 214 L528 214 Z" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+<circle cx="340" cy="66" r="6" fill="var(--ink)"/>
+<circle cx="152" cy="214" r="6" fill="var(--ink)"/>
+<circle cx="528" cy="214" r="6" fill="var(--ink)"/>
+<text class="tl" x="340" y="50" text-anchor="middle">decentralization</text>
+<text class="tl" x="134" y="240" text-anchor="middle">security</text>
+<text class="tl" x="546" y="240" text-anchor="middle">scalability</text>
+<g class="fstep" data-step="1" data-note="Bitcoin keeps verification cheap and the attack cost physical. Blocks stay small so an ordinary machine can still check every one of them, and throughput is the corner that pays.">
+<circle cx="528" cy="214" r="14" fill="none" stroke="var(--bad)" stroke-width="2"/>
+<text class="ts" x="546" y="264" text-anchor="middle" style="fill:var(--bad)">throughput pays</text>
+</g>
+<g class="fstep" data-step="2" data-note="Buy security and throughput together and the validator set gets smaller, better connected and more expensive to join. The chain is fast and costly to attack, but fewer independent parties decide what happened.">
+<circle cx="340" cy="66" r="14" fill="none" stroke="var(--bad)" stroke-width="2"/>
+<text class="ts" x="340" y="26" text-anchor="middle" style="fill:var(--bad)">openness pays</text>
+</g>
+<g class="fstep" data-step="3" data-note="Keep the chain open and fast and the budget that punishes an attacker gets thin. Many small validators and cheap blocks are easy to join and easier to overpower.">
+<circle cx="152" cy="214" r="14" fill="none" stroke="var(--bad)" stroke-width="2"/>
+<text class="ts" x="134" y="264" text-anchor="middle" style="fill:var(--bad)">attack cost pays</text>
+</g>
+</svg>
+<figcaption><span class="figno">Fig. 14.1</span> Step through the three corners. Whichever two a design pushes hardest, the ringed one is what it spends. No design deletes the tradeoff; it moves the cost somewhere its users can live with.</figcaption>
+</figure>
+
+<p>Read the rest of the series as four answers to that budget. <a href="bitcoin-from-zero.html">Bitcoin</a> spends throughput to keep verification cheap and the attack cost physical. <a href="proof-of-stake.html">Proof of stake</a> replaces energy with capital at risk, which lowers the cost of participating but introduces slashing rules and a stake distribution to argue about. <a href="solana.html">Solana</a> buys throughput with hardware, raising the cost of running a validator so users get cheap fast blocks. <a href="sui.html">Sui</a> narrows the problem instead of the hardware, executing transactions that touch nothing in common without putting them through consensus at all.</p>
+<p>Privacy sits outside this triangle, which is exactly why it is worth naming separately. <a href="monero-under-the-hood.html">Monero</a> and <a href="zcash.html">Zcash</a> both keep a public ledger and pay for concealment in verification work and proof size. That is a fourth budget, not a fourth corner, and a chain can be decentralized, secure, fast and still leak everything you do.</p>
 
 <p class="facts">This page sums up a long conversation series on how Bitcoin and crypto work. Details and live experiments are in <a href="bitcoin-from-zero.html">Bitcoin from zero</a> and <a href="monero-under-the-hood.html">Monero under the hood</a>. As of September 2026 the block reward is 3.125 BTC. Monero ring size is 16. FCMP++ is audited but not yet activated.</p>
 

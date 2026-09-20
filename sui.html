@@ -944,6 +944,7 @@ aside.note{background:var(--surface)}
 <figcaption><span class="figno">Fig. 11.1</span> The same question, three answers: what each chain forces through its single sequence, and what Sui lets go around it.</figcaption>
 </figure>
 
+<aside class="note"><p><strong>Sui narrows the problem instead of raising the hardware bar alone.</strong></p><p>A transaction that touches only objects you own has nothing to order against anyone else, so it skips consensus and settles on signatures. Shared objects still go through consensus, because that is where ordering genuinely matters. This buys throughput without charging every transaction the full consensus price, though validators still need serious hardware and the object model adds complexity for developers. Where a design spends is the useful question behind the <a href="crypto-summary.html#s14">blockchain trilemma</a>.</p></aside>
 </main>
 </div>
 

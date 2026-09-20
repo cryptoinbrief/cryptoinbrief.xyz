@@ -1220,6 +1220,7 @@ aside.note{background:var(--surface)}
 </ol>
 
 <p class="facts">The SHA-256 lab uses the browser's real implementation, and the genesis lab hashes Bitcoin's recorded 80-byte genesis header. The signature lab uses browser supported P-256 ECDSA to demonstrate conflicting authorization; Bitcoin signatures use secp256k1. The attacker calculator implements the formula from section 11 of the whitepaper. The current subsidy is 3.125 BTC, and difficulty retargets every 2,016 blocks.</p>
+<aside class="note"><p><strong>Bitcoin buys decentralization and security, and pays in throughput.</strong></p><p>Blocks stay small on purpose. That is what keeps a full node cheap enough to run on ordinary hardware, so you can check the rules yourself instead of trusting someone who did. The price is a hard ceiling on transactions per block and a fee market when demand exceeds it. Payment channels and other layers move that cost rather than remove it, because settling on the base chain still costs a block slot. Where a design spends is the useful question behind the <a href="crypto-summary.html#s14">blockchain trilemma</a>.</p></aside>
 </div>
 </main>
 <footer class="band foot">
