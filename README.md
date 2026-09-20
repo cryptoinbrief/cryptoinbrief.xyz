@@ -18,6 +18,9 @@ Start with [the illustrated overview](crypto-summary.html), then follow the essa
 8. [Bitcoin and Monero white papers compared](bitcoin-vs-monero-whitepapers.html)
 9. [Zcash from zero](zcash.html)
 10. [Zero knowledge from zero](zero-knowledge-from-zero.html)
+11. [Crypto terms](crypto-terms.html)
+12. [Start using crypto](starting-with-crypto.html)
+13. [Dollar yield in DeFi](dollar-yield.html)
 
 Developers can optionally follow a transaction through the verified source references in [Inside the Bitcoin Core codebase](bitcoin-codebase.html).
 

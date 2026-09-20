@@ -27,6 +27,9 @@ PAGES = {
     "monero-under-the-hood.html": ("en", f"{BASE_URL}/monero-under-the-hood.html"),
     "monero-from-zero-ar.html": ("ar", f"{BASE_URL}/monero-from-zero-ar.html"),
     "getting-monero.html": ("en", f"{BASE_URL}/getting-monero.html"),
+    "crypto-terms.html": ("en", f"{BASE_URL}/crypto-terms.html"),
+    "starting-with-crypto.html": ("en", f"{BASE_URL}/starting-with-crypto.html"),
+    "dollar-yield.html": ("en", f"{BASE_URL}/dollar-yield.html"),
     "zcash.html": ("en", f"{BASE_URL}/zcash.html"),
     "zero-knowledge-from-zero.html": ("en", f"{BASE_URL}/zero-knowledge-from-zero.html"),
 }

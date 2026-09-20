@@ -47,6 +47,12 @@ The site uses two kinds of browser labs. Some call standard browser cryptography
 
 - [Monero under the hood](https://cryptoinbrief.xyz/monero-under-the-hood.html): Explains stealth addresses, ring signatures, key images, RingCT, network layer privacy, proof of work, and current protocol tradeoffs. Cryptographic equations are demonstrated in deliberately small groups. Those numbers are unsuitable for real security.
 - [How to get Monero](https://cryptoinbrief.xyz/getting-monero.html): Compares atomic swaps, Haveno peer to peer trading, instant swap services, and centralized exchanges across custody, privacy, liquidity, fees, availability, and counterparty trust. It separates the author's preferred route from the comparison and discloses referral relationships. No route is presented as guaranteeing asset provenance or eliminating counterparty, compliance, liquidity, or execution risk. Information is dated 20 September 2026.
+
+## Practical user guides
+
+- [Crypto terms that actually show up in a wallet](https://cryptoinbrief.xyz/crypto-terms.html): Defines wallet, private key, seed phrase, address, gas, mempool, block, confirmation, confirmation time, finality, UTXO versus account, CEX versus DEX, and stablecoin. Confirmation time is dated 20 September 2026 for Bitcoin (conventionally 1 to 6 confirmations), Ethereum (inclusion then ~12.8 minute economic finality), and Solana (processed / confirmed / finalized).
+- [How to start using crypto](https://cryptoinbrief.xyz/starting-with-crypto.html): Walks a first-time user through hot versus hardware wallets, an author preference for Rabby over MetaMask on EVM and Jupiter over Phantom on Solana, how to read Etherscan confirmation counts and Solana explorer status, three crypto cards, and 24/7 stock tokens on Arcus. Ether.fi Cash referral `https://www.ether.fi/@moon1337` with EUR 0% FX (beta). Plasma One invite `56VLD9` and Lite / Core / Platinum AI-spend tiers. Jupiter Card link `https://jupiter.go.link/7RRSd`. Arcus waitlist `https://waitlist.arcus.xyz/s/TWITTER`. Referral anchors use `rel` including `sponsored`. Stock tokens are described as economic exposure, not share ownership, and as unavailable in restricted jurisdictions.
+- [Dollar yield in DeFi](https://cryptoinbrief.xyz/dollar-yield.html): Treats on-chain dollar yield as compensation for named risks, not a bank deposit. Uses DefiLlama as the comparison surface. Explains Ethena USDe delta-neutral backing and sUSDe rewards, with join link `https://app.ethena.fi/join/urfcl`. Explains Kamino looping / Multiply and liquidation. Yields and TVL dated 20 September 2026.
 - [مونيرو من الصفر](https://cryptoinbrief.xyz/monero-from-zero-ar.html): Arabic explanation of how Monero obscures receiver, sender, and amount using stealth addresses, ring signatures, key images, and confidential transactions.
 
 ## Zcash
@@ -59,7 +65,7 @@ The site uses two kinds of browser labs. Some call standard browser cryptography
 
 ## Languages and editions
 
-- English is the primary language for the eleven detailed topic essays and the illustrated overview.
+- English is the primary language for the fourteen detailed topic essays and the illustrated overview.
 - Arabic editions are available for the illustrated overview, Bitcoin, and Monero.
 - Arabic pages use their own canonical URLs and are listed as language alternatives in the sitemap.
 

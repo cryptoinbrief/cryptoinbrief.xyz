@@ -19,6 +19,9 @@ PAGES = [
     "zcash.html",
     "zero-knowledge-from-zero.html",
     "getting-monero.html",
+    "crypto-terms.html",
+    "starting-with-crypto.html",
+    "dollar-yield.html",
 ]
 ADDRESSES = {
     "XMR": "49BWStdJJVEfPRDQTmCtrT39QSqXNWLUGNvTzU7cMfsMHTG1ozR1YFQPCKb65oduji5isbVAowiwVFPpseHv9Dg3875rB9G",

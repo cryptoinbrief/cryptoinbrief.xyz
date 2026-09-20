@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-coin="solana">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dollar yield in DeFi: DefiLlama, Ethena and Kamino looping | Crypto in Brief</title>
+<meta name="description" content="Hunt dollar yield with DefiLlama, stake Ethena sUSDe, and understand Kamino looping without treating DeFi as a bank.">
+<meta name="author" content="Moamen Basel"><meta name="theme-color" content="#f8faf9">
+<link rel="canonical" href="https://cryptoinbrief.xyz/dollar-yield.html">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Crypto in Brief"><meta property="og:title" content="Dollar yield in DeFi: DefiLlama, Ethena and Kamino looping"><meta property="og:description" content="How to read DefiLlama, how Ethena produces sUSDe yield, and what looping on Kamino actually does to liquidation risk."><meta property="og:url" content="https://cryptoinbrief.xyz/dollar-yield.html"><meta property="og:image" content="https://cryptoinbrief.xyz/og.png"><meta property="og:image:alt" content="Crypto in Brief. Understand crypto from the inside.">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Dollar yield in DeFi | Crypto in Brief"><meta name="twitter:description" content="DefiLlama, Ethena sUSDe and Kamino looping, with dated yields and a referral disclosure."><meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><link rel="stylesheet" href="assets/getting-monero.css"><link rel="stylesheet" href="assets/practical.css">
+<script defer src="assets/article.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Dollar yield in DeFi: DefiLlama, Ethena and Kamino looping","description":"How to read DefiLlama yields, how Ethena produces sUSDe rewards, and what looping on Kamino does.","url":"https://cryptoinbrief.xyz/dollar-yield.html","mainEntityOfPage":"https://cryptoinbrief.xyz/dollar-yield.html","datePublished":"2026-09-20","dateModified":"2026-09-20","inLanguage":"en","image":"https://cryptoinbrief.xyz/og.png","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz/"}}</script>
+<link rel="stylesheet" href="assets/support.css"><script defer src="assets/support.js"></script>
+</head>
+<body class="acquisition-guide">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header"><a class="mark" href="index.html">crypto<span>in</span>brief.</a><nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="starting-with-crypto.html">First wallet</a></nav><p class="switch"><span class="theme"><span id="themenow">Light</span><button type="button" id="themego">Dark</button></span></p></header>
+<main id="main-content">
+<nav class="toc rail" aria-label="Contents"><p class="toclab">In this guide</p><a href="#not-a-bank">Not a bank</a><a href="#defillama">DefiLlama</a><a href="#ethena">Ethena USDe</a><a href="#kamino">Kamino looping</a><a href="#risks">What can go wrong</a></nav>
+<article class="col">
+<section class="bay"><p class="byline">By <a href="https://moamenbasel.com">Moamen Basel</a> · Updated September 20, 2026 · 14 minute read</p><span class="coinbadge"><img src="assets/coins/solana.svg" alt="Solana" width="34" height="34"></span><h1>How to hunt dollar yield in DeFi without pretending it is a bank.</h1><p class="lead">Stable here means “aims at a dollar.” It does not mean a deposit, a locked rate, or a promise that next month looks like this one.</p><p class="disclosure">This guide contains an Ethena referral link. I may receive a benefit if you use it. That relationship does not change the yield, custody or liquidation risks below. Numbers are from 20 September 2026 and will move. This is not financial advice.</p></section>
+
+<section aria-labelledby="not-a-bank"><h2 id="not-a-bank">What “stable money” can honestly mean here</h2>
+<figure class="photo-fig"><img src="assets/guides/yield-desk.jpg" alt="A laptop on a desk showing a blurred yield dashboard next to a dollar bill" width="1440" height="810"><figcaption>Read a yield as a current run-rate, then ask what produces it. A high APY with thin TVL is usually a temporary incentive.</figcaption></figure>
+<p>On-chain dollar yield is a payment you receive for taking a specific risk: funding-rate risk, borrower default, smart-contract bugs, oracle failure, issuer freeze, or liquidation. Treasury-backed tokens such as some tokenized cash funds sit at one end. Looping a volatile LST sits at the other. I treat anything above a short-term government bill rate as compensation for something that can fail.</p>
+<p>You need a wallet first. If you do not yet have one, use <a href="starting-with-crypto.html">the starter guide</a>. Then you need a way to compare live rates instead of screenshots from Twitter.</p></section>
+
+<section aria-labelledby="defillama"><h2 id="defillama">DefiLlama is where I read the yield</h2>
+<figure class="photo-fig"><img src="assets/guides/defillama-yields.png" alt="Table of DefiLlama yields and TVL for Ethena sUSDe, Maple USDC, Sky sUSDS, Ethena and Kamino on 20 September 2026" width="1440" height="900"><figcaption>Yields and TVL pulled from DefiLlama on 20 September 2026. sUSDe printed 4.67% on $1.33B. Protocol TVL for Ethena was $5.29B and for Kamino $1.45B.</figcaption></figure>
+<figure class="photo-fig"><img src="assets/guides/kamino-finance.png" alt="Kamino Earn page listing vault APYs and deposits" width="1440" height="900"><figcaption>Protocol sites advertise their own vaults. DefiLlama is the comparison layer I use before I open any of them. Kamino Earn, captured 20 September 2026.</figcaption></figure>
+<p><a href="https://defillama.com/yields">defillama.com/yields</a> lists pools with APY, TVL, the chain, and whether the rate is base yield or a temporary incentive. I sort by TVL first, then look at APY. A 4% pool with a billion dollars in it is a different object from a 40% pool with a million.</p>
+<p>Checked 20 September 2026 via the DefiLlama yields API:</p>
+<div class="tablewrap"><table class="confirm-table"><thead><tr><th>Pool</th><th>Chain</th><th>APY</th><th>TVL</th></tr></thead><tbody>
+<tr><td>Ethena sUSDe</td><td>Ethereum</td><td>4.67%</td><td>$1.33B</td></tr>
+<tr><td>Maple USDC</td><td>Ethereum</td><td>5.07%</td><td>$2.87B</td></tr>
+<tr><td>Sky sUSDS</td><td>Ethereum</td><td>3.60%</td><td>$4.38B</td></tr>
+<tr><td>Ethena protocol TVL</td><td>mostly Ethereum</td><td>n/a</td><td>$5.29B</td></tr>
+<tr><td>Kamino protocol TVL</td><td>Solana</td><td>n/a</td><td>$1.45B</td></tr
+</tbody></table></div>
+<p>Those APYs are already in percent on DefiLlama. They are not a forecast. Filter for stablecoin pools if you want dollar-denominated risk, then click through to the protocol and read how the yield is produced. DefiLlama will also show a protocol’s historical TVL at <a href="https://defillama.com/protocol/ethena">defillama.com/protocol/ethena</a> and <a href="https://defillama.com/protocol/kamino">/kamino</a>.</p>
+<p class="source-line">Source: <a href="https://yields.llama.fi/pools">yields.llama.fi/pools</a> and <a href="https://api.llama.fi/protocol/ethena">api.llama.fi/protocol/ethena</a>, pulled 20 September 2026.</p></section>
+
+<section aria-labelledby="ethena"><h2 id="ethena">Ethena: USDe, sUSDe and where the yield comes from</h2>
+<p><a class="referral-link" href="https://app.ethena.fi/join/urfcl" rel="sponsored noopener noreferrer" target="_blank">Open Ethena <span>Referral link ↗</span></a></p>
+<figure class="photo-fig"><img src="assets/guides/ethena-app.png" alt="Ethena homepage showing digital dollars, 4.8% APY badge, 10.5% average sUSDe APY and $5.4B total supply" width="1440" height="900"><figcaption>ethena.fi on 20 September 2026. The header badge read 4.8% APY and $5.4B supply. The page also printed a 10.5% average sUSDe APY, which is not the same as today’s run-rate.</figcaption></figure>
+<p>USDe is Ethena’s synthetic dollar. The protocol holds backing assets and, for anything volatile, opens a short perpetual futures position of about the same size. Spot goes up, the short loses; spot goes down, the short gains. That delta-neutral book is how USDe aims to stay near a dollar without being a bank deposit. Stable backing (cash-like assets) does not need the hedge. Source: <a href="https://docs.ethena.fi/overview/how-usde-works">How USDe Works</a>.</p>
+<p>sUSDe is staked USDe. You send USDe in, you receive sUSDe, and the USDe value of sUSDe rises when the Foundation’s subsidiary deposits rewards. The staked USDe is not lent out to produce that yield. The yield is the protocol’s revenue, mainly funding rates collected on those short perpetual positions, plus other sources the docs name. In a week when funding is negative, sUSDe is not supposed to go backwards; the reserve fund is meant to absorb the loss and rewards simply pause. That is a design goal, not a guarantee.</p>
+<p>On 20 September 2026, DefiLlama’s Ethereum sUSDe pool showed <strong>4.67% APY</strong> on $1.33B TVL. Ethena’s own site the same day showed a 4.8% APY badge and a 10.5% “Avg sUSDe APY”. The average is a longer window. Ethena also warns that aggregator sites which annualize the latest eight-hour reward payment will disagree with the official weekly-compounded figure. Unstaking sUSDe has a cooldown that the docs describe as currently between 1 and 7 days, set by governance and reserve conditions.</p>
+<p>Use the app at <a href="https://app.ethena.fi/join/urfcl" rel="sponsored noopener noreferrer">app.ethena.fi/join/urfcl</a>. Read the live APY there before you size anything. Funding rates in 2024 produced double-digit sUSDe APYs. 2026 has been a quieter funding tape. That swing is the product.</p></section>
+
+<section aria-labelledby="kamino"><h2 id="kamino">Kamino Finance and looping</h2>
+<figure class="photo-fig"><img src="assets/guides/kamino-multiply.png" alt="Kamino docs page How to Open a Multiply Position" width="1440" height="900"><figcaption>Kamino Multiply docs, captured 20 September 2026. Multiply is looping packaged as one transaction.</figcaption></figure>
+<figure class="photo-fig"><img src="assets/guides/kamino-loop-sketch.jpg" alt="A pencil sketch of supply, borrow and deposit-again in a loop, with a mark near a liquidation line" width="1440" height="810"><figcaption>Looping in one picture: deposit collateral, borrow against it, buy or stake more of the collateral, repeat. Liquidation sits on the other side of that loop.</figcaption></figure>
+<p>Kamino is Solana’s large lending and vault venue. DefiLlama showed about $1.45B of protocol TVL on 20 September 2026. You can supply assets, borrow against them, or open a Multiply vault that does the looping for you.</p>
+<p>Looping, in this context, is: supply a yield-bearing asset as collateral, borrow the underlying, swap or stake that borrow back into the yield-bearing asset, and supply again. Each turn raises your exposure to the collateral’s yield and to its price. It also raises your loan-to-value ratio. If the collateral falls, or if the borrow rate rises above the yield for long enough, the protocol can sell you out. That sale is liquidation.</p>
+<figure>
+<svg viewBox="0 0 680 250" role="img" aria-labelledby="lp-title lp-desc"><title id="lp-title">Manual looping compared with Kamino Multiply</title><desc id="lp-desc">Manual looping is several supply-borrow-swap steps. Multiply borrows via a flash loan, builds the leveraged position, and either finishes or reverts in one transaction.</desc>
+<text class="cf-lane" x="24" y="22">MANUAL LOOP</text>
+<rect class="cf-box" x="24" y="36" width="100" height="44" rx="5"/><text class="cf-label" x="74" y="63" text-anchor="middle">supply</text>
+<path class="cf-link" d="M124 58h36"/>
+<rect class="cf-box" x="160" y="36" width="100" height="44" rx="5"/><text class="cf-label" x="210" y="63" text-anchor="middle">borrow</text>
+<path class="cf-link" d="M260 58h36"/>
+<rect class="cf-box" x="296" y="36" width="110" height="44" rx="5"/><text class="cf-label" x="351" y="63" text-anchor="middle">re-deposit</text>
+<path class="cf-link" d="M406 58h36"/>
+<rect class="cf-box" x="442" y="36" width="90" height="44" rx="5"/><text class="cf-label" x="487" y="63" text-anchor="middle">repeat</text>
+<text class="cf-sub" x="24" y="100">Each step can fail on its own. Price can move between steps. Gas and slippage stack.</text>
+<text class="cf-lane" x="24" y="132">KAMINO MULTIPLY · ONE TRANSACTION</text>
+<rect class="cf-box is-on" x="24" y="146" width="130" height="44" rx="5"/><text class="cf-label" x="89" y="173" text-anchor="middle">flash borrow</text>
+<path class="cf-link" d="M154 168h28"/>
+<rect class="cf-box is-on" x="182" y="146" width="110" height="44" rx="5"/><text class="cf-label" x="237" y="173" text-anchor="middle">swap / stake</text>
+<path class="cf-link" d="M292 168h28"/>
+<rect class="cf-box is-on" x="320" y="146" width="110" height="44" rx="5"/><text class="cf-label" x="375" y="173" text-anchor="middle">supply</text>
+<path class="cf-link" d="M430 168h28"/>
+<rect class="cf-box is-on" x="458" y="146" width="150" height="44" rx="5"/><text class="cf-label" x="533" y="173" text-anchor="middle">repay flash loan</text>
+<text class="cf-sub" x="24" y="214">If the flash loan cannot be repaid, the whole transaction reverts. Your leverage is still a loan. Liquidation risk remains after it lands.</text>
+</svg>
+<figcaption>Multiply removes the messy middle steps. It does not remove leverage. Source: <a href="https://kamino.com/docs/learn/multiply/key-concepts">Kamino Multiply key concepts</a>.</figcaption>
+</figure>
+<p>A common Solana loop is JitoSOL (or another LST) supplied, SOL borrowed, more LST bought, supplied again. eMode on correlated pairs raises the allowed loan-to-value, which means higher leverage and a thinner buffer to liquidation. Kamino’s docs are explicit: borrow rates are variable, and if they exceed collateral yield for a stretch, net APY goes negative while debt still grows.</p>
+<p>Open Kamino at <a href="https://kamino.finance/">kamino.finance</a>. If you use Multiply, start at 1.5x or 2x on a pair you understand, and watch the liquidation price the UI prints. A 10x LST loop is not “stable money.” It is a leveraged bet that the LST stays pegged and that borrow stays cheap.</p></section>
+
+<section aria-labelledby="risks"><h2 id="risks">What I actually do with this</h2>
+<p>I read DefiLlama, I ignore pools whose TVL would not survive my withdrawal, and I treat Ethena sUSDe as a funding-rate product that happened to print about 4.7% on the day I checked, not as a savings account. I treat Kamino looping as optional leverage on top of a Solana lending book, not as a way to manufacture a safe 15%.</p>
+<p>If a number on this page is more than a few days old, replace it. The links above are the live sources. The wallet and explorer habits from <a href="starting-with-crypto.html">the starter guide</a> still apply: test with a small amount, confirm the transaction, then decide whether the risk is one you meant to take.</p></section>
+<nav class="guide-next" aria-label="Related guides"><a href="starting-with-crypto.html"><span>Before you deposit</span><strong>Start with a wallet ↗</strong></a><a href="proof-of-stake.html"><span>How validators get paid</span><strong>Proof of stake ↗</strong></a></nav>
+</article></main>
+<footer class="site-footer article-shell"><div><p class="footer-brand">crypto<span>in</span>brief.</p><p>Written by <a href="https://moamenbasel.com">moamenbasel.com</a> · <a href="https://greycorelabs.com">Grey Core Labs</a></p><p>Educational comparisons. Yields, TVL and liquidation rules change. Nothing here is a deposit or a return guarantee.</p></div><nav aria-label="Footer"><a href="index.html">All guides</a><a href="https://github.com/cryptoinbrief/cryptoinbrief.xyz">Source code</a><a href="rss.xml">RSS</a></nav></footer>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "190f466f82e24b918d3febe41efba2fe"}'></script>
+</body>
+</html>

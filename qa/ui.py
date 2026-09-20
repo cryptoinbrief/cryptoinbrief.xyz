@@ -12,6 +12,7 @@ PAGES = [
     "proof-of-stake.html", "solana.html", "sui.html", "monero-under-the-hood.html",
     "monero-from-zero-ar.html", "getting-monero.html", "zcash.html",
     "zero-knowledge-from-zero.html",
+    "crypto-terms.html", "starting-with-crypto.html", "dollar-yield.html",
 ]
 
 
@@ -125,7 +126,7 @@ def run(base_url, output):
         check(page.locator("#empty-topics").is_visible(), "Missing empty state")
         page.locator("#topic-search").fill("")
         page.locator("[data-filter='all']").click()
-        check(page.locator(".topic:visible").count() == 12, "All guides did not restore")
+        check(page.locator(".topic:visible").count() == 15, "All guides did not restore")
         page.locator("#theme-toggle").click()
         check(page.locator("html").get_attribute("data-theme") == "dark", "Theme switch failed")
         page.reload()

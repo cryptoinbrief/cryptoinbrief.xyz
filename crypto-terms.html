@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-coin="bitcoin">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crypto terms that actually show up in a wallet | Crypto in Brief</title>
+<meta name="description" content="A practical glossary of wallet, address, seed, gas, mempool, confirmation time, finality, UTXO, CEX, DEX and stablecoin, dated September 2026.">
+<meta name="author" content="Moamen Basel"><meta name="theme-color" content="#f8faf9">
+<link rel="canonical" href="https://cryptoinbrief.xyz/crypto-terms.html">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Crypto in Brief"><meta property="og:title" content="Crypto terms that actually show up in a wallet"><meta property="og:description" content="Wallet, gas, mempool, confirmation time and related user terms, with dated confirmation counts for Bitcoin, Ethereum and Solana."><meta property="og:url" content="https://cryptoinbrief.xyz/crypto-terms.html"><meta property="og:image" content="https://cryptoinbrief.xyz/og.png"><meta property="og:image:alt" content="Crypto in Brief. Understand crypto from the inside.">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Crypto terms | Crypto in Brief"><meta name="twitter:description" content="Wallet, gas, mempool, confirmation time and related user terms, dated September 2026."><meta name="twitter:image" content="https://cryptoinbrief.xyz/og.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="Crypto in Brief" href="rss.xml">
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/article.css"><link rel="stylesheet" href="assets/getting-monero.css"><link rel="stylesheet" href="assets/practical.css">
+<script defer src="assets/article.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Crypto terms that actually show up in a wallet","description":"A practical glossary of wallet, address, seed, gas, mempool, confirmation time, finality, UTXO, CEX, DEX and stablecoin.","url":"https://cryptoinbrief.xyz/crypto-terms.html","mainEntityOfPage":"https://cryptoinbrief.xyz/crypto-terms.html","datePublished":"2026-09-20","dateModified":"2026-09-20","inLanguage":"en","image":"https://cryptoinbrief.xyz/og.png","author":{"@type":"Person","name":"Moamen Basel","url":"https://moamenbasel.com"},"publisher":{"@type":"Organization","name":"Crypto in Brief","url":"https://cryptoinbrief.xyz/"}}</script>
+<link rel="stylesheet" href="assets/support.css"><script defer src="assets/support.js"></script>
+</head>
+<body class="acquisition-guide">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header"><a class="mark" href="index.html">crypto<span>in</span>brief.</a><nav class="article-links" aria-label="Site navigation"><a href="index.html#guides">All guides</a><a href="starting-with-crypto.html">First wallet</a></nav><p class="switch"><span class="theme"><span id="themenow">Light</span><button type="button" id="themego">Dark</button></span></p></header>
+<main id="main-content">
+<nav class="toc rail" aria-label="Contents"><p class="toclab">In this guide</p><a href="#wallet">Wallet and keys</a><a href="#address">Address</a><a href="#gas">Gas and fees</a><a href="#mempool">Mempool and block</a><a href="#confirm">Confirmation time</a><a href="#finality">Finality</a><a href="#models">UTXO and account</a><a href="#venues">CEX and DEX</a><a href="#stable">Stablecoin</a></nav>
+<article class="col">
+<section class="bay"><p class="byline">By <a href="https://moamenbasel.com">Moamen Basel</a> · Updated September 20, 2026 · 12 minute read</p><span class="coinbadge"><img src="assets/coins/bitcoin.svg" alt="Bitcoin" width="34" height="34"></span><h1>Crypto terms that actually show up in a wallet.</h1><p class="lead">Most glossaries list every protocol word. This one covers the terms you meet the first time you send, receive, or wait for a payment.</p><p>If you want the illustrated overview of hashing and signatures, start with <a href="crypto-summary.html">the big picture</a>. This page stays on the user vocabulary: keys, fees, confirmations, and the difference between an exchange balance and coins you can spend yourself.</p></section>
+
+<section aria-labelledby="wallet"><h2 id="wallet">Wallet, private key and seed</h2>
+<figure class="photo-fig"><img src="assets/guides/hot-and-hardware.jpg" alt="A metal hardware wallet on a desk beside a phone showing a generic hot-wallet screen" width="1440" height="810"><figcaption>A hardware device keeps keys offline. A phone or browser wallet keeps them on a machine that is often online. Same job, different attack surface.</figcaption></figure>
+<p>A wallet is software or a device that holds the keys used to authorize payments. It is not a box of coins. The network stores balances; the wallet stores the secret that can move them.</p>
+<p>The <strong>private key</strong> is that secret. Anyone who has it can spend. The matching public key is how the network checks a signature without learning the private key. A <strong>seed phrase</strong> (recovery phrase) is a human-readable backup that can rebuild those keys. A swap site, a card issuer, or a support chat never needs it.</p>
+<figure class="photo-fig"><img src="assets/guides/seed-phrase.jpg" alt="A notebook with placeholder recovery words next to a hardware wallet and a sealed envelope" width="1440" height="810"><figcaption>Write the recovery phrase on paper or metal you control. The words in this photo are placeholders, not a live seed.</figcaption></figure>
+<p>If you lose the seed and the device, the coins are gone. If someone else copies the seed, they can empty the wallet later, even if you still have the device. That is why a hardware wallet helps for savings and a hot wallet is for amounts you can afford to operate with daily. The next guide covers that choice in <a href="starting-with-crypto.html">how to start using crypto</a>.</p></section>
+
+<section aria-labelledby="address"><h2 id="address">Address</h2>
+<figure class="photo-fig"><img src="assets/guides/wallet-address.jpg" alt="A printed receipt showing a long public address next to a closed cardholder" width="1440" height="810"><figcaption>An address is a receiving location derived from a public key. It is safe to share. The private key is not.</figcaption></figure>
+<p>An address is the string you paste when someone should pay you. Bitcoin addresses often start with <code>bc1</code>. Ethereum and most EVM chains use a <code>0x</code> hex string. Solana addresses are Base58 strings of similar length to a public key.</p>
+<p>Sending to the right format on the wrong network can lose funds. USDC on Ethereum is not the same asset as USDC on Solana or Base. The wallet that generated the address is the one that can spend what arrives there, provided you sent on a network that wallet actually supports.</p></section>
+
+<section aria-labelledby="gas"><h2 id="gas">Gas, fees and why a payment sits</h2>
+<figure class="photo-fig"><img src="assets/guides/gas-fee.jpg" alt="A gas meter and a coin on a desk next to a handwritten fee table" width="1440" height="810"><figcaption>A fee is a bid for block space. Pay too little and the payment can wait. Pay enough and a proposer has a reason to include it.</figcaption></figure>
+<p>A fee pays the computers that include your payment in a block. Ethereum calls this <strong>gas</strong>: you pay a base fee that is burned and a tip to the proposer. Bitcoin miners rank transactions by fee rate. Solana charges a small signature fee and, for some actions, a priority fee.</p>
+<p>Fees move with demand. A transfer of the same dollar amount can cost cents one hour and much more the next. A wallet that estimates a fee is guessing from current conditions, not promising inclusion.</p></section>
+
+<section aria-labelledby="mempool"><h2 id="mempool">Mempool and block</h2>
+<figure class="photo-fig"><img src="assets/guides/mempool.jpg" alt="Paper slips queued on a corkboard, standing in for unconfirmed transactions waiting for a block" width="1440" height="810"><figcaption>Unconfirmed payments wait in a mempool, which is each node’s local queue, not one global inbox.</figcaption></figure>
+<p>After you sign, your wallet broadcasts the transaction. Nodes that accept it keep a copy in a <strong>mempool</strong> (memory pool): a waiting room of valid payments that are not yet in a block. There is no single shared mempool. Each node has its own view.</p>
+<p>A <strong>block</strong> is a batch of transactions plus a header that links it to the previous block. Bitcoin targets about ten minutes between blocks. Ethereum slots are 12 seconds. Solana produces slots on the order of a few hundred milliseconds; the official explorer on 20 September 2026 showed a one-minute average slot time near 268 ms.</p></section>
+
+<section aria-labelledby="confirm"><h2 id="confirm">Confirmation and confirmation time</h2>
+<figure class="photo-fig"><img src="assets/guides/confirmation-blocks.jpg" alt="Stacked glass bricks on a desk, standing in for confirmations accumulating on a payment" width="1440" height="810"><figcaption>Each new block on top of yours is another confirmation. How many you wait for is a policy, not a law of physics.</figcaption></figure>
+<p><strong>Confirmation time</strong> is the wait from broadcast until a payment is buried under enough later blocks that you are willing to treat it as settled. Inclusion in one block is the first confirmation. Every block after that adds one more. Explorers such as Etherscan print that count next to the transaction. Solana explorers usually show a status (processed, confirmed, finalized) rather than a large integer.</p>
+<p>How many confirmations “matter” depends on the chain and on who is taking the risk. Checked 20 September 2026:</p>
+<div class="tablewrap"><table class="confirm-table"><thead><tr><th>Network</th><th>What one confirmation is</th><th>Typical wait people actually use</th></tr></thead><tbody>
+<tr><td>Bitcoin</td><td>The payment is in a block. New blocks target about 10 minutes.</td><td>Small trusted payments often take 1 confirmation. Exchanges commonly wait for 3 to 6. Six confirmations is about an hour and is the usual high-value convention. The protocol never declares absolute finality.</td></tr>
+<tr><td>Ethereum</td><td>A slot is 12 seconds. The first block in an epoch of 32 slots is a checkpoint.</td><td>Inclusion is one slot. Economic finality needs two epochs of supermajority votes, about 12.8 minutes. Many services credit after a handful of blocks; large bridges wait for finality. Source: <a href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/">ethereum.org proof of stake</a>.</td></tr>
+<tr><td>Solana</td><td>A slot. Commitment has three levels: processed, confirmed, finalized.</td><td>Processed is optimistic and sub-second. Confirmed usually means votes from roughly two-thirds of stake (a few slots). Finalized waits for 32 confirmed slots, on the order of 8 to 13 seconds in 2026 measurements. Circle’s CCTP docs, checked the same week, use 2 to 3 slots for fast transfers and 32 for standard finality.</td></tr>
+</tbody></table></div>
+<figure>
+<svg viewBox="0 0 680 330" role="img" aria-labelledby="cf-title cf-desc"><title id="cf-title">Confirmation time on Bitcoin, Ethereum and Solana</title><desc id="cf-desc">Bitcoin waits through several ten-minute blocks. Ethereum reaches economic finality after two epochs. Solana moves from processed to confirmed to finalized in seconds.</desc>
+<text class="cf-lane" x="24" y="22">BITCOIN · ABOUT 10 MINUTES PER BLOCK</text>
+<rect class="cf-box is-on" x="24" y="34" width="90" height="44" rx="5"/><text class="cf-label" x="69" y="61" text-anchor="middle">included</text>
+<path class="cf-link" d="M114 56h28"/>
+<rect class="cf-box" x="142" y="34" width="70" height="44" rx="5"/><text class="cf-label" x="177" y="61" text-anchor="middle">+1</text>
+<path class="cf-link" d="M212 56h20"/>
+<rect class="cf-box" x="232" y="34" width="70" height="44" rx="5"/><text class="cf-label" x="267" y="61" text-anchor="middle">+2</text>
+<path class="cf-link" d="M302 56h20"/>
+<rect class="cf-box is-on" x="322" y="34" width="90" height="44" rx="5"/><text class="cf-label" x="367" y="61" text-anchor="middle">6 conf.</text>
+<text class="cf-sub" x="24" y="98">Six confirmations is the usual exchange convention, about one hour. Not a protocol guarantee.</text>
+<text class="cf-lane" x="24" y="128">ETHEREUM · 12 SECOND SLOTS, 32 SLOTS PER EPOCH</text>
+<rect class="cf-box is-on" x="24" y="140" width="110" height="44" rx="5"/><text class="cf-label" x="79" y="167" text-anchor="middle">in a slot</text>
+<path class="cf-link" d="M134 162h36"/>
+<rect class="cf-box" x="170" y="140" width="130" height="44" rx="5"/><text class="cf-label" x="235" y="167" text-anchor="middle">justified</text>
+<path class="cf-link" d="M300 162h36"/>
+<rect class="cf-box is-on" x="336" y="140" width="140" height="44" rx="5"/><text class="cf-label" x="406" y="167" text-anchor="middle">finalized</text>
+<text class="cf-sub" x="24" y="204">Two epochs of supermajority votes. About 12.8 minutes. Reverting that burns a large amount of stake.</text>
+<text class="cf-lane" x="24" y="234">SOLANA · PROCESSED, CONFIRMED, FINALIZED</text>
+<rect class="cf-box" x="24" y="246" width="120" height="44" rx="5"/><text class="cf-label" x="84" y="273" text-anchor="middle">processed</text>
+<path class="cf-link" d="M144 268h28"/>
+<rect class="cf-box is-on" x="172" y="246" width="120" height="44" rx="5"/><text class="cf-label" x="232" y="273" text-anchor="middle">confirmed</text>
+<path class="cf-link" d="M292 268h28"/>
+<rect class="cf-box is-on" x="320" y="246" width="120" height="44" rx="5"/><text class="cf-label" x="380" y="273" text-anchor="middle">finalized</text>
+<text class="cf-sub" x="24" y="308">Finalized is 32 confirmed slots. Seconds, not hours. Still wait for finalized before treating a large payment as done.</text>
+</svg>
+<figcaption>Confirmation time is a wait you choose. The chain only tells you how deep the payment is.</figcaption>
+</figure>
+<p class="source-line">Sources dated 20 September 2026: <a href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/">Ethereum proof of stake</a>, <a href="https://developers.circle.com/cctp/concepts/finality-and-block-confirmations">Circle CCTP finality</a>, Solana explorer cluster stats, Bitcoin’s conventional six-block wait.</p></section>
+
+<section aria-labelledby="finality"><h2 id="finality">Finality</h2>
+<p>Finality is the point after which reversing a payment would be so expensive or so unlikely that honest software treats the history as settled. Bitcoin never reaches that in the strict sense; confidence just grows with depth. Ethereum finality is economic: two-thirds of stake would have to be slashed to revert a finalized checkpoint. Solana’s finalized commitment is the explorer status you want for a large transfer.</p>
+<p>A merchant who releases goods at one confirmation is taking a reorg risk. An exchange that waits for six Bitcoin blocks or for Ethereum finality is buying time. Neither number is magic. It is a tradeoff between speed and the cost of being wrong.</p></section>
+
+<section aria-labelledby="models"><h2 id="models">UTXO versus account</h2>
+<figure class="photo-fig"><img src="assets/guides/utxo-account.jpg" alt="Two wooden trays: paper slips of unspent outputs on the left and a running ledger book on the right" width="1440" height="810"><figcaption>Bitcoin tracks coins as unspent outputs. Ethereum and Solana track balances on accounts.</figcaption></figure>
+<p>Bitcoin uses an unspent transaction output model (UTXO). Each coin you can spend is a discrete output from an earlier payment. You spend whole outputs and receive change. Ethereum and Solana use accounts: a balance lives at an address and a payment subtracts from it.</p>
+<p>You do not need the jargon to send. You do need it when a wallet shows several Bitcoin inputs, a change address, or an Ethereum nonce. The nonce is a counter that stops the same Ethereum payment from being replayed.</p></section>
+
+<section aria-labelledby="venues"><h2 id="venues">CEX versus DEX</h2>
+<figure class="photo-fig"><img src="assets/guides/cex-dex.jpg" alt="A handmade cardboard model of a bank window beside an open market stall" width="1440" height="810"><figcaption>A centralized exchange holds a balance in your name. A decentralized exchange settles on the network from wallets you control.</figcaption></figure>
+<p>A centralized exchange (CEX) is a company. You deposit, it credits an account, and you withdraw later if the company, your verification status, and the network all allow it. A decentralized exchange (DEX) is software on a chain. You sign a swap from your wallet. You still trust the smart contract, the interface, and the token you receive.</p>
+<p>An exchange balance is an IOU. A wallet balance you can sign for is yours until you send it. Mixing those two is how people lose coins to a withdrawal halt or to a phishing site that looks like a DEX.</p></section>
+
+<section aria-labelledby="stable"><h2 id="stable">Stablecoin</h2>
+<figure class="photo-fig"><img src="assets/guides/stablecoin.jpg" alt="A US dollar bill beside a stack of identical cream paper tokens" width="1440" height="810"><figcaption>A stablecoin is a token that aims to stay near one dollar. The method of aiming is the whole product.</figcaption></figure>
+<p>A stablecoin is a token designed to stay close to a unit of fiat, usually one US dollar. USDC and USDT are the ones you will see on cards and in DeFi. Some are backed by cash and short-term treasuries held by an issuer. Some, such as Ethena’s USDe, are synthetic: they hedge crypto collateral with short perpetual futures. That design is the subject of <a href="dollar-yield.html">the dollar-yield guide</a>.</p>
+<p>Stable is a target, not a promise. An issuer can freeze tokens. A synthetic dollar can trade off the peg if the hedge fails. Treat a stablecoin as a tool for moving value, not as a bank deposit.</p></section>
+<nav class="guide-next" aria-label="Related guides"><a href="starting-with-crypto.html"><span>Next</span><strong>Start with a wallet ↗</strong></a><a href="crypto-summary.html"><span>Illustrated overview</span><strong>The big picture ↗</strong></a></nav>
+</article></main>
+<footer class="site-footer article-shell"><div><p class="footer-brand">crypto<span>in</span>brief.</p><p>Written by <a href="https://moamenbasel.com">moamenbasel.com</a> · <a href="https://greycorelabs.com">Grey Core Labs</a></p><p>Educational comparisons. Network rules and explorer layouts can change.</p></div><nav aria-label="Footer"><a href="index.html">All guides</a><a href="https://github.com/cryptoinbrief/cryptoinbrief.xyz">Source code</a><a href="rss.xml">RSS</a></nav></footer>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "190f466f82e24b918d3febe41efba2fe"}'></script>
+</body>
+</html>

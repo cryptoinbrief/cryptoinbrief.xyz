@@ -1,0 +1,27 @@
+.acquisition-guide .photo-fig{padding:0!important;overflow:hidden}
+.acquisition-guide .photo-fig img{display:block;width:100%;height:auto;max-height:420px;object-fit:cover;object-position:top;background:var(--soft)}
+.acquisition-guide .photo-fig figcaption{margin:0;padding:14px 18px;border-top:1px solid var(--line)}
+.acquisition-guide .term-list{padding:0;margin:0 0 28px;list-style:none;border-block:1px solid var(--line)}
+.acquisition-guide .term-list>li{padding:18px 0;border-bottom:1px solid var(--line)}
+.acquisition-guide .term-list>li:last-child{border-bottom:0}
+.acquisition-guide .term-list h3{margin:0 0 8px!important;font-size:19px!important}
+.acquisition-guide .term-list p{margin:0;font-size:15px;color:var(--muted);line-height:1.65}
+.acquisition-guide .confirm-table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 4px}
+.acquisition-guide .confirm-table th,.acquisition-guide .confirm-table td{text-align:start;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.acquisition-guide .confirm-table th{font-weight:500;color:var(--muted);font-size:12px}
+.acquisition-guide .tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}
+.acquisition-guide .tier-grid>div{padding:16px 16px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.acquisition-guide .tier-grid h3{margin:0 0 8px!important;font-size:17px!important}
+.acquisition-guide .tier-grid p{margin:0;font-size:13px;color:var(--muted);line-height:1.6}
+.acquisition-guide .tier-grid strong{display:block;font-size:22px;font-weight:500;margin:0 0 8px;color:var(--accent)}
+.cf-lane{font:10px var(--mono);fill:var(--accent);letter-spacing:.06em}
+.cf-label{font:600 12px var(--mono);fill:var(--ink)}
+.cf-sub{font:11px var(--sans);fill:var(--muted)}
+.cf-box{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.cf-box.is-on{fill:color-mix(in srgb,var(--coin) 14%,var(--surface));stroke:var(--coin)}
+.cf-link{stroke:var(--muted);stroke-width:1.4;fill:none}
+@media(max-width:760px){
+  .acquisition-guide .tier-grid{grid-template-columns:1fr}
+  .acquisition-guide .photo-fig img{max-height:280px}
+  .acquisition-guide .confirm-table{font-size:12px}
+}

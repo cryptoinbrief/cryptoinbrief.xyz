@@ -4,7 +4,7 @@
   "private": true,
   "description": "Browser checks for the Crypto in Brief static learning site",
   "scripts": {
-    "test": "python3 qa/site_audit.py && node qa/bitcoin-interactions.test.js && node qa/chains.mjs",
+    "test": "python3 qa/site_audit.py && python3 qa/content_guides.py && node qa/bitcoin-interactions.test.js && node qa/chains.mjs",
     "test:ui": "python3 qa/ui.py",
     "test:labs": "python3 qa/monero_interactions.py && python3 qa/zk_interactions.py",
     "test:stories": "python3 qa/consensus_story.py && python3 qa/execution_story.py && python3 qa/privacy_story.py",

@@ -89,6 +89,33 @@
       <description>Stealth addresses, ring signatures, key images, RingCT, network privacy, and the limits of toy cryptographic models.</description>
     </item>
     <item>
+      <title>Crypto terms that actually show up in a wallet</title>
+      <link>https://cryptoinbrief.xyz/crypto-terms.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/crypto-terms.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>A practical glossary of wallet, gas, mempool, confirmation time, finality, UTXO, CEX, DEX and stablecoin, dated September 2026.</description>
+    </item>
+    <item>
+      <title>How to start using crypto: wallets, explorers and cards</title>
+      <link>https://cryptoinbrief.xyz/starting-with-crypto.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/starting-with-crypto.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>Hot versus hardware wallets, Rabby versus MetaMask, Jupiter versus Phantom, explorers, and crypto cards with disclosed referrals.</description>
+    </item>
+    <item>
+      <title>Dollar yield in DeFi: DefiLlama, Ethena and Kamino looping</title>
+      <link>https://cryptoinbrief.xyz/dollar-yield.html</link>
+      <guid isPermaLink="true">https://cryptoinbrief.xyz/dollar-yield.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <dc:creator>Moamen Basel</dc:creator>
+      <dc:language>en</dc:language>
+      <description>How to read DefiLlama, how Ethena produces sUSDe yield, and what looping on Kamino does to liquidation risk.</description>
+    </item>
+    <item>
       <title>How to get Monero: swaps, P2P and exchanges</title>
       <link>https://cryptoinbrief.xyz/getting-monero.html</link>
       <guid isPermaLink="true">https://cryptoinbrief.xyz/getting-monero.html</guid>
