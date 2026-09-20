@@ -20,6 +20,8 @@ PAGES = {
             "Phantom",
             "Etherscan",
             "confirmation time",
+            "33760 Block Confirmations",
+            "Finalized (MAX Confirmations)",
         ],
         "hrefs": [
             "https://www.ether.fi/@moon1337",
@@ -129,10 +131,16 @@ def main():
                 continue
             if not target.is_file():
                 errors.append(f"{name}: missing image file {src}")
-    if "defillama.com" not in (ROOT / "dollar-yield.html").read_text(encoding="utf-8") and "DefiLlama" not in (
-        ROOT / "dollar-yield.html"
-    ).read_text(encoding="utf-8"):
+    dollar = (ROOT / "dollar-yield.html").read_text(encoding="utf-8")
+    if "defillama.com" not in dollar and "DefiLlama" not in dollar:
         errors.append("dollar-yield.html: missing DefiLlama or defillama.com")
+    if "</tr\n" in dollar or "</tr<" in dollar:
+        errors.append("dollar-yield.html: unclosed table row")
+    starter = (ROOT / "starting-with-crypto.html").read_text(encoding="utf-8")
+    if "Blockscout Ethereum transaction page" in starter:
+        errors.append("starting-with-crypto.html: etherscan figure still describes Blockscout")
+    if "cluster stats" in starter:
+        errors.append("starting-with-crypto.html: solana figure still describes cluster stats")
     for message in errors:
         print(f"ERROR {message}")
     if errors:

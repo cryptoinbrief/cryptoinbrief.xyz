@@ -44,7 +44,7 @@
 <p>Open Jupiter at <a href="https://jup.ag/">jup.ag</a>. Phantom is at <a href="https://phantom.com/">phantom.com</a>. Same rule as EVM: never type a seed into a site that is not the wallet you just downloaded.</p></section>
 
 <section aria-labelledby="etherscan"><h2 id="etherscan">How to check a transaction on Etherscan</h2>
-<figure class="photo-fig"><img src="assets/guides/etherscan-tx.png" alt="Blockscout Ethereum transaction page showing Success status, block number and 2 block confirmations" width="1440" height="900"><figcaption>A live Ethereum transfer on 20 September 2026, viewed on Blockscout, which shows the same fields as Etherscan: hash, Success, block, and confirmation count. This one had 2 block confirmations when captured.</figcaption></figure>
+<figure class="photo-fig"><img src="assets/guides/etherscan-tx.png" alt="Etherscan transaction page showing Success status, block 25982448 and 33760 block confirmations" width="1440" height="900"><figcaption>etherscan.io on 20 September 2026. A 0.00001 ETH transfer to vitalik.eth: Status Success, block 25982448, 33760 Block Confirmations. That confirmation count is the field you wait on.</figcaption></figure>
 <figure>
 <svg viewBox="0 0 680 268" role="img" aria-labelledby="es-title es-desc"><title id="es-title">What to read on an Ethereum explorer</title><desc id="es-desc">An Ethereum explorer shows the hash, status, block number, confirmation count, from and to addresses, value and the fee. Confirmation time is the wait until that confirmation count reaches the depth you chose.</desc>
 <rect class="cf-box" x="16" y="16" width="648" height="236" rx="8"/>
@@ -71,7 +71,8 @@
 <p>4. Read Confirmations. That integer is confirmation time in block-count form. One confirmation is inclusion. For a small transfer I will often move on after a few. For a large one I wait until the block is old enough that Ethereum’s checkpoint finality has had time to land, about two epochs or 13 minutes. The <a href="crypto-terms.html#confirm">terms page</a> tables that wait.</p></section>
 
 <section aria-labelledby="solana-explorer"><h2 id="solana-explorer">How to check a transaction on Solana</h2>
-<figure class="photo-fig"><img src="assets/guides/solana-explorer.png" alt="Official Solana explorer cluster stats including slot time and transaction counts on 20 September 2026" width="1440" height="900"><figcaption>Official Solana explorer on 20 September 2026. Slot time that hour averaged about 268 ms. Use this site or Solscan to open a signature.</figcaption></figure>
+<figure class="photo-fig"><img src="assets/guides/solscan-tx.png" alt="Solscan transaction page showing SUCCESS and Finalized MAX Confirmations" width="1440" height="900"><figcaption>solscan.io on 20 September 2026. Result is SUCCESS and Finalized (MAX Confirmations). That finalized status is the confirmation depth that matters on Solana.</figcaption></figure>
+<figure class="photo-fig"><img src="assets/guides/solana-explorer.png" alt="Official Solana explorer transaction page showing Success and Finalized MAX Confirmations" width="1440" height="900"><figcaption>The same signature on explorer.solana.com the same day. Status Success, Confirmation Finalized (MAX Confirmations), plus slot and fee.</figcaption></figure>
 <figure>
 <svg viewBox="0 0 680 240" role="img" aria-labelledby="so-title so-desc"><title id="so-title">What to read on a Solana explorer</title><desc id="so-desc">Solana explorers show a signature, a status of processed confirmed or finalized, a slot, fee, and the accounts involved. Finalized is the confirmation depth that matters for a large payment.</desc>
 <rect class="cf-box" x="16" y="16" width="648" height="208" rx="8"/>
