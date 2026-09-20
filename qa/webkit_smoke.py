@@ -172,7 +172,7 @@ def run():
             page.on(
                 "console",
                 lambda message: runtime_errors.append(f"console: {message.text}")
-                if message.type == "error" and "cloudflareinsights" not in message.text
+                if message.type == "error" and "cloudflareinsights" not in (message.location or {}).get("url", "")
                 else None,
             )
             page.on(

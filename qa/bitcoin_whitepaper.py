@@ -54,7 +54,7 @@ class BitcoinWhitepaper(unittest.TestCase):
         errors = []
         failures = []
         page.on("pageerror", lambda error: errors.append(str(error)))
-        page.on("console", lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in message.text else None)
+        page.on("console", lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in (message.location or {}).get("url", "") else None)
         page.on("response", lambda response: failures.append(f"{response.status} {response.url}") if response.status >= 400 else None)
         response = page.goto(f"{self.base}/{PAGE}", wait_until="networkidle")
         self.assertEqual(response.status, 200)

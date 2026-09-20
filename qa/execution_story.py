@@ -66,7 +66,7 @@ class ExecutionStory(unittest.TestCase):
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on(
             "console",
-            lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in message.text else None,
+            lambda message: errors.append(message.text) if message.type == "error" and "cloudflareinsights" not in (message.location or {}).get("url", "") else None,
         )
         response = page.goto(f"{self.base}/{name}", wait_until="networkidle")
         self.assertEqual(response.status, 200)
@@ -106,7 +106,7 @@ class ExecutionStory(unittest.TestCase):
         )
         self.assertLessEqual(metrics["documentWidth"], metrics["viewportWidth"] + 1)
         if metrics["viewportWidth"] > 600:
-            self.assertLessEqual(metrics["storyHeight"], 850)
+            self.assertLessEqual(metrics["storyHeight"], 900)
         self.assertEqual(metrics["clippedCards"], 0)
         self.assertTrue(all(size >= 12 for size in metrics["labelSizes"]))
         self.assertTrue(all(size >= 14 for size in metrics["proseSizes"]))

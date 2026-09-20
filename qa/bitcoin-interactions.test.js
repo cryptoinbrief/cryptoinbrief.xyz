@@ -196,7 +196,7 @@ async function run() {
         const errors = [];
         page.on('pageerror', error => errors.push(`page: ${error.message}`));
         page.on('console', message => {
-          if (message.type() === 'error' && !message.text().includes('cloudflareinsights')) errors.push(`console: ${message.text()}`);
+          if (message.type() === 'error' && !(message.location() || {}).url?.includes('cloudflareinsights')) errors.push(`console: ${message.text()}`);
         });
         page.on('response', response => {
           if (response.url().startsWith(base) && response.status() >= 400) errors.push(`http ${response.status()}: ${response.url()}`);

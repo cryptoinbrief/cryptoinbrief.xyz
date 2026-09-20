@@ -185,7 +185,7 @@
     const cards = [...story.querySelectorAll('.est-tx')];
     cards.forEach((card, index) => {
       const transaction = schedule[index];
-      const rows = [18, 50, 82];
+      const rows = [22, 52, 82];
       const mobileLane = rows[index];
       let x = 14;
       let y = rows[index];
