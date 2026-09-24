@@ -11,6 +11,7 @@ Author: Moamen Basel
 Website: https://moamenbasel.com
 Role: Security engineer at Grey Core Labs
 Company: https://greycorelabs.com
+Also builds: JMacy, a download manager for Mac, https://www.jmacy.xyz
 
 /* SOURCE */
 Repository: https://github.com/cryptoinbrief/cryptoinbrief.xyz
